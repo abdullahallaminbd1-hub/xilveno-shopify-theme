@@ -396,10 +396,13 @@ function updateVariantState(form, productData) {
   const variantInput = $('[name="id"]', form);
   if (variantInput) variantInput.value = variant.id;
 
-  // Update URL without reload
-  const url = new URL(window.location);
-  url.searchParams.set('variant', variant.id);
-  window.history.replaceState({}, '', url.toString());
+  // Update URL without reload. Skip inside the Theme Editor preview, where the
+  // URL is owned by the editor and must keep its preview params intact.
+  if (!(window.Shopify && window.Shopify.designMode)) {
+    const url = new URL(window.location);
+    url.searchParams.set('variant', variant.id);
+    window.history.replaceState({}, '', url.toString());
+  }
 
   emit(document, 'xilveno:variant:changed', { variant });
 }

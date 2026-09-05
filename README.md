@@ -6,13 +6,38 @@
 
 ---
 
-## Quick Start — Upload to Shopify
+## Quick Start
+
+### Option A — Upload a ZIP
 
 1. Download the `xilveno.zip` file
 2. Go to **Shopify Admin → Online Store → Themes**
 3. Click **Add theme → Upload ZIP file**
 4. Select `xilveno.zip`
 5. Click **Customize** to open the Theme Editor and begin configuring
+
+### Option B — Connect from GitHub (recommended for development)
+
+1. Go to **Shopify Admin → Online Store → Themes**
+2. Click **Add theme → Connect from GitHub**
+3. Connect your GitHub account and select:
+   - **Repository:** `abdullahallaminbd1-hub/xilveno-shopify-theme`
+   - **Branch:** `main`
+4. **Theme root directory: leave it empty (`/`)** — the theme files (including
+   `layout/theme.liquid`) live directly at the repository root.
+5. Click **Save**.
+
+> **Troubleshooting — "Role can't be set to main: missing required file
+> layout/theme.liquid"**
+>
+> This error means Shopify is looking for the theme in a nested folder that no
+> longer exists. Previously this repository stored the theme under
+> `xilveno_upload/`, but the theme now lives at the **repository root**. To fix:
+>
+> 1. In the GitHub connection, set **Theme root directory to `/`**
+>    (blank = repo root).
+> 2. Re-import, or push a new commit to `main` to trigger a re-sync.
+> 3. `layout/theme.liquid` is verified to exist at `main` root.
 
 ---
 

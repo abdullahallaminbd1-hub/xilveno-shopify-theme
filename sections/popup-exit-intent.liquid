@@ -56,6 +56,9 @@
 
 <script>
 (function() {
+  // Never auto-open the popup inside the Shopify Theme Editor preview.
+  if (window.Shopify && window.Shopify.designMode) return;
+
   var STORAGE_KEY = 'xilveno_popup_dismissed';
   var popup = document.getElementById('exit-popup');
   var closeBtn = document.getElementById('popup-close');

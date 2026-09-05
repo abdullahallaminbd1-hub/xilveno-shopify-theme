@@ -1,5 +1,0 @@
-/* Cart drawer supplemental styles loaded async */
-.cart-drawer[inert] { pointer-events: none; }
-.cart-drawer__body::-webkit-scrollbar { width: 4px; }
-.cart-drawer__body::-webkit-scrollbar-track { background: transparent; }
-.cart-drawer__body::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }

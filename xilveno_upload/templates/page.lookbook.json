@@ -1,1 +1,0 @@
-{ "sections": { "hero": { "type": "page-hero", "settings": { "heading": "Lookbook", "eyebrow": "Style inspiration" } }, "main": { "type": "lookbook-grid", "settings": {} } }, "order": ["hero","main"] }

@@ -30,6 +30,8 @@ class PredictiveSearch {
 
   onKeydown(e) {
     if (e.key === 'Escape') this.hide();
+    // The Theme Editor preview cannot navigate to /search (an unsupported URL).
+    if (window.Shopify && window.Shopify.designMode) return;
     if (e.key === 'Enter' && this.query) {
       window.location.href = `/search?q=${encodeURIComponent(this.query)}&type=product`;
     }

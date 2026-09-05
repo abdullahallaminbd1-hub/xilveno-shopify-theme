@@ -76,7 +76,7 @@ const CartDrawer = {
   open() {
     this.el.classList.add('is-open');
     this.el.removeAttribute('inert');
-    window.Overlay?.show();
+    Overlay?.show();
     const closeBtn = this.el.querySelector('.cart-drawer__close');
     setTimeout(() => closeBtn?.focus(), 100);
   },
@@ -84,7 +84,7 @@ const CartDrawer = {
   close() {
     this.el.classList.remove('is-open');
     this.el.setAttribute('inert', '');
-    window.Overlay?.hide();
+    Overlay?.hide();
   },
 
   async refresh() {
@@ -235,7 +235,10 @@ const CartDrawer = {
       e.preventDefault();
       const input = form.querySelector('input');
       if (!input?.value.trim()) return;
-      // Shopify doesn't allow applying discount codes via AJAX Cart API
+      // Shopify doesn't allow applying discount codes via AJAX Cart API.
+      // The Theme Editor preview cannot navigate to /checkout (an unsupported
+      // URL for the editor iframe), so never redirect while in design mode.
+      if (window.Shopify && window.Shopify.designMode) return;
       // Best practice: redirect to checkout with discount applied
       window.location.href = `/checkout?discount=${encodeURIComponent(input.value.trim())}`;
     });

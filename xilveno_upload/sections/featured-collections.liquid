@@ -1,0 +1,72 @@
+{% comment %}featured-collections.liquid{% endcomment %}
+<section class="section-padding" id="fc-{{ section.id }}">
+  <div class="page-container">
+    {%- if section.settings.heading != blank -%}
+      <div class="section-header{% if section.settings.align == 'center' %} section-header--center{% endif %}">
+        {%- if section.settings.eyebrow != blank -%}<span class="section-eyebrow animate-on-scroll">{{ section.settings.eyebrow }}</span>{%- endif -%}
+        <h2 class="section-title h2 animate-on-scroll animate-on-scroll--delay-1">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+    <div style="display:grid;grid-template-columns:repeat({{ section.settings.columns }},1fr);gap:1.5rem;" data-stagger>
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'collection_card' -%}
+          {%- assign col = collections[block.settings.collection] -%}
+          {%- assign card_alt = col.title | default: block.settings.custom_title -%}
+          <a href="{{ col.url | default: '#' }}" class="category-card" style="aspect-ratio:{% if section.settings.columns == 2 %}16/9{% else %}3/4{% endif %};" aria-label="{{ card_alt }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag: class: 'category-card__image', alt: card_alt, loading: 'lazy', width: 800 }}
+            {%- elsif col != blank and col.featured_image != blank -%}
+              {{ col.featured_image | image_url: width: 800 | image_tag: class: 'category-card__image', alt: col.title, loading: 'lazy', width: 800 }}
+            {%- else -%}
+              <div class="category-card__image" style="background:var(--color-surface-2);"></div>
+            {%- endif -%}
+            <div class="category-card__overlay" aria-hidden="true"></div>
+            <div class="category-card__content">
+              <p class="category-card__name">{{ block.settings.custom_title | default: col.title }}</p>
+              {%- if col.products_count > 0 -%}<p class="category-card__count">{{ col.products_count }} products</p>{%- endif -%}
+            </div>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  @media (max-width:768px) { #fc-{{ section.id }} [style*="grid-template-columns"] { grid-template-columns: repeat(2,1fr) !important; } }
+  @media (max-width:480px) { #fc-{{ section.id }} [style*="grid-template-columns"] { grid-template-columns: 1fr !important; } }
+</style>
+
+{% schema %}
+{
+  "name": "Featured collections",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop Collections" },
+    { "type": "select", "id": "align", "label": "Heading alignment", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }], "default": "left" },
+    { "type": "range", "id": "columns", "min": 2, "max": 4, "step": 1, "label": "Columns", "default": 3 }
+  ],
+  "blocks": [
+    {
+      "type": "collection_card",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "text", "id": "custom_title", "label": "Custom title (overrides collection name)" },
+        { "type": "image_picker", "id": "image", "label": "Custom image (overrides collection image)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collections",
+      "blocks": [
+        { "type": "collection_card" },
+        { "type": "collection_card" },
+        { "type": "collection_card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

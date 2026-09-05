@@ -1,0 +1,1 @@
+{ "sections": { "main": { "type": "blog-grid", "settings": { "articles_count": 9, "show_view_all": false } } }, "order": ["main"] }

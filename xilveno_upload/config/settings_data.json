@@ -1,0 +1,32 @@
+{
+  "current": {
+    "color_scheme": "scheme-1",
+    "color_primary": "#0a0a0a",
+    "color_background": "#ffffff",
+    "color_accent": "#0a0a0a",
+    "color_surface": "#f9fafb",
+    "color_border": "#e5e7eb",
+    "color_error": "#dc2626",
+    "color_success": "#16a34a",
+    "type_header_font": "inter_n4",
+    "type_body_font": "inter_n4",
+    "heading_scale": 100,
+    "body_font_size": 16,
+    "page_width": 1400,
+    "spacing_sections": 60,
+    "button_style": "square",
+    "social_instagram_url": "",
+    "social_tiktok_url": "",
+    "social_facebook_url": "",
+    "social_pinterest_url": "",
+    "social_youtube_url": "",
+    "social_twitter_url": "",
+    "free_shipping_threshold": 5000,
+    "animation_level": "full",
+    "show_vendor": true,
+    "show_rating": false,
+    "card_image_ratio": "portrait",
+    "card_hover": "quick-add"
+  },
+  "presets": {}
+}

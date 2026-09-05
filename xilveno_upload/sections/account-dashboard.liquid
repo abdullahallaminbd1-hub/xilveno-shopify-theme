@@ -1,0 +1,96 @@
+<div class="page-container">
+  <div class="account-layout">
+    <nav class="account-nav" aria-label="Account navigation">
+      <ul class="account-nav__list" role="list">
+        <li><a href="{{ routes.account_url }}" class="account-nav__link is-active" aria-current="page">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="6" r="3"/><path d="M3 16a6 6 0 0 1 12 0" stroke-linecap="round"/></svg>
+          Overview
+        </a></li>
+        <li><a href="{{ routes.account_url }}#orders" class="account-nav__link">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="14" height="14" rx="2"/><path d="M5 6h8M5 9h6M5 12h4" stroke-linecap="round"/></svg>
+          Orders
+        </a></li>
+        <li><a href="{{ routes.account_url }}addresses" class="account-nav__link">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 1a6 6 0 0 1 6 6c0 4-6 10-6 10S3 11 3 7a6 6 0 0 1 6-6z"/><circle cx="9" cy="7" r="2"/></svg>
+          Addresses
+        </a></li>
+        <li><a href="/pages/wishlist" class="account-nav__link">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15.65 3.35a5.5 5.5 0 0 0-7.78 0L7 4.22l-.87-.87a5.5 5.5 0 1 0 7.78 7.78l.87-.87L16.52 9.5l-.87.87z"/></svg>
+          Wishlist
+        </a></li>
+        <li><a href="{{ routes.account_logout_url }}" class="account-nav__link" style="color:var(--color-fg-muted);margin-top:1rem;">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 3H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h4M12 5l4 4-4 4M16 9H7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sign out
+        </a></li>
+      </ul>
+    </nav>
+
+    <div class="account-content">
+      <h1 class="account-content__title">Welcome back, {{ customer.first_name }}!</h1>
+
+      {%- comment -%} Loyalty placeholder — connect Smile.io, LoyaltyLion, or similar {%- endcomment -%}
+      {%- if section.settings.show_loyalty -%}
+        <div class="loyalty-widget" style="margin-bottom:1.5rem;">
+          <p style="font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;opacity:0.6;margin-bottom:0.75rem;">Your rewards</p>
+          <p class="loyalty-widget__points">—</p>
+          <p class="loyalty-widget__label">Points balance</p>
+          <p class="loyalty-widget__note">Connect a loyalty app (Smile.io, LoyaltyLion) to show real point balances here.</p>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Recent orders {%- endcomment -%}
+      <h2 style="font-size:1.125rem;font-weight:500;margin-bottom:1rem;" id="orders">Recent orders</h2>
+      {%- if customer.orders.size > 0 -%}
+        {%- for order in customer.orders limit: 5 -%}
+          <div class="order-card">
+            <div class="order-card__header">
+              <div>
+                <p style="font-weight:500;font-size:0.9375rem;">Order {{ order.name }}</p>
+                <p style="font-size:0.8125rem;color:var(--color-fg-muted);margin-top:2px;">{{ order.created_at | date: '%B %d, %Y' }}</p>
+              </div>
+              <div style="text-align:right;">
+                <span class="order-status order-status--{{ order.fulfillment_status }}">{{ order.fulfillment_status_label }}</span>
+                <p style="font-weight:500;font-size:0.9375rem;margin-top:0.5rem;">{{ order.total_price | money }}</p>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+              {%- for line_item in order.line_items limit: 3 -%}
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8125rem;color:var(--color-fg-muted);">
+                  {%- if line_item.image != blank -%}
+                    <div style="width:40px;height:40px;border-radius:var(--radius-md);overflow:hidden;flex-shrink:0;background:var(--color-surface);">
+                      {{ line_item.image | image_url: width: 80 | image_tag: alt: line_item.title, loading: 'lazy', width: 40, height: 40, style: 'object-fit:cover;width:100%;height:100%;' }}
+                    </div>
+                  {%- endif -%}
+                  <span>{{ line_item.title | truncate: 30 }} &times; {{ line_item.quantity }}</span>
+                </div>
+              {%- endfor -%}
+            </div>
+            <div style="display:flex;gap:0.75rem;">
+              <a href="{{ order.customer_url }}" class="btn btn--ghost btn--sm">View order</a>
+              {%- if section.settings.show_returns and order.fulfillment_status == 'fulfilled' -%}
+                <a href="/pages/contact?order={{ order.name }}" class="btn btn--ghost btn--sm">Request return</a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div style="background:var(--color-surface);border-radius:var(--radius-xl);padding:2.5rem;text-align:center;">
+          <p style="color:var(--color-fg-muted);margin-bottom:1rem;">You haven't placed any orders yet.</p>
+          <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">Start shopping</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Account dashboard",
+  "tag": "section",
+  "settings": [
+    { "type": "checkbox", "id": "show_loyalty", "label": "Show loyalty points placeholder", "info": "Shows a placeholder widget. Connect a loyalty app to populate with real data.", "default": true },
+    { "type": "checkbox", "id": "show_returns", "label": "Show return request link on fulfilled orders", "default": true }
+  ],
+  "presets": [{ "name": "Account dashboard" }]
+}
+{% endschema %}

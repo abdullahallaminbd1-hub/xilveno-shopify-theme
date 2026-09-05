@@ -1,0 +1,1 @@
+{ "sections": { "hero": { "type": "page-hero", "settings": { "heading": "Frequently asked questions", "eyebrow": "Help center" } }, "main": { "type": "faq-accordion", "settings": { "heading": "" } } }, "order": ["hero","main"] }

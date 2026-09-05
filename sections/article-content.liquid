@@ -1,0 +1,39 @@
+<article class="page-container page-container--narrow section-padding" itemscope itemtype="https://schema.org/Article">
+  <header style="margin-bottom:2.5rem;">
+    {%- if article.tags.size > 0 -%}
+      <div style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+        {%- for tag in article.tags -%}
+          <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="badge badge--new" style="text-decoration:none;">{{ tag }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    <h1 class="h1" itemprop="headline">{{ article.title }}</h1>
+    <p style="color:var(--color-fg-muted);font-size:0.875rem;margin-top:1rem;">
+      <time datetime="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}" itemprop="datePublished">{{ article.published_at | date: '%B %d, %Y' }}</time>
+      &middot; <span itemprop="author">{{ article.author }}</span>
+    </p>
+    {%- if article.image -%}
+      <div style="margin-top:1.5rem;border-radius:var(--radius-xl);overflow:hidden;">
+        {{ article.image | image_url: width: 1200 | image_tag: alt: article.image.alt, loading: 'eager', fetchpriority: 'high', width: 1200, height: 630, itemprop: 'image' }}
+      </div>
+    {%- endif -%}
+  </header>
+  <div class="rte" itemprop="articleBody" style="font-size:1.0625rem;line-height:1.8;color:var(--color-fg);">
+    {{ article.content }}
+  </div>
+  <footer style="margin-top:3rem;padding-top:2rem;border-top:1px solid var(--color-border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+    <a href="{{ blog.url }}" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.875rem;color:var(--color-fg-muted);">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Back to {{ blog.title }}
+    </a>
+    {%- if article.next_article or article.previous_article -%}
+      <div style="display:flex;gap:1rem;">
+        {%- if article.previous_article -%}<a href="{{ article.previous_article }}" class="btn btn--ghost btn--sm">← Previous</a>{%- endif -%}
+        {%- if article.next_article -%}<a href="{{ article.next_article }}" class="btn btn--ghost btn--sm">Next →</a>{%- endif -%}
+      </div>
+    {%- endif -%}
+  </footer>
+</article>
+{% schema %}
+{ "name": "Article content", "tag": "section", "settings": [], "presets": [{ "name": "Article content" }] }
+{% endschema %}

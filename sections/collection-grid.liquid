@@ -1,0 +1,202 @@
+<div class="page-container section-padding--sm">
+
+  {%- comment -%} Collection banner {%- endcomment -%}
+  {%- if section.settings.show_banner -%}
+    <div class="page-hero{% if collection.image %} page-hero--with-image{% endif %}" style="margin-bottom:2rem;border-radius:var(--radius-xl);overflow:hidden;{% unless collection.image %}padding:2.5rem 0 1.5rem;{% endunless %}">
+      {%- if collection.image -%}
+        {{ collection.image | image_url: width: 1800 | image_tag: class: 'page-hero__bg', alt: collection.title, loading: 'eager', fetchpriority: 'high', width: 1800, height: 400 }}
+        <div class="page-hero__overlay" aria-hidden="true"></div>
+      {%- endif -%}
+      <div class="page-hero__content page-container">
+        <h1 class="h2" {% if collection.image %}style="color:#fff;"{% endif %}>{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}
+          <p style="margin-top:0.5rem;font-size:0.9375rem;{% if collection.image %}color:rgba(255,255,255,0.85);{% else %}color:var(--color-fg-muted);{% endif %}max-width:560px;">
+            {{ collection.description | strip_html | truncate: 200 }}
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="collection-layout{% if section.settings.show_filters == false %} collection-layout--no-sidebar{% endif %}">
+
+    {%- comment -%} ─── Filters sidebar ──────────────────────────────────────── {%- endcomment -%}
+    {%- if section.settings.show_filters -%}
+      <aside class="filters-sidebar" aria-label="{{ 'collections.filters.title' | t | default: 'Filters' }}">
+        <p class="filters-sidebar__title">{{ 'collections.filters.title' | t | default: 'Filter' }}</p>
+
+        {%- for filter in collection.filters -%}
+          <div class="filter-group">
+            <button
+              class="filter-group__toggle"
+              aria-expanded="false"
+              aria-controls="filter-{{ filter.param_name }}"
+            >
+              {{ filter.label }}
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="filter-group__options" id="filter-{{ filter.param_name }}">
+              {%- if filter.type == 'boolean' or filter.type == 'list' -%}
+                {%- for value in filter.values -%}
+                  <label class="filter-option">
+                    <input
+                      type="checkbox"
+                      name="{{ value.param_name }}"
+                      value="{{ value.value }}"
+                      {% if value.active %}checked{% endif %}
+                      {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                      onchange="this.closest('form').submit()"
+                    >
+                    <span>{{ value.label }}</span>
+                    <span class="filter-option__count">({{ value.count }})</span>
+                  </label>
+                {%- endfor -%}
+              {%- elsif filter.type == 'price_range' -%}
+                <div style="display:flex;gap:0.5rem;padding:0.5rem 0;">
+                  <input
+                    type="number"
+                    placeholder="{{ 'collections.filters.from' | t | default: 'Min' }}"
+                    name="{{ filter.min_value.param_name }}"
+                    value="{{ filter.min_value.value | divided_by: 100.0 | ceil }}"
+                    min="{{ filter.range_min | divided_by: 100.0 | ceil }}"
+                    max="{{ filter.range_max | divided_by: 100.0 | ceil }}"
+                    style="width:80px;padding:0.4rem 0.6rem;border:1.5px solid var(--color-border);border-radius:var(--radius);font-size:0.8125rem;"
+                    onchange="this.closest('form').submit()"
+                  >
+                  <input
+                    type="number"
+                    placeholder="{{ 'collections.filters.to' | t | default: 'Max' }}"
+                    name="{{ filter.max_value.param_name }}"
+                    value="{{ filter.max_value.value | divided_by: 100.0 | ceil }}"
+                    min="{{ filter.range_min | divided_by: 100.0 | ceil }}"
+                    max="{{ filter.range_max | divided_by: 100.0 | ceil }}"
+                    style="width:80px;padding:0.4rem 0.6rem;border:1.5px solid var(--color-border);border-radius:var(--radius);font-size:0.8125rem;"
+                    onchange="this.closest('form').submit()"
+                  >
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+
+        {%- if collection.filters.size > 0 -%}
+          {%- assign active_filters = 0 -%}
+          {%- for filter in collection.filters -%}
+            {%- for value in filter.active_values -%}
+              {%- assign active_filters = active_filters | plus: 1 -%}
+            {%- endfor -%}
+          {%- endfor -%}
+          {%- if active_filters > 0 -%}
+            <a href="{{ collection.url }}" style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1rem;font-size:0.8125rem;color:var(--color-error);text-decoration:underline;text-underline-offset:2px;">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Clear all filters ({{ active_filters }})
+            </a>
+          {%- endif -%}
+        {%- endif -%}
+      </aside>
+    {%- endif -%}
+
+    {%- comment -%} ─── Main grid ─────────────────────────────────────────────── {%- endcomment -%}
+    <div>
+      <div class="collection-toolbar">
+        <p class="collection-toolbar__count" aria-live="polite">
+          {{ 'collections.general.items_with_count' | t: count: collection.products_count | default: collection.products_count | append: ' products' }}
+        </p>
+        <label for="sort-by-{{ section.id }}" class="visually-hidden">{{ 'collections.sorting.title' | t | default: 'Sort by' }}</label>
+        <select
+          id="sort-by-{{ section.id }}"
+          name="sort_by"
+          class="sort-select"
+          aria-label="{{ 'collections.sorting.title' | t | default: 'Sort by' }}"
+          onchange="window.location.href = '{{ collection.url }}?sort_by=' + this.value + '{{ collection.current_type }}{{ collection.current_vendor }}'{% if current_tags.size > 0 %} + '&constraint={{ current_tags | join: '+' }}'{% endif %}"
+        >
+          {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>
+              {{ option.name }}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+
+      {%- paginate collection.products by section.settings.products_per_page -%}
+        {%- if collection.products.size > 0 -%}
+          <div class="products-grid" data-stagger>
+            {%- for product in collection.products -%}
+              {%- render 'product-card', product: product -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <nav class="pagination" aria-label="{{ 'general.pagination.label' | t | default: 'Pagination' }}">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}" class="pagination__item pagination__item--arrow" aria-label="{{ 'general.pagination.previous' | t | default: 'Previous page' }}">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+              {%- endif -%}
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}" class="pagination__item" aria-label="{{ 'general.pagination.page' | t: number: part.title | default: 'Page ' | append: part.title }}">{{ part.title }}</a>
+                {%- elsif part.title == paginate.current_page -%}
+                  <span class="pagination__item is-current" aria-current="page" aria-label="{{ 'general.pagination.current_page' | t: number: part.title | default: 'Page ' | append: part.title }}">{{ part.title }}</span>
+                {%- else -%}
+                  <span class="pagination__item" aria-hidden="true">{{ part.title }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" class="pagination__item pagination__item--arrow" aria-label="{{ 'general.pagination.next' | t | default: 'Next page' }}">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M7 4l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+
+        {%- else -%}
+          <div style="text-align:center;padding:4rem 0;">
+            <p style="font-size:1.125rem;font-weight:500;margin-bottom:0.5rem;">{{ 'collections.general.no_matches' | t | default: 'No products found' }}</p>
+            <p style="color:var(--color-fg-muted);margin-bottom:1.5rem;">{{ 'collections.general.no_matches_description' | t | default: 'Try adjusting your filters or search terms.' }}</p>
+            <a href="{{ collection.url }}" class="btn btn--primary">Clear filters</a>
+          </div>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection grid",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_banner",
+      "label": "Show collection banner",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filter sidebar",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection grid"
+    }
+  ]
+}
+{% endschema %}

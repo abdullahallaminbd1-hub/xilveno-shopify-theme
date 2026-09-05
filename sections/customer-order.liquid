@@ -1,0 +1,50 @@
+<div class="page-container" style="padding:2.5rem var(--gutter);">
+  <div style="max-width:760px;margin:0 auto;">
+    <a href="{{ routes.account_url }}" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.875rem;color:var(--color-fg-muted);margin-bottom:1.5rem;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to account
+    </a>
+    <h1 class="h2" style="margin-bottom:0.25rem;">Order {{ order.name }}</h1>
+    <p style="color:var(--color-fg-muted);font-size:0.875rem;margin-bottom:2rem;">Placed on {{ order.created_at | date: '%B %d, %Y' }}</p>
+    <div style="display:flex;gap:0.75rem;margin-bottom:2rem;flex-wrap:wrap;">
+      <span class="order-status order-status--{{ order.fulfillment_status }}">{{ order.fulfillment_status_label }}</span>
+      <span class="order-status" style="background:var(--color-surface);color:var(--color-fg);">{{ order.financial_status_label }}</span>
+    </div>
+    {%- for line_item in order.line_items -%}
+      <div class="cart-item" style="grid-template-columns:80px 1fr;padding:1rem 0;">
+        <div class="cart-item__image" style="width:80px;height:80px;">
+          {%- if line_item.image != blank -%}
+            {{ line_item.image | image_url: width: 160 | image_tag: alt: line_item.title, loading: 'lazy', width: 80, height: 80 }}
+          {%- endif -%}
+        </div>
+        <div class="cart-item__details">
+          <p class="cart-item__title">{{ line_item.product.title }}</p>
+          {%- unless line_item.variant.title == 'Default Title' -%}<p class="cart-item__variant">{{ line_item.variant.title }}</p>{%- endunless -%}
+          <div class="cart-item__row">
+            <span class="cart-item__variant">Qty: {{ line_item.quantity }}</span>
+            <span class="cart-item__price">{{ line_item.final_line_price | money }}</span>
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+    <div style="border-top:1px solid var(--color-border);padding-top:1rem;margin-top:0.5rem;">
+      <div class="cart-totals__row" style="padding:0.25rem 0;font-size:0.875rem;display:flex;justify-content:space-between;"><span>Subtotal</span><span>{{ order.subtotal_price | money }}</span></div>
+      {%- for discount in order.discount_applications -%}
+        <div class="cart-totals__row" style="padding:0.25rem 0;font-size:0.875rem;display:flex;justify-content:space-between;color:var(--color-success);"><span>Discount ({{ discount.title }})</span><span>-{{ discount.total_allocated_amount | money }}</span></div>
+      {%- endfor -%}
+      <div class="cart-totals__row" style="padding:0.25rem 0;font-size:0.875rem;display:flex;justify-content:space-between;"><span>Shipping</span><span>{{ order.shipping_price | money }}</span></div>
+      <div class="cart-totals__row cart-totals__row--total" style="display:flex;justify-content:space-between;font-weight:500;padding-top:0.75rem;border-top:1px solid var(--color-border);margin-top:0.5rem;"><span>Total</span><span>{{ order.total_price | money }}</span></div>
+    </div>
+    {%- if order.shipping_address -%}
+      <div style="margin-top:2rem;background:var(--color-surface);border-radius:var(--radius-xl);padding:1.25rem;">
+        <p style="font-weight:500;margin-bottom:0.5rem;">Shipping address</p>
+        <address style="font-style:normal;font-size:0.875rem;color:var(--color-fg-muted);line-height:1.6;">
+          {{ order.shipping_address | format_address }}
+        </address>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+{% schema %}
+{ "name": "Customer order", "tag": "section", "settings": [], "presets": [{ "name": "Customer order" }] }
+{% endschema %}

@@ -1,0 +1,134 @@
+{%- if section.settings.enabled -%}
+<div
+  class="popup-overlay"
+  id="exit-popup"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="popup-title"
+  aria-hidden="true"
+>
+  <div class="popup-modal">
+    {%- if section.settings.image != blank -%}
+      <div class="popup-modal__image" aria-hidden="true">
+        {{ section.settings.image | image_url: width: 600 | image_tag: alt: '', loading: 'lazy', width: 300, height: 300 }}
+      </div>
+    {%- endif -%}
+    <div class="popup-modal__content">
+      <button class="popup-modal__close" id="popup-close" aria-label="Close offer">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="popup-modal__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="popup-modal__title" id="popup-title">{{ section.settings.heading | default: 'Get 10% off' }}</h2>
+      {%- if section.settings.text != blank -%}
+        <p class="popup-modal__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+      {%- form 'customer', id: 'popup-newsletter-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,popup">
+        {%- if form.posted_successfully? -%}
+          <p style="color:var(--color-success);font-weight:500;font-size:0.875rem;">✓ {{ section.settings.success_msg | default: "You're in! Check your email for your discount code." }}</p>
+        {%- else -%}
+          <div class="popup-form">
+            <input
+              type="email"
+              name="contact[email]"
+              class="field__input"
+              placeholder="{{ section.settings.placeholder | default: 'Your email address' }}"
+              required
+              autocomplete="email"
+              aria-label="Email address"
+            >
+            <button type="submit" class="btn btn--primary btn--full">
+              {{ section.settings.btn_label | default: 'Claim offer' }}
+            </button>
+          </div>
+        {%- endif -%}
+      {%- endform -%}
+      <button class="popup-dismiss" id="popup-dismiss" aria-label="No thanks, dismiss offer">
+        {{ section.settings.dismiss_text | default: 'No thanks, I prefer full price' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var STORAGE_KEY = 'xilveno_popup_dismissed';
+  var popup = document.getElementById('exit-popup');
+  var closeBtn = document.getElementById('popup-close');
+  var dismissBtn = document.getElementById('popup-dismiss');
+  var triggerType = '{{ section.settings.trigger }}';
+  var delay = {{ section.settings.delay | times: 1000 | default: 5000 }};
+
+  if (!popup) return;
+
+  // Check if dismissed
+  try {
+    var dismissedAt = localStorage.getItem(STORAGE_KEY);
+    if (dismissedAt) {
+      var diff = Date.now() - parseInt(dismissedAt);
+      if (diff < 7 * 24 * 60 * 60 * 1000) return; // suppress for 7 days
+    }
+  } catch(e) {}
+
+  function openPopup() {
+    popup.classList.add('is-open');
+    popup.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('no-scroll');
+    closeBtn && closeBtn.focus();
+  }
+
+  function closePopup() {
+    popup.classList.remove('is-open');
+    popup.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('no-scroll');
+    try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch(e) {}
+  }
+
+  closeBtn && closeBtn.addEventListener('click', closePopup);
+  dismissBtn && dismissBtn.addEventListener('click', closePopup);
+  popup.addEventListener('click', function(e) { if (e.target === popup) closePopup(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePopup(); });
+
+  if (triggerType === 'exit') {
+    document.addEventListener('mouseleave', function handler(e) {
+      if (e.clientY < 20) {
+        openPopup();
+        document.removeEventListener('mouseleave', handler);
+      }
+    });
+    // Mobile fallback: time-based
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      setTimeout(openPopup, delay);
+    }
+  } else {
+    setTimeout(openPopup, delay);
+  }
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Exit-intent popup",
+  "tag": "section",
+  "limit": 1,
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Enable popup", "default": true },
+    { "type": "select", "id": "trigger", "label": "Trigger", "options": [{ "value": "exit", "label": "Exit intent (mouse leaves page)" }, { "value": "delay", "label": "Time delay" }], "default": "exit" },
+    { "type": "range", "id": "delay", "min": 3, "max": 30, "step": 1, "unit": "s", "label": "Time delay (for delay trigger)", "default": 5 },
+    { "type": "image_picker", "id": "image", "label": "Side image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Exclusive offer" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Get 10% off your first order" },
+    { "type": "text", "id": "text", "label": "Supporting text", "default": "Subscribe to our newsletter and receive a discount code instantly." },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Your email address" },
+    { "type": "text", "id": "btn_label", "label": "Button label", "default": "Claim 10% off" },
+    { "type": "text", "id": "success_msg", "label": "Success message", "default": "You're in! Check your email for your discount code." },
+    { "type": "text", "id": "dismiss_text", "label": "Dismiss link text", "default": "No thanks, I prefer full price" }
+  ],
+  "presets": [{ "name": "Exit-intent popup" }]
+}
+{% endschema %}

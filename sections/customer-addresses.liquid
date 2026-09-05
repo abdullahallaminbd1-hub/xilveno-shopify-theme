@@ -1,0 +1,81 @@
+<div class="page-container" style="padding:2.5rem var(--gutter);">
+  <div style="max-width:760px;margin:0 auto;">
+    <a href="{{ routes.account_url }}" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.875rem;color:var(--color-fg-muted);margin-bottom:1.5rem;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to account
+    </a>
+    <h1 class="h2" style="margin-bottom:2rem;">Address book</h1>
+    {%- for address in customer.addresses -%}
+      <div class="order-card" style="margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <address style="font-style:normal;font-size:0.9rem;color:var(--color-fg);line-height:1.6;">
+            <strong>{{ address.first_name }} {{ address.last_name }}</strong><br>
+            {{ address.address1 }}{%- if address.address2 != blank -%}, {{ address.address2 }}{%- endif -%}<br>
+            {{ address.city }}, {{ address.province }} {{ address.zip }}<br>
+            {{ address.country }}
+            {%- if address.phone != blank -%}<br>{{ address.phone }}{%- endif -%}
+          </address>
+          <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+            {%- if customer.default_address == address -%}
+              <span class="badge badge--new">Default</span>
+            {%- endif -%}
+            <a href="#edit-address-{{ address.id }}" class="btn btn--ghost btn--sm" onclick="document.getElementById('edit-address-{{ address.id }}').style.display='block';return false;">Edit</a>
+            {%- form 'customer_address', address -%}
+              <input type="hidden" name="_method" value="delete">
+              <button type="submit" class="btn btn--ghost btn--sm" onclick="return confirm('Delete this address?')">Remove</button>
+            {%- endform -%}
+          </div>
+        </div>
+        <div id="edit-address-{{ address.id }}" style="display:none;margin-top:1rem;border-top:1px solid var(--color-border);padding-top:1rem;">
+          {%- form 'customer_address', address -%}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+              <div class="field"><label class="field__label" for="addr-fn-{{ address.id }}">First name</label><input type="text" id="addr-fn-{{ address.id }}" name="address[first_name]" value="{{ address.first_name }}" class="field__input"></div>
+              <div class="field"><label class="field__label" for="addr-ln-{{ address.id }}">Last name</label><input type="text" id="addr-ln-{{ address.id }}" name="address[last_name]" value="{{ address.last_name }}" class="field__input"></div>
+            </div>
+            <div class="field" style="margin-bottom:0.75rem;"><label class="field__label" for="addr-a1-{{ address.id }}">Address</label><input type="text" id="addr-a1-{{ address.id }}" name="address[address1]" value="{{ address.address1 }}" class="field__input" autocomplete="address-line1"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+              <div class="field"><label class="field__label" for="addr-city-{{ address.id }}">City</label><input type="text" id="addr-city-{{ address.id }}" name="address[city]" value="{{ address.city }}" class="field__input" autocomplete="address-level2"></div>
+              <div class="field"><label class="field__label" for="addr-zip-{{ address.id }}">ZIP</label><input type="text" id="addr-zip-{{ address.id }}" name="address[zip]" value="{{ address.zip }}" class="field__input" autocomplete="postal-code"></div>
+              <div class="field"><label class="field__label" for="addr-country-{{ address.id }}">Country</label>
+                <select id="addr-country-{{ address.id }}" name="address[country]" class="field__input" data-default="{{ address.country }}">{{ country_option_tags }}</select>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.75rem;align-items:center;">
+              <button type="submit" class="btn btn--primary btn--sm">Save address</button>
+              <label style="display:flex;align-items:center;gap:0.375rem;font-size:0.875rem;">
+                <input type="checkbox" name="address[default]" value="1" {% if customer.default_address == address %}checked{% endif %}> Set as default
+              </label>
+            </div>
+          {%- endform -%}
+        </div>
+      </div>
+    {%- endfor -%}
+    <details style="margin-top:1.5rem;">
+      <summary style="cursor:pointer;font-weight:500;padding:1rem;background:var(--color-surface);border-radius:var(--radius-lg);list-style:none;display:flex;align-items:center;gap:0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add new address
+      </summary>
+      <div style="padding:1.25rem;background:var(--color-surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);margin-top:-4px;">
+        {%- form 'customer_address', customer.new_address -%}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+            <div class="field"><label class="field__label" for="new-fn">First name</label><input type="text" id="new-fn" name="address[first_name]" class="field__input" autocomplete="given-name"></div>
+            <div class="field"><label class="field__label" for="new-ln">Last name</label><input type="text" id="new-ln" name="address[last_name]" class="field__input" autocomplete="family-name"></div>
+          </div>
+          <div class="field" style="margin-bottom:0.75rem;"><label class="field__label" for="new-a1">Address</label><input type="text" id="new-a1" name="address[address1]" class="field__input" autocomplete="address-line1"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+            <div class="field"><label class="field__label" for="new-city">City</label><input type="text" id="new-city" name="address[city]" class="field__input" autocomplete="address-level2"></div>
+            <div class="field"><label class="field__label" for="new-zip">ZIP</label><input type="text" id="new-zip" name="address[zip]" class="field__input" autocomplete="postal-code"></div>
+            <div class="field"><label class="field__label" for="new-country">Country</label><select id="new-country" name="address[country]" class="field__input">{{ country_option_tags }}</select></div>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:center;">
+            <button type="submit" class="btn btn--primary btn--sm">Add address</button>
+            <label style="display:flex;align-items:center;gap:0.375rem;font-size:0.875rem;"><input type="checkbox" name="address[default]" value="1"> Set as default</label>
+          </div>
+        {%- endform -%}
+      </div>
+    </details>
+  </div>
+</div>
+{% schema %}
+{ "name": "Customer addresses", "tag": "section", "settings": [], "presets": [{ "name": "Customer addresses" }] }
+{% endschema %}

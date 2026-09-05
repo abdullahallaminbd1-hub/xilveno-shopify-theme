@@ -1,0 +1,422 @@
+{%- assign show_announcement = section.settings.show_announcement -%}
+
+{%- if show_announcement and section.blocks.size > 0 -%}
+<div
+  class="announcement-bar"
+  style="background:{{ section.settings.announcement_bg }};color:{{ section.settings.announcement_color }};"
+  role="banner"
+  data-autoplay
+  data-interval="{{ section.settings.announcement_speed | times: 1000 }}"
+  aria-label="Announcements"
+>
+  <div class="announcement-bar__slider" aria-live="polite" aria-atomic="true">
+    <div class="announcement-bar__track">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'announcement' -%}
+          <div class="announcement-bar__slide" role="listitem">
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}" class="announcement-bar__link">{{ block.settings.text }}</a>
+            {%- else -%}
+              <span>{{ block.settings.text }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+  <button class="announcement-bar__close" aria-label="{{ 'accessibility.close_announcement' | t }}">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+{%- endif -%}
+
+<header
+  class="site-header{% if section.settings.sticky_header %} site-header--sticky{% endif %}{% if section.settings.transparent_header %} site-header--transparent{% endif %}"
+  role="banner"
+  data-section-id="{{ section.id }}"
+>
+  <div class="site-header__inner">
+
+    {%- comment -%} Burger (mobile) {%- endcomment -%}
+    <button class="header-burger header-action" aria-label="{{ 'accessibility.open_menu' | t }}" aria-expanded="false" aria-controls="mobile-nav">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    {%- comment -%} Logo {%- endcomment -%}
+    <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        {%- assign logo_width = section.settings.logo_width | default: 140 -%}
+        {{- section.settings.logo | image_url: width: logo_width | image_tag: class: 'site-header__logo-img', alt: shop.name, loading: 'eager', fetchpriority: 'high', width: logo_width -}}
+      {%- else -%}
+        <span class="site-header__logo-text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    {%- comment -%} Desktop nav {%- endcomment -%}
+    <nav class="site-header__nav" role="navigation" aria-label="{{ 'accessibility.main_nav' | t }}">
+      <ul class="nav__list" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'nav_item' -%}
+            <li class="nav__item" {{ block.shopify_attributes }}>
+              {%- if block.settings.has_mega_menu -%}
+                <button
+                  class="nav__link"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  aria-controls="mega-{{ block.id }}"
+                >
+                  {{ block.settings.label }}
+                  <svg class="nav__chevron" viewBox="0 0 12 8" fill="none" aria-hidden="true">
+                    <path d="M1 1.5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <div class="mega-menu" id="mega-{{ block.id }}" role="region" aria-label="{{ block.settings.label }}">
+                  <div class="mega-menu__inner">
+                    <div class="mega-menu__column">
+                      {%- if block.settings.col1_heading != blank -%}
+                        <p class="mega-menu__heading">{{ block.settings.col1_heading }}</p>
+                      {%- endif -%}
+                      {%- assign links1 = block.settings.col1_links | split: ',' -%}
+                      {%- assign labels1 = block.settings.col1_labels | split: ',' -%}
+                      {%- for link in links1 -%}
+                        <a href="{{ link | strip }}" class="mega-menu__link">
+                          {{ labels1[forloop.index0] | strip | default: link | strip }}
+                        </a>
+                      {%- endfor -%}
+                    </div>
+                    <div class="mega-menu__column">
+                      {%- if block.settings.mega_image != blank -%}
+                        <a href="{{ block.settings.mega_image_link | default: '#' }}" class="mega-menu__image-link">
+                          {{ block.settings.mega_image | image_url: width: 400 | image_tag: class: 'mega-menu__image', alt: block.settings.label, loading: 'lazy', width: 400 }}
+                        </a>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              {%- else -%}
+                <a
+                  href="{{ block.settings.link | default: '#' }}"
+                  class="nav__link"
+                  {% if block.settings.link == request.path %} aria-current="page"{% endif %}
+                >
+                  {{ block.settings.label }}
+                </a>
+              {%- endif -%}
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    {%- comment -%} Actions {%- endcomment -%}
+    <div class="site-header__actions">
+
+      {%- comment -%} Search {%- endcomment -%}
+      <button class="header-action" data-search-open aria-label="{{ 'general.search.title' | t }}" aria-expanded="false" aria-controls="search-drawer">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M13.5 13.5L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      {%- comment -%} Wishlist {%- endcomment -%}
+      <a href="{{ routes.root_url }}pages/wishlist" class="header-action" aria-label="Wishlist">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M10 17.5S2.5 13.5 2.5 7.5a4 4 0 0 1 7.5-2 4 4 0 0 1 7.5 2c0 6-7.5 10-7.5 10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      {%- comment -%} Account {%- endcomment -%}
+      {%- if shop.customer_accounts_enabled -%}
+        {%- if customer -%}
+          {%- assign account_link = routes.account_url -%}
+          {%- assign account_label = 'customer.account.title' | t -%}
+        {%- else -%}
+          {%- assign account_link = routes.account_login_url -%}
+          {%- assign account_label = 'customer.login.title' | t -%}
+        {%- endif -%}
+        <a href="{{ account_link }}" class="header-action" aria-label="{{ account_label }}">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M3 18a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </a>
+      {%- endif -%}
+
+      {%- comment -%} Cart {%- endcomment -%}
+      <button class="header-action" data-cart-open aria-label="{{ 'sections.cart.title' | t }}" aria-expanded="false" aria-controls="cart-drawer">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M2 2h2l1.68 8.39a2 2 0 0 0 1.97 1.61h6.7a2 2 0 0 0 1.96-1.6L17 7H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="8" cy="17" r="1" fill="currentColor"/>
+          <circle cx="15" cy="17" r="1" fill="currentColor"/>
+        </svg>
+        <span class="cart-count" data-count="{{ cart.item_count }}" aria-label="{{ cart.item_count }} items">{{ cart.item_count }}</span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+{%- comment -%} Search drawer {%- endcomment -%}
+<div class="search-drawer" id="search-drawer" role="search" aria-label="{{ 'general.search.title' | t }}" data-search-drawer>
+  <div class="search-drawer__inner">
+    <div class="search-form">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M12 12L16 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input
+        type="search"
+        class="search-input"
+        placeholder="{{ 'general.search.placeholder' | t | default: 'Search products, collections…' }}"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        role="combobox"
+        aria-expanded="false"
+        aria-autocomplete="list"
+        aria-label="{{ 'general.search.title' | t }}"
+      >
+      <button class="search-drawer__close" aria-label="Close search">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-results" role="listbox" aria-label="Search suggestions" style="display:none;"></div>
+  </div>
+</div>
+
+{%- comment -%} Mobile nav {%- endcomment -%}
+<nav class="mobile-nav" id="mobile-nav" aria-label="{{ 'accessibility.main_nav' | t }}" inert>
+  <div class="mobile-nav__header">
+    <span class="mobile-nav__logo">{{ shop.name }}</span>
+    <button class="mobile-nav__close header-action" aria-label="{{ 'accessibility.close_menu' | t }}">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+        <path d="M2 2l14 14M16 2L2 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <ul class="mobile-nav__list" role="list">
+    {%- for link in linklists[section.settings.mobile_menu].links -%}
+      <li>
+        <a href="{{ link.url }}" class="mobile-nav__link">
+          {{ link.title }}
+          {%- if link.links.size > 0 -%}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          {%- endif -%}
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+  <div class="mobile-nav__footer">
+    {%- if customer -%}
+      <a href="{{ routes.account_url }}" class="mobile-nav__account-link">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 16a6 6 0 0 1 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        {{ customer.first_name | default: 'Account' }}
+      </a>
+    {%- else -%}
+      <a href="{{ routes.account_login_url }}" class="mobile-nav__account-link">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 16a6 6 0 0 1 12 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Sign in / Register
+      </a>
+    {%- endif -%}
+  </div>
+</nav>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 80,
+      "max": 280,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 140
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "mobile_menu",
+      "label": "Mobile menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Sticky header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header",
+      "label": "Transparent on homepage hero",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Announcement bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "announcement_bg",
+      "label": "Announcement background",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "announcement_color",
+      "label": "Announcement text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "announcement_speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Announcement rotation speed",
+      "default": 4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free shipping on orders over $50 — Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        }
+      ]
+    },
+    {
+      "type": "nav_item",
+      "name": "Navigation item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Shop"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (used when no mega menu)"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_mega_menu",
+          "label": "Enable mega menu",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "col1_heading",
+          "label": "Column 1 heading",
+          "default": "Categories"
+        },
+        {
+          "type": "textarea",
+          "id": "col1_links",
+          "label": "Column 1 links (comma separated URLs)",
+          "info": "e.g. /collections/fashion,/collections/beauty"
+        },
+        {
+          "type": "textarea",
+          "id": "col1_labels",
+          "label": "Column 1 link labels (comma separated)",
+          "info": "e.g. Fashion,Beauty"
+        },
+        {
+          "type": "image_picker",
+          "id": "mega_image",
+          "label": "Featured image"
+        },
+        {
+          "type": "url",
+          "id": "mega_image_link",
+          "label": "Featured image link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": { "text": "Free shipping on orders over $50" }
+        },
+        {
+          "type": "announcement",
+          "settings": { "text": "New arrivals every week — Explore now" }
+        },
+        {
+          "type": "announcement",
+          "settings": { "text": "30-day hassle-free returns" }
+        },
+        {
+          "type": "nav_item",
+          "settings": { "label": "Shop All", "link": "/collections/all" }
+        },
+        {
+          "type": "nav_item",
+          "settings": { "label": "Fashion", "link": "/collections/fashion" }
+        },
+        {
+          "type": "nav_item",
+          "settings": { "label": "Home & Kitchen", "link": "/collections/home-kitchen" }
+        },
+        {
+          "type": "nav_item",
+          "settings": { "label": "Beauty", "link": "/collections/beauty" }
+        },
+        {
+          "type": "nav_item",
+          "settings": { "label": "Kids", "link": "/collections/kids" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

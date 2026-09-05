@@ -1,0 +1,52 @@
+<section class="section-padding">
+  <div class="page-container">
+    <div style="max-width:560px;margin:0 auto 2.5rem;">
+      <h1 class="h2" style="text-align:center;margin-bottom:1.5rem;">
+        {%- if search.performed -%}
+          {%- if search.results_count == 0 -%}{{ 'general.search.no_results' | t: terms: search.terms }}
+          {%- else -%}{{ 'general.search.results_with_count' | t: count: search.results_count, terms: search.terms }}
+          {%- endif -%}
+        {%- else -%}Search{%- endif -%}
+      </h1>
+      <form action="{{ routes.search_url }}" method="get" role="search">
+        <input type="hidden" name="type" value="product">
+        <div class="search-form" style="border-width:1.5px;">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M12 12L16 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input type="search" name="q" value="{{ search.terms | escape }}" class="search-input" placeholder="Search products…" autocomplete="off" aria-label="Search">
+          <button type="submit" class="btn btn--primary btn--sm">Search</button>
+        </div>
+      </form>
+    </div>
+    {%- if search.performed and search.results_count > 0 -%}
+      {%- paginate search.results by 24 -%}
+        <div class="products-grid products-grid--wide" data-stagger>
+          {%- for result in search.results -%}
+            {%- if result.object_type == 'product' -%}
+              {%- render 'product-card', product: result -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Search pagination">
+            {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}" class="pagination__item pagination__item--arrow" aria-label="Previous">&#8592;</a>{%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}<a href="{{ part.url }}" class="pagination__item">{{ part.title }}</a>
+              {%- elsif part.title == paginate.current_page -%}<span class="pagination__item is-current" aria-current="page">{{ part.title }}</span>
+              {%- else -%}<span class="pagination__item">{{ part.title }}</span>{%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}<a href="{{ paginate.next.url }}" class="pagination__item pagination__item--arrow" aria-label="Next">&#8594;</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- elsif search.performed -%}
+      <div style="text-align:center;padding:4rem 0;">
+        <p style="font-size:1rem;color:var(--color-fg-muted);margin-bottom:1.5rem;">Try a different search term or browse our collections.</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">Shop all products</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Search results", "tag": "section", "settings": [], "presets": [{ "name": "Search results" }] }
+{% endschema %}

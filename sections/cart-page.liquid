@@ -1,0 +1,67 @@
+<section class="section-padding" id="cart-page-{{ section.id }}">
+  <div class="page-container page-container--narrow">
+    <h1 class="h2" style="margin-bottom:2rem;">{{ 'sections.cart.title' | t | default: 'Your cart' }}</h1>
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" id="cart-form">
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:3rem;align-items:start;">
+          <div>
+            {%- for item in cart.items -%}
+              <div class="cart-item" style="grid-template-columns:100px 1fr;">
+                <div class="cart-item__image" style="width:100px;height:100px;">
+                  <a href="{{ item.url }}">{{ item.image | image_url: width: 200 | image_tag: alt: item.title, loading: 'lazy', width: 100, height: 100 }}</a>
+                </div>
+                <div class="cart-item__details">
+                  <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+                  {%- unless item.variant.title == 'Default Title' -%}<p class="cart-item__variant">{{ item.variant.title }}</p>{%- endunless -%}
+                  <div class="cart-item__row">
+                    <div class="cart-item__qty">
+                      <button type="button" class="cart-item__qty-btn" onclick="var i=this.nextElementSibling;if(parseInt(i.value)>1){i.value=parseInt(i.value)-1;}" aria-label="Decrease">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><rect x="2" y="6.5" width="10" height="1" rx="0.5"/></svg>
+                      </button>
+                      <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" class="cart-item__qty-input" aria-label="Quantity">
+                      <button type="button" class="cart-item__qty-btn" onclick="var i=this.previousElementSibling;i.value=parseInt(i.value)+1;" aria-label="Increase">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M7.5 2a.5.5 0 0 0-1 0v4.5H2a.5.5 0 0 0 0 1h4.5V12a.5.5 0 0 0 1 0V7.5H12a.5.5 0 0 0 0-1H7.5V2z"/></svg>
+                      </button>
+                    </div>
+                    <span class="cart-item__price">{{ item.final_line_price | money }}</span>
+                  </div>
+                </div>
+              </div>
+            {%- endfor -%}
+            <button type="submit" name="update" class="btn btn--ghost btn--sm" style="margin-top:1rem;">Update cart</button>
+          </div>
+          <div style="background:var(--color-surface);border-radius:var(--radius-xl);padding:1.5rem;position:sticky;top:calc(var(--header-height) + 1rem);">
+            {%- if settings.free_shipping_threshold > 0 -%}
+              <div class="free-shipping-bar" data-free-shipping-threshold="{{ settings.free_shipping_threshold }}" style="margin-bottom:1.25rem;">
+                <p class="free-shipping-bar__label">
+                  {%- if cart.total_price >= settings.free_shipping_threshold -%}<strong>🎉 Free shipping unlocked!</strong>
+                  {%- else -%}Spend <strong>{{ settings.free_shipping_threshold | minus: cart.total_price | money }}</strong> more for free shipping{%- endif -%}
+                </p>
+                <div class="free-shipping-bar__track"><div class="free-shipping-bar__fill" style="width:{{ cart.total_price | times: 100 | divided_by: settings.free_shipping_threshold | at_most: 100 }}%;"></div></div>
+              </div>
+            {%- endif -%}
+            <div class="cart-totals">
+              <div class="cart-totals__row cart-totals__row--total"><span>Total</span><span>{{ cart.total_price | money }}</span></div>
+            </div>
+            <p class="cart-totals__note" style="margin-bottom:1rem;">Taxes and shipping calculated at checkout</p>
+            <a href="{{ routes.checkout_url }}" class="btn btn--primary btn--full btn--lg">Checkout</a>
+            <a href="{{ routes.root_url }}" style="display:block;text-align:center;margin-top:0.75rem;font-size:0.8125rem;color:var(--color-fg-muted);">Continue shopping</a>
+          </div>
+        </div>
+      </form>
+    {%- else -%}
+      <div class="cart-empty" style="min-height:40vh;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="56" aria-hidden="true"><path d="M3 6h2l3.6 7.59L7.5 15a1 1 0 0 0 1 1H19m-2 2a1 1 0 1 0 2 0 1 1 0 0 0-2 0m-7 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0M1 1h3.27L5.64 8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="cart-empty__title">Your cart is empty</p>
+        <p class="cart-empty__text">Add products you love to get started.</p>
+        <a href="{{ routes.root_url }}collections/all" class="btn btn--primary" style="margin-top:0.5rem">Start shopping</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>@media(max-width:768px){#cart-page-{{ section.id }} [style*="grid-template-columns:1fr 360px"]{grid-template-columns:1fr!important;}}</style>
+
+{% schema %}
+{ "name": "Cart page", "tag": "section", "settings": [], "presets": [{ "name": "Cart page" }] }
+{% endschema %}

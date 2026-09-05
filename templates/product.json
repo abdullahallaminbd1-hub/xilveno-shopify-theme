@@ -1,0 +1,25 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-info",
+      "blocks": {
+        "trust1": { "type": "trust_item", "settings": { "icon": "truck", "label": "Free shipping over $50" } },
+        "trust2": { "type": "trust_item", "settings": { "icon": "rotate", "label": "30-day returns" } },
+        "trust3": { "type": "trust_item", "settings": { "icon": "shield", "label": "Secure checkout" } },
+        "tab1": { "type": "tab", "settings": { "title": "Shipping & Returns", "content": "<p>Free standard shipping on orders over $50. Express delivery available. 30-day returns on unworn items.</p>" } },
+        "tab2": { "type": "tab", "settings": { "title": "Care Instructions", "content": "<p>Please refer to the care label on your item. When in doubt, hand wash cold and lay flat to dry.</p>" } }
+      },
+      "block_order": ["trust1","trust2","trust3","tab1","tab2"],
+      "settings": { "show_quantity": true, "show_tabs": true, "show_sticky_atc": true }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": { "heading": "You may also like", "limit": 4 }
+    },
+    "recently_viewed": {
+      "type": "recently-viewed",
+      "settings": { "heading": "Recently viewed", "limit": 4 }
+    }
+  },
+  "order": ["main","recommendations","recently_viewed"]
+}

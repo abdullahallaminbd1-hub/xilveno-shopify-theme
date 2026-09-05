@@ -1,0 +1,1 @@
+{ "sections": { "hero": { "type": "page-hero", "settings": { "heading": "Get in touch", "eyebrow": "Contact us" } }, "main": { "type": "contact-form", "settings": {} } }, "order": ["hero","main"] }

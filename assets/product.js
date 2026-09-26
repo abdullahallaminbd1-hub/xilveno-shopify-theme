@@ -1,5 +1,5 @@
-/* LumaForm product page behaviour: gallery, quantity offers, countdown,
-   order progress, accordions, description and add to cart. */
+/* LumaForm product page behaviour: gallery, quantity stepper and offers,
+   countdown, order progress, policy accordions and add to cart. */
 (function () {
   'use strict';
 
@@ -163,6 +163,9 @@
         ? '<span class="lf-dot" aria-hidden="true"></span> In stock — ships in 1 business day'
         : '<span class="lf-dot is-off" aria-hidden="true"></span> Currently unavailable';
     }
+    /* keep the quantity inside what this variant actually allows */
+    if (readQty() > qtyCeiling(variant)) { paintQty(qtyCeiling(variant)); } else { syncQtyControls(); }
+
     if (variant.featured_media_id) {
       slides.forEach(function (slide, i) {
         if (String(slide.getAttribute('data-media-id')) === String(variant.featured_media_id)) { show(i); }
@@ -170,10 +173,90 @@
     }
   };
 
-  /* ---------------- buy more, save more ---------------- */
-  var offers = qsa('[data-offer]', root);
+  /* ---------------- quantity stepper ----------------
+     Shopify reports how many units of a variant may be ordered: a quantity rule,
+     tracked inventory with the "deny" policy, or nothing at all. The stepper always
+     works from the live value, so any quantity the inventory allows can be chosen. */
+  var MAX_QTY = 999;
   var quantityField = qs('[data-atc-quantity]', root);
   var qtyValue = qs('[data-qty-value]', root);
+  var quantityWrap = qs('[data-qty]', root);
+  var qtyMinus = qs('[data-qty-minus]', root);
+  var qtyPlus = qs('[data-qty-plus]', root);
+
+  var readQty = function () {
+    var value = parseInt(quantityField ? quantityField.value : '1', 10);
+    return isNaN(value) || value < 1 ? 1 : value;
+  };
+
+  var currentVariant = function () {
+    var id = variantField ? String(variantField.value) : '';
+    for (var i = 0; i < variants.length; i++) {
+      if (String(variants[i].id) === id) { return variants[i]; }
+    }
+    return variants[0] || null;
+  };
+
+  var qtyCeiling = function (variant) {
+    if (!variant) { return MAX_QTY; }
+    var caps = [];
+    var ruleMax = parseInt(variant.quantity_rule_max, 10);
+    if (ruleMax > 0) { caps.push(ruleMax); }
+    if (variant.inventory_management && String(variant.inventory_policy) !== 'continue') {
+      var stock = parseInt(variant.inventory_quantity, 10);
+      caps.push(isNaN(stock) || stock < 0 ? 0 : stock);
+    }
+    if (!caps.length) { return MAX_QTY; }
+    return Math.max(0, Math.min.apply(null, caps));
+  };
+
+  var syncQtyControls = function () {
+    var qty = readQty();
+    var ceiling = qtyCeiling(currentVariant());
+    if (qtyMinus) { qtyMinus.disabled = qty <= 1; }
+    if (qtyPlus) { qtyPlus.disabled = qty >= ceiling; }
+    if (quantityWrap) { quantityWrap.classList.toggle('is-at-limit', qty >= ceiling); }
+  };
+
+  var paintQty = function (qty) {
+    var value = Math.max(1, Math.min(qty, qtyCeiling(currentVariant())));
+    if (quantityField) { quantityField.value = String(value); }
+    if (qtyValue) { qtyValue.textContent = String(value); }
+    syncQtyControls();
+    return value;
+  };
+
+  var tierForQty = function (qty) {
+    for (var i = 0; i < offers.length; i++) {
+      if ((parseInt(offers[i].getAttribute('data-quantity'), 10) || 1) === qty) { return offers[i]; }
+    }
+    return null;
+  };
+
+  var highlightTiers = function (offer) {
+    offers.forEach(function (other) {
+      var input = qs('[data-offer-input]', other);
+      if (input) { input.checked = other === offer; }
+      other.classList.toggle('is-selected', other === offer);
+    });
+  };
+
+  var bump = function (delta) {
+    var ceiling = qtyCeiling(currentVariant());
+    var next = Math.max(1, Math.min(readQty() + delta, ceiling));
+    if (next === readQty()) { syncQtyControls(); return; }
+    var tier = tierForQty(next);
+    /* a bundle discount only applies while the quantity matches that offer exactly */
+    highlightTiers(tier);
+    if (tier) { paintPrice(syncOffer(tier)); return; }
+    paintQty(next);
+  };
+
+  if (qtyMinus) { qtyMinus.addEventListener('click', function () { bump(-1); }); }
+  if (qtyPlus) { qtyPlus.addEventListener('click', function () { bump(1); }); }
+
+  /* ---------------- buy more, save more ---------------- */
+  var offers = qsa('[data-offer]', root);
   var offersWrap = qs('[data-offers]', root);
 
   var selectedOffer = function () {
@@ -233,8 +316,7 @@
     if (offersWrap) {
       offers.forEach(function (other) { other.classList.toggle('is-selected', other === offer); });
     }
-    if (quantityField) { quantityField.value = String(qty); }
-    if (qtyValue) { qtyValue.textContent = String(qty); }
+    paintQty(qty);
     return variant;
   };
 
@@ -267,24 +349,11 @@
     offers.forEach(function (other) { other.classList.toggle('is-selected', other === active); });
     if (active) { syncOffer(active); }
     paintPrice(active ? syncOffer(active) : variants[0]);
+    paintQty(readQty());
   } else if (variantField && variants.length) {
     paintPrice(variants[0]);
+    paintQty(readQty());
   }
-
-  /* ---------------- quantity stepper ---------------- */
-  var bump = function (delta) {
-    var offer = selectedOffer();
-    var base = offer ? (parseInt(offer.getAttribute('data-quantity'), 10) || 1) : 1;
-    var next = base + delta;
-    if (next < 1) { next = 1; }
-    if (quantityField) { quantityField.value = String(next); }
-    if (qtyValue) { qtyValue.textContent = String(next); }
-  };
-  var qMinus = qs('[data-qty-minus]', root);
-  var qPlus = qs('[data-qty-plus]', root);
-  if (qMinus) { qMinus.addEventListener('click', function () { bump(-1); }); }
-  if (qPlus) { qPlus.addEventListener('click', function () { bump(1); }); }
-
 
   /* ---------------- countdown ---------------- */
   var timer = qs('[data-timer]', root);
@@ -332,33 +401,6 @@
     qsa('[data-track-date]', track).forEach(function (el, i) {
       el.textContent = dates[i] || '-';
     });
-  }
-
-  /* ---------------- description expansion ---------------- */
-  var description = qs('[data-description]', root);
-  if (description) {
-    var toggle = qs('[data-description-toggle]', description);
-    var inner = qs('[data-description-inner]', description);
-    var label = qs('[data-description-label]', description);
-    var syncDescription = function () {
-      if (!toggle || !inner) { return; }
-      if (inner.scrollHeight <= description.clientHeight + 4) {
-        description.classList.remove('is-collapsed');
-        toggle.hidden = true;
-      } else {
-        toggle.hidden = false;
-      }
-    };
-    window.requestAnimationFrame(syncDescription);
-    if (toggle) {
-      toggle.addEventListener('click', function () {
-        if (toggle.hidden) { return; }
-        var collapsed = description.classList.toggle('is-collapsed');
-        toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-        if (label) { label.textContent = collapsed ? 'View full details' : 'Show less'; }
-      });
-    }
-    window.addEventListener('resize', syncDescription);
   }
 
   /* ---------------- add to cart ---------------- */

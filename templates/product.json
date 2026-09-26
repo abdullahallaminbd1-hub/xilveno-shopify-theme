@@ -11,10 +11,70 @@
   "sections": {
     "main": {
       "type": "main-product",
+      "blocks": {
+        "highlight-1": {
+          "type": "highlight",
+          "settings": {"icon": "star", "text": "A customer favourite"}
+        },
+        "highlight-2": {
+          "type": "highlight",
+          "settings": {"icon": "sparkle", "text": "In demand - selling fast"}
+        },
+        "highlight-3": {
+          "type": "highlight",
+          "settings": {"icon": "gift", "text": "Beautifully giftable"}
+        },
+        "offer-1": {
+          "type": "tier",
+          "settings": {"quantity": 1, "discount": 0, "badge": "Single pick", "benefit": "Perfect for trying it", "caption": "Standard price"}
+        },
+        "offer-2": {
+          "type": "tier",
+          "settings": {"quantity": 2, "discount": 10, "badge": "Most popular", "benefit": "Best value", "solid_benefit": true, "featured": true, "caption": "Standard price"}
+        },
+        "policy-shipping": {
+          "type": "accordion",
+          "settings": {"icon": "box", "heading": "Shipping Policy", "body": "<p>Thank you for shopping with us! Below you will find important information about our shipping process.</p><p><strong>Order processing time</strong><br>All orders are processed within 1&ndash;5 business days (excluding weekends and holidays). Once your order has been processed and shipped, you will receive a confirmation email with tracking information.</p><p><strong>Delivery estimates</strong><br>Tracked delivery usually arrives in 3&ndash;8 business days. International orders can take a little longer, and any customs charges are set by the destination country.</p>"}
+        },
+        "policy-refund": {
+          "type": "accordion",
+          "settings": {"icon": "check", "heading": "Refund Policy", "body": "<p>Thank you for shopping with us! Below you will find important information about our refund process.</p><p>You may request a return within 30 days of receiving your order.</p><p><strong>How to start a return</strong><br>Message our customer care team with your order number and the item you would like to return, and we will send you the next steps and the return address.</p><p><strong>Refunds</strong><br>Once your return has been received and inspected we will send you a confirmation email and your refund will be issued to the original payment method.</p>"}
+        },
+        "review-1": {
+          "type": "review",
+          "settings": {"text": "Add verified customer feedback here once your review platform is connected.", "author": "LumaForm customer"}
+        },
+        "review-2": {
+          "type": "review",
+          "settings": {"text": "Add a second verified review block in the theme editor.", "author": "LumaForm customer"}
+        },
+        "review-3": {
+          "type": "review",
+          "settings": {"text": "Add a third verified review block in the theme editor.", "author": "LumaForm customer"}
+        }
+      },
+      "block_order": [
+        "highlight-1",
+        "highlight-2",
+        "highlight-3",
+        "offer-1",
+        "offer-2",
+        "policy-shipping",
+        "policy-refund",
+        "review-1",
+        "review-2",
+        "review-3"
+      ],
+      "settings": {}
+    },
+    "recommendations": {
+      "type": "product-recommendations",
       "settings": {}
     }
   },
   "order": [
-    "main"
+    "main",
+    "recommendations"
   ]
 }
+

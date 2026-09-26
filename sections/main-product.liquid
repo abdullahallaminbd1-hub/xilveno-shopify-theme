@@ -211,8 +211,8 @@
         </button>
 
         <div class="lf-atc__meta">
-          <div class="lf-qty">
-            <button type="button" data-qty-minus aria-label="Decrease quantity">−</button>
+          <div class="lf-qty" data-qty role="group" aria-label="Quantity">
+            <button type="button" data-qty-minus aria-label="Decrease quantity">&minus;</button>
             <span class="lf-qty__value" data-qty-value aria-live="polite">1</span>
             <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
           </div>
@@ -277,6 +277,13 @@
         </div>
       {%- endif -%}
 
+      {%- comment -%} ==================== description ==================== {%- endcomment -%}
+      {%- if product.description != blank -%}
+        <div class="lf-description" data-description>
+          <div class="lf-description__inner rte" data-description-inner>{{ product.description }}</div>
+        </div>
+      {%- endif -%}
+
       {%- comment -%} ==================== policy accordions ==================== {%- endcomment -%}
       {%- assign accordions = section.blocks | where: 'type', 'accordion' -%}
       {%- if accordions.size > 0 -%}
@@ -313,17 +320,6 @@
         </div>
       </div>
 
-      {%- comment -%} ==================== description ==================== {%- endcomment -%}
-      {%- if product.description != blank -%}
-        <div class="lf-description" data-description>
-          <div class="lf-description__inner rte" data-description-inner>{{ product.description }}</div>
-          <span class="lf-description__fade" data-description-fade aria-hidden="true"></span>
-          <button class="lf-description__toggle" type="button" data-description-toggle aria-expanded="false">
-            <span data-description-label>{{ section.settings.description_toggle | escape }}</span>
-            <span class="lf-description__chevron" aria-hidden="true">{% render 'icon', icon: 'chevron-right' %}</span>
-          </button>
-        </div>
-      {%- endif -%}
     </div>
   </div>
 </div>
@@ -389,41 +385,19 @@
         "available": {{ variant.available | json }},
         "price": {{ variant.price }},
         "compare_at_price": {{ variant.compare_at_price | default: 0 }},
-        "featured_media_id": {{ variant.featured_media.id | default: 0 }}
+        "featured_media_id": {{ variant.featured_media.id | default: 0 }},
+        "inventory_management": {{ variant.inventory_management | json }},
+        "inventory_policy": {{ variant.inventory_policy | json }},
+        "inventory_quantity": {{ variant.inventory_quantity | default: 0 }},
+        "quantity_rule_min": {{ variant.quantity_rule.min | default: 1 }},
+        "quantity_rule_max": {{ variant.quantity_rule.max | default: 0 }},
+        "quantity_rule_increment": {{ variant.quantity_rule.increment | default: 1 }}
       }{%- unless forloop.last -%},{%- endunless -%}
     {%- endfor -%}
   ]
 }
 </script>
 <script src="{{ 'product.js' | asset_url }}" defer></script>
-
-{%- comment -%} ==================== recommendations ==================== {%- endcomment -%}
-{%- if section.settings.show_recommendations -%}
-  <section class="lf-products">
-    <div class="page-width">
-      <div class="lf-section-head">
-        <span class="lf-eyebrow">Complete the ritual</span>
-        <h2 class="lf-section-title">{{ section.settings.recommendations_heading | escape }}</h2>
-      </div>
-      <div class="lf-product-grid lf-product-grid--4">
-        {%- if recommendations.products.size > 0 -%}
-          {%- for item in recommendations.products limit: 4 -%}
-            {%- render 'product-card', product: item, show_note: true -%}
-          {%- endfor -%}
-        {%- else -%}
-          {%- for item in collections.all.products limit: 5 -%}
-            {%- unless item.id == product.id -%}
-              {%- render 'product-card', product: item, show_note: true -%}
-            {%- endunless -%}
-          {%- endfor -%}
-        {%- endif -%}
-      </div>
-      <div class="lf-products__footer">
-        <a class="lf-btn-outline" href="{{ routes.all_products_collection_url }}">Shop all <span aria-hidden="true">&#8594;</span></a>
-      </div>
-    </div>
-  </section>
-{%- endif -%}
 
 {% schema %}
 {
@@ -448,13 +422,10 @@
     {"type": "text", "id": "shipping_text", "label": "Shipping badge text", "default": "Tracked delivery in 3-8 business days"},
     {"type": "text", "id": "support_title", "label": "Support badge title", "default": "Dedicated customer support"},
     {"type": "text", "id": "support_text", "label": "Support badge text", "default": "Real help whenever you need it"},
-    {"type": "text", "id": "description_toggle", "label": "Description toggle label", "default": "View full details"},
     {"type": "text", "id": "reviews_eyebrow", "label": "Reviews eyebrow", "default": "Verified reviews"},
     {"type": "text", "id": "reviews_title", "label": "Reviews title", "default": "Loved by our customers"},
     {"type": "text", "id": "reviews_score_label", "label": "Reviews score label", "default": "Excellent"},
-    {"type": "text", "id": "reviews_note", "label": "Reviews placeholder text", "default": "Add your review blocks in the theme editor to feature real customer feedback here."},
-    {"type": "checkbox", "id": "show_recommendations", "label": "Show recommendations", "default": true},
-    {"type": "text", "id": "recommendations_heading", "label": "Recommendations heading", "default": "You may also like."}
+    {"type": "text", "id": "reviews_note", "label": "Reviews placeholder text", "default": "Add your review blocks in the theme editor to feature real customer feedback here."}
   ],
   "blocks": [
     {
@@ -502,8 +473,8 @@
           {"value": "shield", "label": "Shield"},
           {"value": "star", "label": "Star"}
         ]},
-        {"type": "text", "id": "heading", "label": "Heading", "default": "Shipping policy"},
-        {"type": "richtext", "id": "body", "label": "Body", "default": "<p>Orders are packed within one business day and sent with tracked delivery. You will receive a confirmation email as soon as your parcel leaves our studio.</p>"}
+        {"type": "text", "id": "heading", "label": "Heading", "default": "Shipping Policy"},
+        {"type": "richtext", "id": "body", "label": "Body", "default": "<p>Thank you for shopping with us! Below you will find important information about our shipping process.</p><p><strong>Order processing time</strong><br>All orders are processed within 1&ndash;5 business days (excluding weekends and holidays). Once your order has been processed and shipped, you will receive a confirmation email with tracking information.</p><p><strong>Delivery estimates</strong><br>Tracked delivery usually arrives in 3&ndash;8 business days. International orders can take a little longer, and any customs charges are set by the destination country.</p>"}
       ]
     },
     {
@@ -526,8 +497,8 @@
         {"type": "highlight", "settings": {"icon": "gift", "text": "Beautifully giftable"}},
         {"type": "tier", "settings": {"quantity": 1, "discount": 0, "badge": "Single pick", "benefit": "Perfect for trying it", "caption": "Standard price"}},
         {"type": "tier", "settings": {"quantity": 2, "discount": 10, "badge": "Most popular", "benefit": "Best value", "solid_benefit": true, "featured": true, "caption": "Standard price"}},
-        {"type": "accordion", "settings": {"icon": "box", "heading": "Shipping policy", "body": "<p>Orders are packed within one business day and sent with tracked delivery. You will receive a confirmation email as soon as your parcel leaves our studio.</p>"}},
-        {"type": "accordion", "settings": {"icon": "check", "heading": "Refund policy", "body": "<p>Eligible items can be returned within 30 days of delivery. Start a return from your confirmation email and we will arrange the next steps.</p>"}},
+        {"type": "accordion", "settings": {"icon": "box", "heading": "Shipping Policy", "body": "<p>Thank you for shopping with us! Below you will find important information about our shipping process.</p><p><strong>Order processing time</strong><br>All orders are processed within 1&ndash;5 business days (excluding weekends and holidays). Once your order has been processed and shipped, you will receive a confirmation email with tracking information.</p><p><strong>Delivery estimates</strong><br>Tracked delivery usually arrives in 3&ndash;8 business days. International orders can take a little longer, and any customs charges are set by the destination country.</p>"}},
+        {"type": "accordion", "settings": {"icon": "check", "heading": "Refund Policy", "body": "<p>Thank you for shopping with us! Below you will find important information about our refund process.</p><p>You may request a return within 30 days of receiving your order.</p><p><strong>How to start a return</strong><br>Message our customer care team with your order number and the item you would like to return, and we will send you the next steps and the return address.</p><p><strong>Refunds</strong><br>Once your return has been received and inspected we will send you a confirmation email and your refund will be issued to the original payment method.</p>"}},
         {"type": "review", "settings": {"text": "Add verified customer feedback here once your review platform is connected.", "author": "LumaForm customer"}},
         {"type": "review", "settings": {"text": "Add a second verified review block in the theme editor.", "author": "LumaForm customer"}},
         {"type": "review", "settings": {"text": "Add a third verified review block in the theme editor.", "author": "LumaForm customer"}}

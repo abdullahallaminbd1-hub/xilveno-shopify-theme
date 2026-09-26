@@ -465,6 +465,9 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
   .lf-announcement__track{font-size:10px;gap:30px;}
   .lf-categories__grid{grid-template-columns:repeat(2,minmax(0,1fr));}
   .lf-categories,.lf-editorial,.lf-products,.lf-value-edit,.lf-reviews,.lf-confidence{padding:58px 0 64px;}
+  /* the four cards under the hero stack one per row on phones */
+  .lf-trust-strip{padding:26px 0;}
+  .lf-trust-strip__container{grid-template-columns:1fr;gap:12px;}
   .lf-section-head{margin-bottom:32px;}
   .lf-card-btn{padding:11px 16px;font-size:10.5px;letter-spacing:.08em;}
   .lf-card-view{font-size:11.5px;}
@@ -542,5 +545,39 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
   :root{--lf-header-pad:16px;}
   .lf-header{
     max-width:100%;
+  }
+}
+
+
+/* ---------- mobile only: keep the footer inside the viewport ----------
+   Phones and small tablets only. Desktop keeps the exact footer layout,
+   grid, spacing and colours it has today. These rules only guarantee that
+   the footer can never paint or scroll outside the screen: the side gutter
+   matches the rest of the page, long words (emails, links, shop names) wrap
+   instead of pushing out, and grid children are allowed to shrink. */
+@media(max-width:749px){
+  .lf-footer{
+    overflow-x:hidden;   /* fallback for older Safari */
+    overflow-x:clip;     /* hard guarantee: no horizontal overflow */
+  }
+  .lf-footer__inner{
+    padding-left:var(--lf-home-pad,16px);
+    padding-right:var(--lf-home-pad,16px);
+  }
+  .lf-footer__grid>*{min-width:0;}
+  .lf-footer__brand p{max-width:none;}
+  .lf-footer__brand p,
+  .lf-footer__column a,
+  .lf-footer__column>span,
+  .lf-footer__pay-box small,
+  .lf-footer__trust>div,
+  .lf-footer__bottom{
+    overflow-wrap:anywhere;
+  }
+  .lf-footer__trust>div{min-width:0;}
+  .lf-footer__bottom{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
   }
 }

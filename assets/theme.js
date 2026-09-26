@@ -117,10 +117,12 @@
     }
   }
 
-  /* ---------- product gallery + quantity ---------- */
+  /* ---------- product gallery thumbnails (legacy markup) + quantity ---------- */
   document.addEventListener('click', function (event) {
     var thumb = event.target.closest('[data-gallery-thumb]');
     if (thumb) {
+      /* The new product section owns its own gallery; leave those thumbnails alone. */
+      if (thumb.closest('[data-product-root]')) { return; }
       var wanted = thumb.getAttribute('data-gallery-thumb');
       qsa('.product-gallery__item').forEach(function (item, i) { item.classList.toggle('is-active', String(i) === wanted); });
       qsa('[data-gallery-thumb]').forEach(function (other) { other.classList.toggle('is-active', other === thumb); });
@@ -318,6 +320,21 @@
   window.addEventListener('pageshow', function (event) {
     if (event.persisted) { refreshDrawer(); }
   });
+
+  /* ---------- product page add to cart (uses the existing cart drawer) ---------- */
+  var addToCart = function (items) {
+    return postCart('/cart/add.js', { items: items })
+      .then(function (r) {
+        if (!r.ok) { throw new Error('add failed'); }
+        return getCart();
+      })
+      .then(function (cart) {
+        paintCount(cart.item_count);
+        setDrawer(true);
+        return refreshDrawer().then(function () { return cart; });
+      });
+  };
+  window.LumaCart = { add: addToCart, open: setDrawer, refresh: refreshDrawer, setCount: paintCount };
 
   bindDrawerInternals();
 }());

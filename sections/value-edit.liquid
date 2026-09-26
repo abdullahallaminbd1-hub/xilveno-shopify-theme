@@ -24,7 +24,7 @@
               <h3 class="lf-product-card__title"><a href="{{ routes.all_products_collection_url }}">{% case i %}{% when 1 %}Precision facial roller{% when 2 %}Cooling ice globes{% when 3 %}LED face mask brush{% else %}Gua sha sculpting stone{% endcase %}</a></h3>
               <div class="lf-product-card__price">${{ i | plus: 9 }}.99</div>
               <div class="lf-product-card__actions">
-                <a class="lf-card-btn lf-card-btn--{{ section.settings.button_style | default: 'filled' }}" href="{{ routes.all_products_collection_url }}">{{ section.settings.button_label | default: 'Add to cart' }}</a>
+                <a class="lf-card-btn lf-card-btn--{{ section.settings.button_style | default: 'filled' }}" href="{{ routes.all_products_collection_url }}">View product</a>
               </div>
             </div>
           </article>

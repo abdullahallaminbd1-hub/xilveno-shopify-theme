@@ -177,11 +177,11 @@
       "type": "featured-products",
       "settings": {
         "kicker": "Customer favourites",
-        "heading": "Our <span>Best Sellers</span>",
+        "heading": "Our Best Sellers",
         "text": "Discover popular picks from across our beauty tools and devices - thoughtfully selected for modern routines.",
-        "collection": "",
+        "collection": "frontpage",
         "columns": 4,
-        "limit": 8,
+        "limit": 4,
         "badge_label": "Best seller",
         "show_vendor": false,
         "show_arrow": false,
@@ -274,7 +274,7 @@
       ],
       "settings": {
         "kicker": "Customer experiences",
-        "heading": "Loved by <span>Our Customers</span>",
+        "heading": "Loved by Our Customers",
         "text": "Genuine feedback helps shoppers discover LumaForm with confidence. Verified customer reviews will appear here as they are collected."
       }
     },

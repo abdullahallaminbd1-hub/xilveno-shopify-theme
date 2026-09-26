@@ -1,0 +1,25 @@
+<section class="hero hero--slideshow"{% if section.settings.image %} style="--hero-image: url({{ section.settings.image | image_url: width: 2200 }})"{% endif %}>
+  <div class="hero__media" aria-hidden="true">{% if section.settings.image %}{{ section.settings.image | image_url: width: 2200 | image_tag: loading: 'eager', fetchpriority: 'high', class: 'hero__image', alt: section.settings.heading }}{% else %}<div class="hero__fallback"><span class="hero-product hero-product--one"></span><span class="hero-product hero-product--two"></span><span class="hero-product hero-product--three"></span></div>{% endif %}</div>
+  <div class="hero__overlay" aria-hidden="true"></div>
+  <div class="hero__content">
+    <span class="eyebrow">{{ section.settings.kicker }}</span>
+    <h1>{{ section.settings.heading }}</h1>
+    <p>{{ section.settings.text }}</p>
+    <a class="button button--accent" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }} <span>→</span></a>
+  </div>
+  <div class="hero__dots" aria-hidden="true"><i class="is-active"></i><i></i><i></i></div>
+</section>
+{% schema %}
+{
+  "name": "Hero slideshow",
+  "settings": [
+    {"type":"text","id":"kicker","label":"Kicker","default":"The LumaForm Edit"},
+    {"type":"text","id":"heading","label":"Heading","default":"Elevate Your Everyday Beauty"},
+    {"type":"textarea","id":"text","label":"Text","default":"Curated beauty essentials designed to bring confidence, simplicity and a refined touch to your everyday routine."},
+    {"type":"text","id":"button_label","label":"Button label","default":"Shop Beauty"},
+    {"type":"url","id":"link","label":"Button link"},
+    {"type":"image_picker","id":"image","label":"Background image"}
+  ],
+  "presets":[{"name":"Hero slideshow"}]
+}
+{% endschema %}

@@ -1,1 +1,13 @@
-[]
+[
+  {"name":"theme_info","theme_name":"LumaForm","theme_version":"1.0.0","theme_author":"LumaForm","theme_documentation_url":"https://example.com","theme_support_url":"https://example.com"},
+  {"name":"Brand","settings":[
+    {"type":"text","id":"brand_tagline","label":"Brand tagline","default":"Tools for your everyday ritual"},
+    {"type":"color","id":"color_ink","label":"Ink","default":"#25211f"},
+    {"type":"color","id":"color_accent","label":"Accent","default":"#d9755f"},
+    {"type":"color","id":"color_sand","label":"Warm background","default":"#f5f0e9"}
+  ]},
+  {"name":"Social","settings":[
+    {"type":"url","id":"instagram_url","label":"Instagram URL"},
+    {"type":"url","id":"tiktok_url","label":"TikTok URL"}
+  ]}
+]

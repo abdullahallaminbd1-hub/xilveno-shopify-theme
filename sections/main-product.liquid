@@ -1,0 +1,64 @@
+<section class="product-page">
+  <div class="product-page__media">
+    {%- if product.images.size > 0 -%}
+      <div class="product-gallery">
+        {%- for image in product.images limit: 4 -%}
+          <div class="product-gallery__item{% if forloop.first %} is-active{% endif %}">{{ image | image_url: width: 1400 | image_tag: loading: 'lazy', class: 'product-page__image', alt: image.alt | default: product.title }}</div>
+        {%- endfor -%}
+      </div>
+      <div class="product-gallery__thumbs" aria-label="Product images">
+        {%- for image in product.images limit: 4 -%}
+          <button type="button" class="product-gallery__thumb{% if forloop.first %} is-active{% endif %}" data-gallery-thumb="{{ forloop.index0 }}" aria-label="View image {{ forloop.index }}">{{ image | image_url: width: 240 | image_tag: alt: '' }}</button>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="product-placeholder product-placeholder--large">LumaForm</div>
+    {%- endif -%}
+  </div>
+
+  <div class="product-page__info">
+    <span class="eyebrow">{{ product.vendor | default: 'LumaForm' }} / {{ product.type | default: 'Beauty tool' }}</span>
+    <h1>{{ product.title }}</h1>
+    <div class="price price--large" data-product-price>{{ product.price | money }}{% if product.compare_at_price > product.price %} <s>{{ product.compare_at_price | money }}</s>{% endif %}</div>
+    {%- if product.description != blank -%}<div class="product-description">{{ product.description | strip_html | truncate: 320 }}</div>{%- endif -%}
+
+    {% form 'product', product, class: 'product-form' %}
+      {%- unless product.has_only_default_variant -%}
+        <label class="variant-label" for="VariantSelect">Choose an option</label>
+        <select id="VariantSelect" name="id" class="variant-select" data-variant-select>
+          {%- for variant in product.variants -%}
+            <option value="{{ variant.id }}" data-price="{{ variant.price }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+              {{ variant.title }} — {{ variant.price | money }}{% unless variant.available %} (Sold out){% endunless %}
+            </option>
+          {%- endfor -%}
+        </select>
+      {%- else -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {%- endunless -%}
+
+      <div class="product-buy-row">
+        <div class="quantity-control"><button type="button" data-qty-minus aria-label="Decrease quantity">−</button><input type="number" name="quantity" value="1" min="1" aria-label="Quantity"><button type="button" data-qty-plus aria-label="Increase quantity">＋</button></div>
+        <button class="button button--accent button--full" type="submit" {% unless product.available %}disabled{% endunless %}>
+          {%- if product.available -%}Add to cart <span>→</span>{%- else -%}Sold out{%- endif -%}
+        </button>
+      </div>
+    {% endform %}
+
+    <div class="product-promise"><span>◇</span> Free shipping over $75<br><span>↺</span> 30-day returns on eligible items<br><span>✦</span> Secure checkout</div>
+
+    <div class="product-accordion">
+      <details open><summary>Details</summary><p>{{ product.description | default: 'Thoughtfully selected for modern routines.' }}</p></details>
+      <details><summary>Shipping &amp; returns</summary><p>Orders are dispatched with clear tracking. Eligible items can be returned within 30 days.</p></details>
+      <details><summary>Need help?</summary><p><a href="/pages/contact-us">Contact our team</a> for product or order support.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="product-section product-recommendations">
+  <div class="section-heading"><div><span class="eyebrow">Complete the ritual</span><h2>You may also like.</h2></div><a class="text-link" href="{{ routes.all_products_collection_url }}">Shop all <span>↗</span></a></div>
+  <div class="product-grid product-grid--4">
+    {%- for item in collections.all.products limit: 8 -%}{%- unless item.id == product.id -%}{%- render 'product-card', product: item -%}{%- endunless -%}{%- endfor -%}
+  </div>
+</section>
+
+{% schema %}{"name":"Main product","settings":[],"presets":[{"name":"Main product"}]}{% endschema %}

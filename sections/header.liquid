@@ -1,1 +1,31 @@
-<header class="site-header"><div class="header-inner"><button class="icon-button mobile-only" data-menu-open aria-label="Open menu">☰</button><a class="wordmark" href="{{ routes.root_url }}">Luma<i>Form</i></a><nav class="desktop-nav"><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="/collections/facial-tools">Facial tools</a><a href="/collections/beauty-devices">Beauty devices</a><a href="/collections/hair-tools">Hair tools</a><a href="/collections/best-sellers">Best sellers</a><a href="/pages/about-us">About</a></nav><div class="header-actions"><a class="icon-button desktop-only" href="{{ routes.search_url }}" aria-label="Search">⌕</a><a class="icon-button desktop-only" href="{{ routes.account_login_url }}" aria-label="Account">◯</a><button class="icon-button" data-cart-open aria-label="Open cart">▢<sup data-cart-count>{{ cart.item_count }}</sup></button></div></div><div class="mobile-nav" data-mobile-nav><button class="icon-button" data-menu-close aria-label="Close menu">×</button><span class="eyebrow">Explore LumaForm</span><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="/collections/facial-tools">Facial tools</a><a href="/collections/beauty-devices">Beauty devices</a><a href="/collections/hair-tools">Hair tools</a><a href="/collections/best-sellers">Best sellers</a><a href="/pages/about-us">About us</a><div class="mobile-nav-bottom"><a href="{{ routes.search_url }}">Search</a><a href="{{ routes.account_login_url }}">Account</a></div></div></header>
+<header class="site-header" data-header>
+  <div class="header-top">
+    <div class="header-top__side header-top__side--left">
+      <a class="icon-button" href="{{ routes.search_url }}" aria-label="Search">{% render 'icon', icon: 'search' %}</a>
+      <button class="mobile-menu icon-button" data-menu-open aria-label="Open menu">{% render 'icon', icon: 'menu' %}</button>
+    </div>
+    <a class="wordmark wordmark--center" href="{{ routes.root_url }}"><span>Luma</span><i>Form</i><small>beauty • lifestyle • essentials</small></a>
+    <div class="header-top__side header-top__side--right">
+      <a class="icon-button" href="{{ routes.account_login_url }}" aria-label="Account">{% render 'icon', icon: 'user' %}</a>
+      <button class="icon-button cart-trigger" data-cart-open aria-label="Open cart">{% render 'icon', icon: 'bag' %}<sup data-cart-count>{{ cart.item_count }}</sup></button>
+    </div>
+  </div>
+  <nav class="desktop-nav" aria-label="Main navigation">
+    <a href="{{ routes.collections_url }}/beauty-essentials">Beauty Essentials</a>
+    <a href="{{ routes.collections_url }}/home-lifestyle">Home &amp; Lifestyle</a>
+    <a href="{{ routes.collections_url }}/smart-gadgets">Smart Gadgets</a>
+    <a href="{{ routes.collections_url }}/pet-essentials">Pet Essentials</a>
+    <a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a>
+    <a href="/pages/about-us">About Us</a>
+  </nav>
+  <div class="mobile-nav" data-mobile-nav>
+    <div class="mobile-nav__head"><span class="eyebrow">Explore LumaForm</span><button class="icon-button" data-menu-close aria-label="Close menu">{% render 'icon', icon: 'close' %}</button></div>
+    <a href="{{ routes.collections_url }}/beauty-essentials">Beauty Essentials</a>
+    <a href="{{ routes.collections_url }}/home-lifestyle">Home &amp; Lifestyle</a>
+    <a href="{{ routes.collections_url }}/smart-gadgets">Smart Gadgets</a>
+    <a href="{{ routes.collections_url }}/pet-essentials">Pet Essentials</a>
+    <a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a>
+    <a href="/pages/about-us">About Us</a>
+    <div class="mobile-nav__bottom"><a href="{{ routes.search_url }}">Search</a><a href="{{ routes.account_login_url }}">Account</a></div>
+  </div>
+</header>

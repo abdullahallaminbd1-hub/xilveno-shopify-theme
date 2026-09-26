@@ -1,1 +1,13 @@
-<article class="product-card"><a class="product-media" href="{{ product.url }}">{% if product.featured_image %}{{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy' }}{% else %}<div class="product-placeholder">LF</div>{% endif %}{% if product.compare_at_price > product.price %}<span class="badge">Sale</span>{% endif %}<button class="quick-add" data-quick-add="{{ product.selected_or_first_available_variant.id }}">{% if product.available %}Quick add +{% else %}Sold out{% endif %}</button></a><div class="product-info"><span class="eyebrow">{{ product.vendor | default: 'LumaForm' }}</span><h3><a href="{{ product.url }}">{{ product.title }}</a></h3><div><strong>{{ product.price | money }}</strong>{% if product.compare_at_price > product.price %}<s>{{ product.compare_at_price | money }}</s>{% endif %}</div></div></article>
+<article class="product-card">
+  <a class="product-card__media" href="{{ product.url }}">
+    {% if product.featured_image %}{{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '360,540,700', class: 'product-card__image' }}{% else %}<div class="placeholder-media">LF</div>{% endif %}
+    {% if product.compare_at_price > product.price %}<span class="badge">Save</span>{% endif %}
+    <span class="product-card__badge">{% if product.available %}In stock{% else %}Sold out{% endif %}</span>
+    <span class="quick-add" data-quick-add="{{ product.selected_or_first_available_variant.id }}">{% if product.available %}Add to cart{% else %}View options{% endif %} <span>+</span></span>
+  </a>
+  <div class="product-card__info">
+    <div class="eyebrow">{{ product.vendor | default: 'LumaForm' }}</div>
+    <h3><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    <div class="product-card__meta"><div class="price">{{ product.price | money }}{% if product.compare_at_price > product.price %}<s>{{ product.compare_at_price | money }}</s>{% endif %}</div><span class="card-arrow">↗</span></div>
+  </div>
+</article>

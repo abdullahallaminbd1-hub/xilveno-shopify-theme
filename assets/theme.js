@@ -1,536 +1,133 @@
-/* ==========================================================================
-   XILVENO THEME — theme.js
-   Core interactions: header, announcement bar, mobile nav, hero slideshow,
-   FAQ accordion, tabs, sticky ATC, search drawer, overlay
-   ========================================================================== */
-
-'use strict';
-
-// ─── Utility helpers ────────────────────────────────────────────────────────
-
-const $ = (sel, ctx = document) => ctx.querySelector(sel);
-const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
-const on = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
-const off = (el, ev, fn) => el && el.removeEventListener(ev, fn);
-const emit = (el, name, detail = {}) => el && el.dispatchEvent(new CustomEvent(name, { detail, bubbles: true }));
-
-function debounce(fn, ms = 300) {
-  let timer;
-  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
-}
-
-function formatMoney(cents) {
-  const amount = (cents / 100).toFixed(2);
-  return window.Shopify?.currency?.active
-    ? `${window.Shopify.currency.active} ${amount}`
-    : `$${amount}`;
-}
-
-// ─── Focus trap for modals/drawers ─────────────────────────────────────────
-
-function trapFocus(el) {
-  const focusables = 'a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])';
-  const items = [...el.querySelectorAll(focusables)].filter(e => !e.closest('[inert]'));
-  if (!items.length) return;
-  const first = items[0], last = items[items.length - 1];
-  function handler(e) {
-    if (e.key !== 'Tab') return;
-    if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
-    else { if (document.activeElement === last) { e.preventDefault(); first.focus(); } }
-  }
-  on(el, 'keydown', handler);
-  items[0].focus();
-  return () => off(el, 'keydown', handler);
-}
-
-// ─── Overlay ────────────────────────────────────────────────────────────────
-
-const Overlay = {
-  el: null,
-  init() {
-    this.el = $('#overlay');
-    on(this.el, 'click', () => this.hide());
-  },
-  show() { this.el?.classList.add('is-visible'); document.body.classList.add('no-scroll'); },
-  hide() {
-    this.el?.classList.remove('is-visible');
-    document.body.classList.remove('no-scroll');
-    emit(document, 'xilveno:overlay:hide');
-  }
-};
-
-// ─── Header scroll behaviour ─────────────────────────────────────────────────
-
-const Header = {
-  el: null,
-  init() {
-    this.el = $('.site-header');
-    if (!this.el) return;
-    let last = 0;
-    const onScroll = () => {
-      const y = window.scrollY;
-      this.el.classList.toggle('site-header--scrolled', y > 10);
-      last = y;
-    };
-    on(window, 'scroll', onScroll, { passive: true });
-    onScroll();
-  }
-};
-
-// ─── Announcement Bar ────────────────────────────────────────────────────────
-
-class AnnouncementBar {
-  constructor(el) {
-    this.el = el;
-    this.track = $('.announcement-bar__track', el);
-    this.slides = $$('.announcement-bar__slide', el);
-    this.current = 0;
-    this.timer = null;
-    this.interval = parseInt(el.dataset.interval || 4000);
-
-    if (this.slides.length > 1) this.start();
-
-    const closeBtn = $('.announcement-bar__close', el);
-    on(closeBtn, 'click', () => {
-      this.stop();
-      el.style.display = 'none';
-      try { sessionStorage.setItem('xilveno_announcement_closed', '1'); } catch(e) {}
-    });
-  }
-
-  goTo(idx) {
-    this.current = (idx + this.slides.length) % this.slides.length;
-    this.track.style.transform = `translateX(-${this.current * 100}%)`;
-  }
-
-  start() {
-    this.timer = setInterval(() => this.goTo(this.current + 1), this.interval);
-  }
-
-  stop() { clearInterval(this.timer); }
-}
-
-// ─── Mobile Navigation ───────────────────────────────────────────────────────
-
-const MobileNav = {
-  drawer: null,
-  releaseFocus: null,
-  init() {
-    this.drawer = $('.mobile-nav');
-    if (!this.drawer) return;
-
-    const openBtn = $('.header-burger');
-    const closeBtn = $('.mobile-nav__close');
-
-    on(openBtn, 'click', () => this.open());
-    on(closeBtn, 'click', () => this.close());
-    on(document, 'keydown', e => { if (e.key === 'Escape' && this.drawer.classList.contains('is-open')) this.close(); });
-    on(document, 'xilveno:overlay:hide', () => this.close());
-  },
-  open() {
-    this.drawer.classList.add('is-open');
-    this.drawer.removeAttribute('inert');
-    Overlay.show();
-    this.releaseFocus = trapFocus(this.drawer);
-    emit(this.drawer, 'xilveno:nav:opened');
-  },
-  close() {
-    this.drawer.classList.remove('is-open');
-    this.drawer.setAttribute('inert', '');
-    Overlay.hide();
-    this.releaseFocus?.();
-  }
-};
-
-// ─── Hero Slideshow ──────────────────────────────────────────────────────────
-
-class HeroSlideshow {
-  constructor(el) {
-    this.el = el;
-    this.track = $('.hero-slideshow__track', el);
-    this.slides = $$('.hero-slide', el);
-    this.dots = $$('.hero-slideshow__dot', el);
-    this.current = 0;
-    this.count = this.slides.length;
-    this.autoplay = el.dataset.autoplay !== 'false';
-    this.interval = parseInt(el.dataset.interval || 5000);
-    this.timer = null;
-    this.startX = 0;
-    this.isDragging = false;
-
-    if (this.count < 2) return;
-
-    on($('.hero-slideshow__arrow--prev', el), 'click', () => { this.prev(); this.resetTimer(); });
-    on($('.hero-slideshow__arrow--next', el), 'click', () => { this.next(); this.resetTimer(); });
-    this.dots.forEach((d, i) => on(d, 'click', () => { this.goTo(i); this.resetTimer(); }));
-
-    // Touch/swipe
-    on(this.track, 'touchstart', e => { this.startX = e.touches[0].clientX; }, { passive: true });
-    on(this.track, 'touchend', e => {
-      const dx = e.changedTouches[0].clientX - this.startX;
-      if (Math.abs(dx) > 50) { dx < 0 ? this.next() : this.prev(); this.resetTimer(); }
-    }, { passive: true });
-
-    // Pause on hover
-    on(el, 'mouseenter', () => this.stop());
-    on(el, 'mouseleave', () => this.autoplay && this.start());
-
-    // Keyboard
-    on(el, 'keydown', e => {
-      if (e.key === 'ArrowLeft') this.prev();
-      if (e.key === 'ArrowRight') this.next();
-    });
-
-    this.update();
-    if (this.autoplay) this.start();
-  }
-
-  goTo(idx) {
-    this.current = (idx + this.count) % this.count;
-    this.update();
-  }
-
-  next() { this.goTo(this.current + 1); }
-  prev() { this.goTo(this.current - 1); }
-
-  update() {
-    this.track.style.transform = `translateX(-${this.current * 100}%)`;
-    this.dots.forEach((d, i) => d.classList.toggle('is-active', i === this.current));
-    this.slides.forEach((s, i) => s.setAttribute('aria-hidden', i !== this.current));
-  }
-
-  start() { this.timer = setInterval(() => this.next(), this.interval); }
-  stop() { clearInterval(this.timer); }
-  resetTimer() { this.stop(); if (this.autoplay) this.start(); }
-}
-
-// ─── FAQ Accordion ───────────────────────────────────────────────────────────
-
-function initFAQ() {
-  $$('.faq-question').forEach(btn => {
-    on(btn, 'click', () => {
-      const answer = $('#' + btn.getAttribute('aria-controls'));
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      // Close others
-      $$('.faq-question[aria-expanded="true"]').forEach(other => {
-        if (other !== btn) {
-          other.setAttribute('aria-expanded', 'false');
-          const a = $('#' + other.getAttribute('aria-controls'));
-          a?.classList.remove('is-open');
-        }
-      });
-      btn.setAttribute('aria-expanded', String(!expanded));
-      answer?.classList.toggle('is-open', !expanded);
-    });
-  });
-}
-
-// ─── Product Tabs ─────────────────────────────────────────────────────────────
-
-function initTabs() {
-  $$('.tabs__btn').forEach(btn => {
-    on(btn, 'click', () => {
-      const container = btn.closest('[data-tabs]');
-      $$('.tabs__btn', container).forEach(b => b.classList.remove('is-active'));
-      $$('.tabs__panel', container).forEach(p => p.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      const panel = $('#' + btn.getAttribute('aria-controls'));
-      panel?.classList.add('is-active');
-    });
-  });
-}
-
-// ─── Filter groups ────────────────────────────────────────────────────────────
-
-function initFilters() {
-  $$('.filter-group__toggle').forEach(btn => {
-    on(btn, 'click', () => {
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!expanded));
-      const opts = btn.nextElementSibling;
-      opts?.classList.toggle('is-open', !expanded);
-    });
-    // Open first few by default
-    if (btn.closest('.filter-group:nth-child(-n+3)')) {
-      btn.click();
-    }
-  });
-}
-
-// ─── Search Drawer ───────────────────────────────────────────────────────────
-
-const SearchDrawer = {
-  drawer: null,
-  input: null,
-  releaseFocus: null,
-  init() {
-    this.drawer = $('.search-drawer');
-    if (!this.drawer) return;
-    this.input = $('.search-input', this.drawer);
-    const openBtns = $$('[data-search-open]');
-    const closeBtn = $('.search-drawer__close', this.drawer);
-    openBtns.forEach(b => on(b, 'click', () => this.open()));
-    on(closeBtn, 'click', () => this.close());
-    on(document, 'keydown', e => { if (e.key === 'Escape') this.close(); });
-  },
-  open() {
-    this.drawer.classList.add('is-open');
-    Overlay.show();
-    this.releaseFocus = trapFocus(this.drawer);
-    setTimeout(() => this.input?.focus(), 100);
-  },
-  close() {
-    this.drawer.classList.remove('is-open');
-    Overlay.hide();
-    this.releaseFocus?.();
-  }
-};
-
-// ─── Gallery thumbnails ──────────────────────────────────────────────────────
-
-function initProductGallery() {
-  const gallery = $('.product-gallery');
-  if (!gallery) return;
-  const mainImg = $('.product-gallery__main-image', gallery);
-  const thumbs = $$('.product-gallery__thumb', gallery);
-
-  thumbs.forEach((thumb, i) => {
-    on(thumb, 'click', () => {
-      const src = thumb.dataset.src;
-      const srcset = thumb.dataset.srcset;
-      if (mainImg && src) {
-        mainImg.src = src;
-        if (srcset) mainImg.srcset = srcset;
-        mainImg.alt = thumb.dataset.alt || '';
-      }
-      thumbs.forEach(t => t.classList.remove('is-active'));
-      thumb.classList.add('is-active');
-    });
-  });
-}
-
-// ─── Variant selector ─────────────────────────────────────────────────────────
-
-function initVariantSelector() {
-  const form = $('form[data-product-form]');
-  if (!form) return;
-
-  const swatches = $$('.swatch', form);
-  const priceEl = $('.product-info__price', document);
-  const comparePriceEl = $('.product-info__price--compare', document);
-  const stockEl = $('.product-info__stock', document);
-  const stockDot = $('.stock-dot', document);
-  const productData = JSON.parse($('[data-product-json]')?.textContent || '{}');
-
-  swatches.forEach(swatch => {
-    on(swatch, 'click', () => {
-      const optionIndex = parseInt(swatch.dataset.optionIndex);
-      const value = swatch.dataset.value;
-      const option = swatch.dataset.option;
-
-      // Update swatches in same group
-      $$(`.swatch[data-option="${option}"]`).forEach(s => s.classList.remove('is-active'));
-      swatch.classList.add('is-active');
-
-      // Update hidden select
-      const select = $(`select[data-option-index="${optionIndex}"]`, form);
-      if (select) {
-        select.value = value;
-        select.dispatchEvent(new Event('change'));
-      }
-
-      // Find matching variant
-      updateVariantState(form, productData);
-    });
-  });
-}
-
-function updateVariantState(form, productData) {
-  if (!productData.variants) return;
-  const selectedOptions = $$('select[data-option-index]', form).map(s => s.value);
-
-  const variant = productData.variants.find(v =>
-    v.options.every((opt, i) => opt === selectedOptions[i])
-  );
-
-  if (!variant) return;
-
-  // Update price
-  const priceEl = $('.product-info__price');
-  const comparePriceEl = $('.product-info__price--compare');
-  if (priceEl) priceEl.textContent = formatMoney(variant.price);
-  if (comparePriceEl && variant.compare_at_price > variant.price) {
-    comparePriceEl.textContent = formatMoney(variant.compare_at_price);
-    comparePriceEl.style.display = '';
-  } else if (comparePriceEl) {
-    comparePriceEl.style.display = 'none';
-  }
-
-  // Update stock
-  const stockEl = $('.product-info__stock');
-  const dot = stockEl?.querySelector('.stock-dot');
-  if (stockEl) {
-    if (!variant.available) {
-      stockEl.querySelector('[data-stock-text]').textContent = 'Out of stock';
-      dot?.classList.remove('stock-dot--in', 'stock-dot--low');
-      dot?.classList.add('stock-dot--out');
-    } else if (variant.inventory_quantity > 0 && variant.inventory_quantity <= 10 && variant.inventory_management) {
-      stockEl.querySelector('[data-stock-text]').textContent = `Only ${variant.inventory_quantity} left`;
-      dot?.classList.remove('stock-dot--in', 'stock-dot--out');
-      dot?.classList.add('stock-dot--low');
-    } else {
-      stockEl.querySelector('[data-stock-text]').textContent = 'In stock';
-      dot?.classList.remove('stock-dot--low', 'stock-dot--out');
-      dot?.classList.add('stock-dot--in');
-    }
-  }
-
-  // Update ATC button
-  const atcBtn = $('[data-atc-btn]');
-  if (atcBtn) {
-    atcBtn.disabled = !variant.available;
-    atcBtn.querySelector('.btn__text').textContent = variant.available ? 'Add to cart' : 'Sold out';
-  }
-
-  // Update hidden variant input
-  const variantInput = $('[name="id"]', form);
-  if (variantInput) variantInput.value = variant.id;
-
-  // Update URL without reload. Skip inside the Theme Editor preview, where the
-  // URL is owned by the editor and must keep its preview params intact.
-  if (!(window.Shopify && window.Shopify.designMode)) {
-    const url = new URL(window.location);
-    url.searchParams.set('variant', variant.id);
-    window.history.replaceState({}, '', url.toString());
-  }
-
-  emit(document, 'xilveno:variant:changed', { variant });
-}
-
-// ─── Quantity stepper ─────────────────────────────────────────────────────────
-
-function initQuantity() {
-  $$('[data-quantity-wrap]').forEach(wrap => {
-    const input = $('input[type="number"]', wrap);
-    const dec = $('[data-qty-dec]', wrap);
-    const inc = $('[data-qty-inc]', wrap);
-
-    on(dec, 'click', () => {
-      const v = parseInt(input.value) || 1;
-      if (v > 1) input.value = v - 1;
-    });
-    on(inc, 'click', () => {
-      const v = parseInt(input.value) || 1;
-      input.value = v + 1;
-    });
-  });
-}
-
-// ─── Sticky ATC ──────────────────────────────────────────────────────────────
-
-function initStickyATC() {
-  const sticky = $('.sticky-atc');
-  const atcBtn = $('[data-atc-btn]');
-  if (!sticky || !atcBtn) return;
-
-  const observer = new IntersectionObserver(
-    ([entry]) => sticky.classList.toggle('is-visible', !entry.isIntersecting),
-    { threshold: 0 }
-  );
-  observer.observe(atcBtn);
-
-  const stickyBtn = $('.sticky-atc__btn');
-  on(stickyBtn, 'click', () => atcBtn.click());
-}
-
-// ─── Scroll animations (IntersectionObserver) ────────────────────────────────
-
-function initScrollAnimations() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const els = $$('.animate-on-scroll');
-  if (!els.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-  );
-
-  els.forEach(el => observer.observe(el));
-}
-
-// ─── Recently Viewed (localStorage) ─────────────────────────────────────────
-
-const RecentlyViewed = {
-  key: 'xilveno_recently_viewed',
-  max: 12,
-  get() { try { return JSON.parse(localStorage.getItem(this.key) || '[]'); } catch(e) { return []; } },
-  add(product) {
-    let items = this.get().filter(p => p.id !== product.id);
-    items.unshift(product);
-    items = items.slice(0, this.max);
-    try { localStorage.setItem(this.key, JSON.stringify(items)); } catch(e) {}
-  },
-  track() {
-    const el = $('[data-product-json]');
-    if (!el) return;
-    try {
-      const p = JSON.parse(el.textContent);
-      this.add({
-        id: p.id,
-        title: p.title,
-        url: p.url,
-        price: p.price,
-        image: p.featured_image?.src,
-        vendor: p.vendor
-      });
-    } catch(e) {}
-  }
-};
-
-// ─── Collapsible (generic) ────────────────────────────────────────────────────
-
-function initCollapsibles() {
-  $$('[data-collapsible-trigger]').forEach(btn => {
-    on(btn, 'click', () => {
-      const target = $('#' + btn.dataset.collapsibleTrigger);
-      const open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-      target?.classList.toggle('is-open', !open);
-    });
-  });
-}
-
-// ─── Init ─────────────────────────────────────────────────────────────────────
-
 document.addEventListener('DOMContentLoaded', () => {
-  Overlay.init();
-  Header.init();
-  MobileNav.init();
-  SearchDrawer.init();
-  initFAQ();
-  initTabs();
-  initFilters();
-  initProductGallery();
-  initVariantSelector();
-  initQuantity();
-  initStickyATC();
-  initScrollAnimations();
-  initCollapsibles();
-  RecentlyViewed.track();
+  const body = document.body;
+  const drawer = document.querySelector('[data-cart-drawer]');
+  const setDrawer = (open) => {
+    body.classList.toggle('drawer-open', open);
+    drawer?.setAttribute('aria-hidden', open ? 'false' : 'true');
+  };
+  const setMenu = (open) => body.classList.toggle('mobile-nav-open', open);
+  const setFilters = (open) => body.classList.toggle('filter-panel-open', open);
 
-  // Announcement bars
-  $$('.announcement-bar[data-autoplay]').forEach(el => new AnnouncementBar(el));
+  document.querySelectorAll('[data-cart-open]').forEach((button) => button.addEventListener('click', () => setDrawer(true)));
+  document.querySelectorAll('[data-drawer-close]').forEach((button) => button.addEventListener('click', () => setDrawer(false)));
+  document.querySelector('[data-menu-open]')?.addEventListener('click', () => setMenu(true));
+  document.querySelector('[data-menu-close]')?.addEventListener('click', () => setMenu(false));
+  document.querySelector('[data-filter-open]')?.addEventListener('click', () => setFilters(true));
+  document.querySelector('[data-filter-close]')?.addEventListener('click', () => setFilters(false));
+  document.querySelectorAll('[data-gift-choice]').forEach((button) => button.addEventListener('click', async () => {
+    document.querySelectorAll('[data-gift-choice]').forEach((choice) => choice.classList.remove('is-selected'));
+    button.classList.add('is-selected');
+    document.querySelectorAll('[data-gift-status]').forEach((status) => { status.textContent = `${button.dataset.giftChoice} selected for checkout.`; });
+    try {
+      await fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ attributes: { 'Complimentary gift': button.dataset.giftChoice } })
+      });
+    } catch (error) {
+      // The selection remains visible even if the cart endpoint is unavailable in preview.
+    }
+  }));
+  document.querySelector('[data-track-form]')?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const result = document.querySelector('[data-track-result]');
+    const value = new FormData(event.currentTarget).get('tracking');
+    if (result) result.innerHTML = `<span>✓</span><h2>Tracking request received.</h2><p>We’ll look up <strong>${String(value).replace(/[&<>"']/g, '')}</strong> and display the latest update when carrier data is connected.</p>`;
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      setDrawer(false);
+      setMenu(false);
+      setFilters(false);
+    }
+  });
 
-  // Hero slideshows
-  $$('.hero-slideshow').forEach(el => new HeroSlideshow(el));
+  document.querySelectorAll('[data-gallery-thumb]').forEach((button) => button.addEventListener('click', () => {
+    const index = button.dataset.galleryThumb;
+    document.querySelectorAll('.product-gallery__item').forEach((item, itemIndex) => item.classList.toggle('is-active', String(itemIndex) === index));
+    document.querySelectorAll('[data-gallery-thumb]').forEach((thumb) => thumb.classList.toggle('is-active', thumb === button));
+  }));
+
+  document.querySelectorAll('[data-qty-minus]').forEach((button) => button.addEventListener('click', () => {
+    const input = button.parentElement.querySelector('input[type="number"]');
+    if (input) input.value = Math.max(1, Number(input.value || 1) - 1);
+  }));
+  document.querySelectorAll('[data-qty-plus]').forEach((button) => button.addEventListener('click', () => {
+    const input = button.parentElement.querySelector('input[type="number"]');
+    if (input) input.value = Math.max(1, Number(input.value || 1) + 1);
+  }));
+
+  document.querySelectorAll('[data-discount-form]').forEach((form) => form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const code = new FormData(form).get('discount');
+    const note = form.parentElement?.querySelector('[data-discount-note]');
+    if (!code || !String(code).trim()) {
+      if (note) { note.textContent = 'Please enter a valid discount code.'; note.classList.add('is-visible'); }
+      return;
+    }
+    try {
+      await fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ attributes: { 'Discount code': String(code).trim() } })
+      });
+      if (note) { note.textContent = `Discount code ${String(code).trim()} applied for review at checkout.`; note.classList.add('is-visible'); }
+    } catch (error) {
+      if (note) { note.textContent = 'Discount code saved for checkout review.'; note.classList.add('is-visible'); }
+    }
+  }));
+
+  const refreshCart = async () => {
+    const response = await fetch('/cart.js');
+    if (!response.ok) throw new Error('Cart unavailable');
+    return response.json();
+  };
+
+  const updateCartCount = (count) => document.querySelectorAll('[data-cart-count]').forEach((element) => { element.textContent = count; });
+
+  document.querySelectorAll('[data-quick-add]').forEach((button) => button.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const variantId = button.dataset.quickAdd;
+    if (!variantId) return;
+    const original = button.innerHTML;
+    button.textContent = 'Adding…';
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ items: [{ id: Number(variantId), quantity: 1 }] })
+      });
+      if (!response.ok) throw new Error('Unable to add item');
+      const cart = await refreshCart();
+      updateCartCount(cart.item_count);
+      button.textContent = 'Added ✓';
+      setDrawer(true);
+      window.setTimeout(() => { button.innerHTML = original; }, 1500);
+    } catch (error) {
+      button.textContent = 'Try again';
+      window.setTimeout(() => { button.innerHTML = original; }, 1500);
+    }
+  }));
+
+  document.querySelectorAll('[data-cart-change]').forEach((button) => button.addEventListener('click', async () => {
+    const line = Number(button.dataset.line);
+    const quantity = Math.max(0, Number(button.dataset.quantity));
+    button.disabled = true;
+    try {
+      await fetch('/cart/change.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ line, quantity })
+      });
+      window.location.reload();
+    } catch (error) {
+      button.disabled = false;
+    }
+  }));
+
+  document.querySelectorAll('[data-remove-item]').forEach((link) => link.addEventListener('click', async (event) => {
+    event.preventDefault();
+    await fetch(link.href, { headers: { Accept: 'application/json' } });
+    window.location.reload();
+  }));
 });
-
-window.Xilveno = { formatMoney, RecentlyViewed };

@@ -1,64 +1,346 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "blocks": {
-        "slide-1": { "type": "slide", "settings": { "kicker": "The LumaForm Edit", "heading": "Elevate Your Everyday Beauty", "text": "Curated beauty tools and devices designed to bring confidence, simplicity and a refined touch to your everyday routine.", "button_label": "Shop beauty tools" } },
-        "slide-2": { "type": "slide", "settings": { "kicker": "Facial rituals", "heading": "Radiance, Made Effortless", "text": "Discover thoughtfully selected facial tools and self-care devices for a beautifully simple daily ritual.", "button_label": "Explore facial tools" } },
-        "slide-3": { "type": "slide", "settings": { "kicker": "Pro-grade devices", "heading": "Tools for Your Signature Look", "text": "Precision instruments and beauty devices chosen for modern routines and refined results.", "button_label": "Shop devices" } }
+        "slide-1": {
+          "type": "slide",
+          "settings": {
+            "kicker": "The LumaForm Edit",
+            "heading": "Elevate Your Everyday Beauty",
+            "text": "Curated beauty tools and devices designed to bring confidence, simplicity and a refined touch to your everyday routine.",
+            "button_label": "Shop beauty tools",
+            "link": "",
+            "image": "shopify://shop_images/dreamcatcher-pendant-necklace_925x_00da1970-b394-4990-9554-50cdb9d31cca.jpg"
+          }
+        },
+        "slide-2": {
+          "type": "slide",
+          "settings": {
+            "kicker": "Facial rituals",
+            "heading": "Radiance, Made Effortless",
+            "text": "Discover thoughtfully selected facial tools and self-care devices for a beautifully simple daily ritual.",
+            "button_label": "Explore facial tools",
+            "link": "",
+            "image": "shopify://shop_images/putting-on-your-shoes_925x_e5a1f560-9926-496b-aff3-aaa48b3e9cf3.jpg"
+          }
+        },
+        "slide-3": {
+          "type": "slide",
+          "settings": {
+            "kicker": "Pro-grade devices",
+            "heading": "Tools for Your Signature Look",
+            "text": "Precision instruments and beauty devices chosen for modern routines and refined results.",
+            "button_label": "Shop devices",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["slide-1", "slide-2", "slide-3"],
-      "settings": { "autoplay": 6 }
+      "block_order": [
+        "slide-1",
+        "slide-2",
+        "slide-3"
+      ],
+      "settings": {
+        "autoplay": 6
+      }
     },
-    "trust": { "type": "value-strip", "settings": {} },
+    "trust": {
+      "type": "value-strip",
+      "settings": {
+        "title_1": "Curated Quality",
+        "text_1": "Thoughtfully Selected Beauty Tools",
+        "title_2": "Free US Shipping",
+        "text_2": "Clear Shipping Information",
+        "title_3": "Secure Checkout",
+        "text_3": "Protected Payment Experience",
+        "title_4": "Customer Support",
+        "text_4": "Here When You Need Us"
+      }
+    },
     "categories": {
       "type": "category-tiles",
       "blocks": {
-        "cat-1": { "type": "tile", "settings": { "title": "Beauty Tools", "link_label": "Shop collection" } },
-        "cat-2": { "type": "tile", "settings": { "title": "Facial Tools", "link_label": "Explore facial tools" } },
-        "cat-3": { "type": "tile", "settings": { "title": "Skincare Tools", "link_label": "Discover skincare" } },
-        "cat-4": { "type": "tile", "settings": { "title": "Beauty Devices", "link_label": "Explore devices" } },
-        "cat-5": { "type": "tile", "settings": { "title": "Hair Tools", "link_label": "Shop hair tools" } },
-        "cat-6": { "type": "tile", "settings": { "title": "New Arrivals", "link_label": "Shop new arrivals" } }
+        "cat-1": {
+          "type": "tile",
+          "settings": {
+            "title": "Beauty Tools",
+            "link_label": "Shop collection",
+            "link": ""
+          }
+        },
+        "cat-2": {
+          "type": "tile",
+          "settings": {
+            "title": "Facial Tools",
+            "link_label": "Explore facial tools",
+            "link": ""
+          }
+        },
+        "cat-3": {
+          "type": "tile",
+          "settings": {
+            "title": "Skincare Tools",
+            "link_label": "Discover skincare",
+            "link": ""
+          }
+        },
+        "cat-4": {
+          "type": "tile",
+          "settings": {
+            "title": "Beauty Devices",
+            "link_label": "Explore devices",
+            "link": ""
+          }
+        },
+        "cat-5": {
+          "type": "tile",
+          "settings": {
+            "title": "Hair Tools",
+            "link_label": "Shop hair tools",
+            "link": ""
+          }
+        },
+        "cat-6": {
+          "type": "tile",
+          "settings": {
+            "title": "New Arrivals",
+            "link_label": "Shop new arrivals",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["cat-1", "cat-2", "cat-3", "cat-4", "cat-5", "cat-6"],
-      "settings": { "kicker": "Curated for everyday beauty", "heading": "Explore the <span>LumaForm Collection</span>", "text": "Discover beauty tools, facial rituals and everyday essentials thoughtfully selected for modern routines." }
+      "block_order": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5",
+        "cat-6"
+      ],
+      "settings": {
+        "kicker": "Curated for everyday beauty",
+        "heading": "Explore the <span>LumaForm Collection</span>",
+        "text": "Discover beauty tools, facial rituals and everyday essentials thoughtfully selected for modern routines."
+      }
     },
     "editorial": {
       "type": "editorial-cards",
       "blocks": {
-        "card-1": { "type": "card", "settings": { "title": "Curated Beauty Tools", "text": "Beauty and self-care tools selected for simple, elevated everyday routines.", "link_label": "Explore tools" } },
-        "card-2": { "type": "card", "settings": { "title": "Smarter Skincare Rituals", "text": "Facial and skincare devices chosen to make everyday moments feel easier.", "link_label": "Explore skincare" } },
-        "card-3": { "type": "card", "settings": { "title": "Devices That Deliver", "text": "Considered beauty devices for the routines and results you care about.", "link_label": "Discover devices" } }
+        "card-1": {
+          "type": "card",
+          "settings": {
+            "title": "Curated Beauty Tools",
+            "text": "Beauty and self-care tools selected for simple, elevated everyday routines.",
+            "link_label": "Explore tools",
+            "link": ""
+          }
+        },
+        "card-2": {
+          "type": "card",
+          "settings": {
+            "title": "Smarter Skincare Rituals",
+            "text": "Facial and skincare devices chosen to make everyday moments feel easier.",
+            "link_label": "Explore skincare",
+            "link": ""
+          }
+        },
+        "card-3": {
+          "type": "card",
+          "settings": {
+            "title": "Devices That Deliver",
+            "text": "Considered beauty devices for the routines and results you care about.",
+            "link_label": "Discover devices",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["card-1", "card-2", "card-3"],
-      "settings": { "kicker": "The LumaForm difference", "heading": "Thoughtfully Selected for <span>Modern Routines</span>", "text": "From everyday beauty rituals to professional-grade devices, discover considered essentials selected to complement the way you live." }
+      "block_order": [
+        "card-1",
+        "card-2",
+        "card-3"
+      ],
+      "settings": {
+        "kicker": "The LumaForm difference",
+        "heading": "Thoughtfully Selected for <span>Modern Routines</span>",
+        "text": "From everyday beauty rituals to professional-grade devices, discover considered essentials selected to complement the way you live."
+      }
     },
-    "bestsellers": { "type": "featured-products", "settings": { "kicker": "Customer favourites", "heading": "Our <span>Best Sellers</span>", "text": "Discover popular picks from across our beauty tools and devices - thoughtfully selected for modern routines.", "columns": 4, "limit": 8, "badge_label": "Best seller", "button_style": "filled", "button_label": "Choose options", "tone": "ivory", "view_all_label": "View all best sellers" } },
-    "trending": { "type": "featured-products", "settings": { "kicker": "Freshly curated", "heading": "Trending <span>Now</span>", "text": "Discover fresh finds across beauty tools and devices - thoughtfully selected for modern everyday living.", "columns": 4, "limit": 8, "badge_label": "Trending", "show_vendor": true, "button_style": "filled", "button_label": "Choose options", "tone": "blush", "view_all_label": "Explore trending finds" } },
-    "devices": { "type": "featured-products", "settings": { "kicker": "Smarter everyday beauty", "heading": "Smart Devices for <span>Modern Routines</span>", "text": "Powered beauty devices and precision tools designed to make modern routines simpler, smarter and more convenient.", "columns": 4, "limit": 4, "badge_label": "Smart pick", "show_vendor": true, "show_arrow": true, "button_style": "outline", "button_label": "View product", "tone": "blush", "view_all_label": "Explore beauty devices" } },
-    "value-edit": { "type": "value-edit", "settings": { "kicker": "Affordable finds / curated by LumaForm", "heading": "Great Finds <span>Under $20</span>", "text": "Discover thoughtfully selected beauty tools and everyday essentials - all priced under $20.", "badge_label": "Under $20", "view_all_label": "Shop all under $20" } },
+    "bestsellers": {
+      "type": "featured-products",
+      "settings": {
+        "kicker": "Customer favourites",
+        "heading": "Our <span>Best Sellers</span>",
+        "text": "Discover popular picks from across our beauty tools and devices - thoughtfully selected for modern routines.",
+        "collection": "",
+        "columns": 4,
+        "limit": 8,
+        "badge_label": "Best seller",
+        "show_vendor": false,
+        "show_arrow": false,
+        "button_style": "filled",
+        "button_label": "Choose options",
+        "tone": "ivory",
+        "view_all_label": "View all best sellers",
+        "view_all_link": ""
+      }
+    },
+    "trending": {
+      "type": "featured-products",
+      "settings": {
+        "kicker": "Freshly curated",
+        "heading": "Trending <span>Now</span>",
+        "text": "Discover fresh finds across beauty tools and devices - thoughtfully selected for modern everyday living.",
+        "collection": "",
+        "columns": 4,
+        "limit": 8,
+        "badge_label": "Trending",
+        "show_vendor": true,
+        "show_arrow": false,
+        "button_style": "filled",
+        "button_label": "Choose options",
+        "tone": "blush",
+        "view_all_label": "Explore trending finds",
+        "view_all_link": ""
+      }
+    },
+    "devices": {
+      "type": "featured-products",
+      "settings": {
+        "kicker": "Smarter everyday beauty",
+        "heading": "Smart Devices for <span>Modern Routines</span>",
+        "text": "Powered beauty devices and precision tools designed to make modern routines simpler, smarter and more convenient.",
+        "collection": "",
+        "columns": 4,
+        "limit": 4,
+        "badge_label": "Smart pick",
+        "show_vendor": true,
+        "show_arrow": true,
+        "button_style": "outline",
+        "button_label": "View product",
+        "tone": "blush",
+        "view_all_label": "Explore beauty devices",
+        "view_all_link": ""
+      }
+    },
+    "value-edit": {
+      "type": "value-edit",
+      "settings": {
+        "kicker": "Affordable finds / curated by LumaForm",
+        "heading": "Great Finds <span>Under $20</span>",
+        "text": "Discover thoughtfully selected beauty tools and everyday essentials - all priced under $20.",
+        "collection": "",
+        "badge_label": "Under $20",
+        "view_all_label": "Shop all under $20",
+        "view_all_link": ""
+      }
+    },
     "reviews": {
       "type": "reviews",
       "blocks": {
-        "rev-1": { "type": "review", "settings": { "title": "Beauty Tools", "text": "Real customer feedback about beauty tools and devices can be displayed here once verified reviews are available." } },
-        "rev-2": { "type": "review", "settings": { "title": "Skincare Devices", "text": "Use this card for genuine feedback on facial and skincare devices collected through your review system." } },
-        "rev-3": { "type": "review", "settings": { "title": "Service & Delivery", "text": "Verified comments about ordering, delivery and customer support can be featured here to strengthen shopper confidence." } }
+        "rev-1": {
+          "type": "review",
+          "settings": {
+            "title": "Beauty Tools",
+            "text": "Real customer feedback about beauty tools and devices can be displayed here once verified reviews are available."
+          }
+        },
+        "rev-2": {
+          "type": "review",
+          "settings": {
+            "title": "Skincare Devices",
+            "text": "Use this card for genuine feedback on facial and skincare devices collected through your review system."
+          }
+        },
+        "rev-3": {
+          "type": "review",
+          "settings": {
+            "title": "Service & Delivery",
+            "text": "Verified comments about ordering, delivery and customer support can be featured here to strengthen shopper confidence."
+          }
+        }
       },
-      "block_order": ["rev-1", "rev-2", "rev-3"],
-      "settings": { "kicker": "Customer experiences", "heading": "Loved by <span>Our Customers</span>", "text": "Genuine feedback helps shoppers discover LumaForm with confidence. Verified customer reviews will appear here as they are collected." }
+      "block_order": [
+        "rev-1",
+        "rev-2",
+        "rev-3"
+      ],
+      "settings": {
+        "kicker": "Customer experiences",
+        "heading": "Loved by <span>Our Customers</span>",
+        "text": "Genuine feedback helps shoppers discover LumaForm with confidence. Verified customer reviews will appear here as they are collected."
+      }
     },
     "trust-section": {
       "type": "trust-section",
       "blocks": {
-        "item-1": { "type": "item", "settings": { "icon": "\u2713", "title": "Thoughtfully Selected", "text": "Beauty tools and everyday essentials chosen with care." } },
-        "item-2": { "type": "item", "settings": { "icon": "\u25C7", "title": "Secure Checkout", "text": "A protected payment experience through trusted checkout methods." } },
-        "item-3": { "type": "item", "settings": { "icon": "\u2192", "title": "Free US Shipping", "text": "Clear shipping information and delivery details before purchase." } },
-        "item-4": { "type": "item", "settings": { "icon": "\u2726", "title": "Customer Support", "text": "Helpful assistance when you need information about your order." } }
+        "item-1": {
+          "type": "item",
+          "settings": {
+            "icon": "✓",
+            "title": "Thoughtfully Selected",
+            "text": "Beauty tools and everyday essentials chosen with care."
+          }
+        },
+        "item-2": {
+          "type": "item",
+          "settings": {
+            "icon": "◇",
+            "title": "Secure Checkout",
+            "text": "A protected payment experience through trusted checkout methods."
+          }
+        },
+        "item-3": {
+          "type": "item",
+          "settings": {
+            "icon": "→",
+            "title": "Free US Shipping",
+            "text": "Clear shipping information and delivery details before purchase."
+          }
+        },
+        "item-4": {
+          "type": "item",
+          "settings": {
+            "icon": "✦",
+            "title": "Customer Support",
+            "text": "Helpful assistance when you need information about your order."
+          }
+        }
       },
-      "block_order": ["item-1", "item-2", "item-3", "item-4"],
-      "settings": { "kicker": "A more confident way to shop", "heading": "Shop With <span>Confidence</span>", "text": "Thoughtfully selected products, clear delivery information and secure checkout support from browsing through to delivery.", "newsletter_kicker": "Join the LumaForm Edit", "newsletter_heading": "Beauty tools and new finds, delivered to your inbox." }
+      "block_order": [
+        "item-1",
+        "item-2",
+        "item-3",
+        "item-4"
+      ],
+      "settings": {
+        "kicker": "A more confident way to shop",
+        "heading": "Shop With <span>Confidence</span>",
+        "text": "Thoughtfully selected products, clear delivery information and secure checkout support from browsing through to delivery.",
+        "newsletter_kicker": "Join the LumaForm Edit",
+        "newsletter_heading": "Beauty tools and new finds, delivered to your inbox."
+      }
     }
   },
-  "order": ["hero", "trust", "categories", "editorial", "bestsellers", "trending", "devices", "value-edit", "reviews", "trust-section"]
+  "order": [
+    "hero",
+    "trust",
+    "categories",
+    "editorial",
+    "bestsellers",
+    "trending",
+    "devices",
+    "value-edit",
+    "reviews",
+    "trust-section"
+  ]
 }

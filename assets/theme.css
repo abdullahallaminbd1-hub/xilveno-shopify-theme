@@ -510,3 +510,38 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
 @media(max-width:749px){
   :root{--lf-home-pad:16px;}
 }
+
+
+/* ---------- header only: centre the whole header in a wide box ----------
+   The header (logo row + nav row) becomes one centred box with visible
+   whitespace either side instead of stretching edge to edge. Height,
+   colours, typography, sticky behaviour and every click target are
+   untouched, and it returns to full width on small screens.
+   Change --lf-header-box to make the box wider or narrower. */
+:root{
+  --lf-header-box:1280px; /* outer width of the centred header box */
+  --lf-header-pad:20px;   /* inner left/right padding inside the box  */
+}
+.lf-header{
+  width:100%;
+  max-width:var(--lf-header-box);
+  margin-left:auto;
+  margin-right:auto;
+  border-left:1px solid var(--line-rose);
+  border-right:1px solid var(--line-rose);
+}
+.lf-header__bar{
+  padding-left:var(--lf-header-pad);
+  padding-right:var(--lf-header-pad);
+}
+.lf-header__menu-list{
+  gap:20px; /* keeps all 9 links on one line inside the narrower box */
+}
+@media(max-width:749px){
+  :root{--lf-header-pad:16px;}
+  .lf-header{
+    max-width:100%;
+    border-left:0;
+    border-right:0;
+  }
+}

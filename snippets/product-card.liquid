@@ -20,13 +20,26 @@
       {%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}
     </div>
     <div class="lf-product-card__actions">
-      {%- assign single_variant = product.variants.first -%}
-      {%- if product.available and product.variants.size == 1 and button_label == 'Add to cart' -%}
-        <button type="button" class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" data-quick-add="{{ single_variant.id }}">{{ button_label }}</button>
+      {%- comment -%}
+        Quick add (homepage cards): resolve one safe, purchasable variant.
+        Shopify picks the selected variant when it is available, otherwise the
+        first available variant, otherwise nil (never an unavailable variant).
+      {%- endcomment -%}
+      {%- assign card_variant = product.selected_or_first_available_variant -%}
+      {%- if card_variant and card_variant.available == false -%}{%- assign card_variant = nil -%}{%- endif -%}
+      {%- assign card_label = button_label | default: 'Add to cart' -%}
+      {%- if quick_add -%}
+        {%- if card_variant -%}
+          <button type="button" class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" data-quick-add="{{ card_variant.id }}" data-quick-add-label="{{ card_label }}">{{ card_label }}</button>
+        {%- else -%}
+          <button type="button" class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" disabled aria-disabled="true">Sold out</button>
+        {%- endif -%}
+      {%- elsif product.available and card_variant and product.variants.size == 1 and button_label == 'Add to cart' -%}
+        <button type="button" class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" data-quick-add="{{ card_variant.id }}" data-quick-add-label="{{ button_label }}">{{ button_label }}</button>
       {%- else -%}
         <a class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" href="{{ product.url }}">{{ button_label | default: 'Choose options' }}</a>
       {%- endif -%}
-      <a class="lf-card-view" href="{{ product.url }}">View details <span aria-hidden="true">→</span></a>
+      {%- unless hide_view_details -%}<a class="lf-card-view" href="{{ product.url }}">View details <span aria-hidden="true">→</span></a>{%- endunless -%}
     </div>
   </div>
 </article>

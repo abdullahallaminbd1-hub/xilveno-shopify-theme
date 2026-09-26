@@ -49,7 +49,9 @@
         "slide-3"
       ],
       "settings": {
-        "autoplay": 6
+        "autoplay": 6,
+        "height_desktop": 0,
+        "height_mobile": 0
       }
     },
     "trust": {
@@ -186,7 +188,7 @@
         "show_vendor": false,
         "show_arrow": false,
         "button_style": "filled",
-        "button_label": "Choose options",
+        "button_label": "Add to cart",
         "tone": "ivory",
         "view_all_label": "View all best sellers",
         "view_all_link": ""
@@ -205,7 +207,7 @@
         "show_vendor": true,
         "show_arrow": false,
         "button_style": "filled",
-        "button_label": "Choose options",
+        "button_label": "Add to cart",
         "tone": "blush",
         "view_all_label": "Explore trending finds",
         "view_all_link": ""
@@ -224,7 +226,7 @@
         "show_vendor": true,
         "show_arrow": true,
         "button_style": "outline",
-        "button_label": "View product",
+        "button_label": "Add to cart",
         "tone": "blush",
         "view_all_label": "Explore beauty devices",
         "view_all_link": ""
@@ -238,6 +240,8 @@
         "text": "Discover thoughtfully selected beauty tools and everyday essentials - all priced under $20.",
         "collection": "",
         "badge_label": "Under $20",
+        "button_label": "Add to cart",
+        "button_style": "filled",
         "view_all_label": "Shop all under $20",
         "view_all_link": ""
       }

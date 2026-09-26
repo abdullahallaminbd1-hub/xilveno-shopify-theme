@@ -14,6 +14,8 @@
     "color_accent": "#7A4B50",
     "color_sand": "#FAF7F3",
     "contact_email": "support@lumaform.com",
+    "hero_height_desktop": 620,
+    "hero_height_mobile": 480,
     "instagram_url": "",
     "tiktok_url": "",
     "facebook_url": ""

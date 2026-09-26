@@ -1,4 +1,12 @@
-<section class="lf-hero" data-slideshow data-autoplay="{{ section.settings.autoplay }}">
+{%- comment -%}
+  Hero height resolution: the section range overrides the theme-wide value.
+  A value of 0 (or an unset section setting) falls back to Theme settings.
+{%- endcomment -%}
+{%- assign hero_height_desktop = settings.hero_height_desktop | default: 620 -%}
+{%- assign hero_height_mobile = settings.hero_height_mobile | default: 480 -%}
+{%- if section.settings.height_desktop > 0 -%}{%- assign hero_height_desktop = section.settings.height_desktop -%}{%- endif -%}
+{%- if section.settings.height_mobile > 0 -%}{%- assign hero_height_mobile = section.settings.height_mobile -%}{%- endif -%}
+<section class="lf-hero" data-slideshow data-autoplay="{{ section.settings.autoplay }}" style="--lf-hero-height:{{ hero_height_desktop }}px;--lf-hero-height-mobile:{{ hero_height_mobile }}px;">
   <div class="lf-hero__slides">
     {%- if section.blocks.size > 0 -%}
       {%- for block in section.blocks -%}
@@ -51,7 +59,10 @@
 {
   "name": "Hero slideshow",
   "settings": [
-    {"type":"range","id":"autoplay","label":"Slide duration (seconds)","min":3,"max":10,"step":1,"unit":"s","default":6}
+    {"type":"range","id":"autoplay","label":"Slide duration (seconds)","min":3,"max":10,"step":1,"unit":"s","default":6},
+    {"type":"header","content":"Hero height"},
+    {"type":"range","id":"height_desktop","label":"Desktop height override","info":"Set to 0 to use the theme-wide Desktop Hero Height setting.","min":0,"max":900,"step":10,"unit":"px","default":0},
+    {"type":"range","id":"height_mobile","label":"Mobile height override","info":"Set to 0 to use the theme-wide Mobile Hero Height setting.","min":0,"max":760,"step":10,"unit":"px","default":0}
   ],
   "blocks": [
     {

@@ -9,7 +9,7 @@
     <div class="lf-product-grid lf-product-grid--4">
       {%- if value_collection.products.size > 0 -%}
         {%- for product in value_collection.products limit: 4 -%}
-          {%- render 'product-card', product: product, badge: section.settings.badge_label, button_label: 'Shop this find', button_style: 'filled', show_vendor: true, show_note: false, arrow: true -%}
+          {%- render 'product-card', product: product, badge: section.settings.badge_label, button_label: section.settings.button_label, button_style: section.settings.button_style, show_vendor: true, show_note: false, arrow: true, quick_add: true, hide_view_details: true -%}
         {%- endfor -%}
       {%- else -%}
         {%- for i in (1..4) -%}
@@ -24,7 +24,7 @@
               <h3 class="lf-product-card__title"><a href="{{ routes.all_products_collection_url }}">{% case i %}{% when 1 %}Precision facial roller{% when 2 %}Cooling ice globes{% when 3 %}LED face mask brush{% else %}Gua sha sculpting stone{% endcase %}</a></h3>
               <div class="lf-product-card__price">${{ i | plus: 9 }}.99</div>
               <div class="lf-product-card__actions">
-                <a class="lf-card-btn lf-card-btn--filled" href="{{ routes.all_products_collection_url }}">Shop this find <span aria-hidden="true">→</span></a>
+                <a class="lf-card-btn lf-card-btn--{{ section.settings.button_style | default: 'filled' }}" href="{{ routes.all_products_collection_url }}">{{ section.settings.button_label | default: 'Add to cart' }}</a>
               </div>
             </div>
           </article>
@@ -45,6 +45,8 @@
     {"type":"textarea","id":"text","label":"Text","default":"Discover thoughtfully selected beauty tools and everyday essentials — all priced under $20."},
     {"type":"collection","id":"collection","label":"Collection"},
     {"type":"text","id":"badge_label","label":"Badge label","default":"Under $20"},
+    {"type":"text","id":"button_label","label":"Card button label","default":"Add to cart"},
+    {"type":"select","id":"button_style","label":"Card button style","options":[{"value":"filled","label":"Filled"},{"value":"outline","label":"Outline"}],"default":"filled"},
     {"type":"text","id":"view_all_label","label":"View all label","default":"Shop all under $20"},
     {"type":"url","id":"view_all_link","label":"View all link"}
   ],

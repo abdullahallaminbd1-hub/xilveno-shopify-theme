@@ -7,6 +7,11 @@
     {"type":"color","id":"color_sand","label":"Warm background","default":"#FAF7F3"},
     {"type":"text","id":"contact_email","label":"Contact email","default":"support@lumaform.com"}
   ]},
+  {"name":"Hero","settings":[
+    {"type":"header","content":"Homepage hero height"},
+    {"type":"range","id":"hero_height_desktop","label":"Desktop Hero Height","info":"Height of the homepage hero on screens wider than 989px.","min":400,"max":900,"step":10,"unit":"px","default":620},
+    {"type":"range","id":"hero_height_mobile","label":"Mobile Hero Height","info":"Height of the homepage hero on mobile and tablet screens (up to 989px).","min":320,"max":760,"step":10,"unit":"px","default":480}
+  ]},
   {"name":"Social","settings":[
     {"type":"url","id":"instagram_url","label":"Instagram URL"},
     {"type":"url","id":"tiktok_url","label":"TikTok URL"},

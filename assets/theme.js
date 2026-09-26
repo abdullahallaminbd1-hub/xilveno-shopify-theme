@@ -193,18 +193,6 @@
     qsa('[data-cart-count]').forEach(function (el) { el.textContent = count; });
   };
 
-  var refreshDrawer = function () {
-    if (!cartDrawer) { return Promise.resolve(); }
-    return fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-      .then(function (r) { return r.text(); })
-      .then(function (html) {
-        var parsed = new DOMParser().parseFromString(html, 'text/html');
-        var fresh = parsed.querySelector('[data-cart-drawer]');
-        if (fresh) { cartDrawer.innerHTML = fresh.innerHTML; }
-      })
-      .catch(function () { /* keep the current drawer markup when the request fails */ });
-  };
-
   var postCart = function (url, payload) {
     return fetch(url, {
       method: 'POST',
@@ -213,13 +201,65 @@
     });
   };
 
-  var flash = function (button, message, restore) {
+  var restoreButton = function (button, html) {
     if (!button) { return; }
-    var original = button.innerHTML;
+    button.innerHTML = html;
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+  };
+
+  var flashButton = function (button, message, html) {
+    if (!button) { return; }
     button.textContent = message;
-    button.disabled = true;
-    window.setTimeout(function () { button.innerHTML = original; button.disabled = false; }, 1600);
-    void restore;
+    window.setTimeout(function () { restoreButton(button, html); }, 1800);
+  };
+
+  /* the drawer markup is replaced after every cart update, so the listeners
+     inside it are re-bound on the fresh nodes */
+  var bindDrawerInternals = function () {
+    var form = qs('[data-discount-form]');
+    if (form && !form.hasAttribute('data-bound')) {
+      form.setAttribute('data-bound', 'true');
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var input = qs('input[name="discount"]', form);
+        var note = qs('[data-discount-note]');
+        var code = input ? input.value.trim() : '';
+        if (!code) { if (note) { note.textContent = 'Enter a discount code first.'; } return; }
+        postCart('/cart/update.js', { discount: code })
+          .then(function (r) { if (!r.ok) { throw new Error('discount failed'); } return getCart(); })
+          .then(function (cart) {
+            if (note) { note.textContent = code + ' applied to your order.'; }
+            paintCount(cart.item_count);
+            return refreshDrawer();
+          })
+          .catch(function () { if (note) { note.textContent = 'That code could not be applied. Please try again.'; } });
+      });
+    }
+    var giftBox = qs('[data-gift-choices]');
+    if (giftBox && !giftBox.hasAttribute('data-bound')) {
+      giftBox.setAttribute('data-bound', 'true');
+      giftBox.addEventListener('click', function (event) {
+        var choice = event.target.closest('[data-gift-choice]');
+        if (!choice) { return; }
+        var status = qs('[data-gift-status]');
+        if (status) { status.textContent = choice.getAttribute('data-gift-choice') + ' will be added as your complimentary gift.'; }
+        giftBox.setAttribute('data-gift-selected', choice.getAttribute('data-gift-choice'));
+      });
+    }
+  };
+
+  var refreshDrawer = function () {
+    if (!cartDrawer) { return Promise.resolve(); }
+    return fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        var parsed = new DOMParser().parseFromString(html, 'text/html');
+        var fresh = parsed.querySelector('[data-cart-drawer]');
+        if (fresh) { cartDrawer.innerHTML = fresh.innerHTML; }
+        bindDrawerInternals();
+      })
+      .catch(function () { /* keep the current drawer markup when the request fails */ });
   };
 
   /* ---------- quick add / quantity / remove (delegated) ---------- */
@@ -228,28 +268,33 @@
     if (quickAdd) {
       event.preventDefault();
       var variantId = quickAdd.getAttribute('data-quick-add');
-      if (!variantId) { return; }
-      quickAdd.textContent = 'Adding...';
+      if (!variantId || quickAdd.disabled) { return; }
+      var originalHtml = quickAdd.innerHTML;
+      quickAdd.setAttribute('aria-busy', 'true');
       quickAdd.disabled = true;
-      postCart('/cart/add.js', { items: [{ id: Number(variantId), quantity: 1 }] })
+      quickAdd.textContent = 'Adding...';
+      postCart('/cart/add.js', { items: [{ id: variantId, quantity: 1 }] })
         .then(function (r) { if (!r.ok) { throw new Error('add failed'); } return getCart(); })
         .then(function (cart) {
           paintCount(cart.item_count);
+          /* open the side cart straight away, then refresh its contents - no navigation */
+          setDrawer(true);
+          restoreButton(quickAdd, originalHtml);
           return refreshDrawer();
         })
-        .then(function () { setDrawer(true); })
-        .catch(function () { flash(quickAdd, 'Try again'); });
+        .catch(function () { flashButton(quickAdd, 'Unavailable', originalHtml); });
       return;
     }
 
     var change = event.target.closest('[data-cart-change]');
     if (change) {
       event.preventDefault();
-      var line = Number(change.getAttribute('data-line'));
-      var quantity = Math.max(0, Number(change.getAttribute('data-quantity')));
+      var line = change.getAttribute('data-line');
+      var quantity = Math.max(0, parseInt(change.getAttribute('data-quantity'), 10) || 0);
+      if (!line) { return; }
       change.disabled = true;
       postCart('/cart/change.js', { line: line, quantity: quantity })
-        .then(function () { return getCart(); })
+        .then(function (r) { if (!r.ok) { throw new Error('change failed'); } return getCart(); })
         .then(function (cart) { paintCount(cart.item_count); return refreshDrawer(); })
         .catch(function () { change.disabled = false; });
       return;
@@ -258,7 +303,11 @@
     var remove = event.target.closest('[data-remove-item]');
     if (remove) {
       event.preventDefault();
-      fetch(remove.getAttribute('href'), { headers: { Accept: 'application/json' } })
+      var removeLine = remove.getAttribute('data-line');
+      var removeRequest = removeLine
+        ? postCart('/cart/change.js', { line: removeLine, quantity: 0 })
+        : fetch(remove.getAttribute('href'), { headers: { Accept: 'application/json' } });
+      removeRequest
         .then(function () { return getCart(); })
         .then(function (cart) { paintCount(cart.item_count); return refreshDrawer(); })
         .catch(function () { /* item stays in the drawer until the page reloads */ });
@@ -269,4 +318,6 @@
   window.addEventListener('pageshow', function (event) {
     if (event.persisted) { refreshDrawer(); }
   });
+
+  bindDrawerInternals();
 }());

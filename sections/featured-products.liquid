@@ -10,7 +10,7 @@
     <div class="lf-product-grid lf-product-grid--{{ section.settings.columns }}">
       {%- if grid_collection.products.size > 0 -%}
         {%- for product in grid_collection.products limit: section.settings.limit -%}
-          {%- render 'product-card', product: product, badge: section.settings.badge_label, button_label: section.settings.button_label, button_style: section.settings.button_style, show_vendor: section.settings.show_vendor, show_note: true, arrow: section.settings.show_arrow -%}
+          {%- render 'product-card', product: product, badge: section.settings.badge_label, button_label: section.settings.button_label, button_style: section.settings.button_style, show_vendor: section.settings.show_vendor, show_note: true, arrow: section.settings.show_arrow, quick_add: true, hide_view_details: true -%}
         {%- endfor -%}
       {%- else -%}
         {%- for i in (1..4) -%}
@@ -26,8 +26,7 @@
               <span class="lf-product-card__note">Thoughtfully selected</span>
               <div class="lf-product-card__price">${{ i | plus: 17 }}.00</div>
               <div class="lf-product-card__actions">
-                <a class="lf-card-btn lf-card-btn--{{ section.settings.button_style }}" href="{{ routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
-                <a class="lf-card-view" href="{{ routes.all_products_collection_url }}">View details <span aria-hidden="true">→</span></a>
+                <a class="lf-card-btn lf-card-btn--{{ section.settings.button_style }}" href="{{ routes.all_products_collection_url }}">{{ section.settings.button_label | default: 'Add to cart' }}</a>
               </div>
             </div>
           </article>
@@ -56,7 +55,7 @@
     {"type":"checkbox","id":"show_vendor","label":"Show vendor label","default":false},
     {"type":"checkbox","id":"show_arrow","label":"Show corner arrow","default":false},
     {"type":"select","id":"button_style","label":"Card button style","options":[{"value":"filled","label":"Filled"},{"value":"outline","label":"Outline"}],"default":"filled"},
-    {"type":"text","id":"button_label","label":"Card button label","default":"Choose options"},
+    {"type":"text","id":"button_label","label":"Card button label","default":"Add to cart"},
     {"type":"select","id":"tone","label":"Background tone","options":[{"value":"plain","label":"White"},{"value":"ivory","label":"Ivory"},{"value":"blush","label":"Blush"}],"default":"ivory"},
     {"type":"text","id":"view_all_label","label":"View all label","default":"View all best sellers"},
     {"type":"url","id":"view_all_link","label":"View all link"}

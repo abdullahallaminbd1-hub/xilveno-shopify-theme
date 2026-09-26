@@ -1,1 +1,52 @@
-<section class="reviews"><div class="section-heading"><div><span class="eyebrow">Customer experiences</span><h2>Loved by our customers.</h2></div><div class="review-stars">★★★★★ <span>Verified feedback area</span></div></div><div class="review-grid"><blockquote>“Verified customer reviews will appear here as they are collected.”<cite>Beauty &amp; Skincare / Verified buyer</cite></blockquote><blockquote>“Real customer feedback about lifestyle, home, and everyday products can be displayed here.”<cite>Home &amp; Lifestyle / Verified buyer</cite></blockquote><blockquote>“Comments about ordering, delivery, and support can be featured here to strengthen confidence.”<cite>Service &amp; Delivery / Verified buyer</cite></blockquote></div></section>
+<section class="lf-reviews" data-reveal-group>
+  <div class="page-width">
+    <div class="lf-section-head">
+      <span class="lf-eyebrow">{{ section.settings.kicker }}</span>
+      <h2 class="lf-section-title">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<p class="lf-section-subtitle">{{ section.settings.text }}</p>{%- endif -%}
+    </div>
+    <div class="lf-reviews__grid">
+      {%- for block in section.blocks -%}
+        <blockquote class="lf-review-card" {{ block.shopify_attributes }} data-reveal>
+          <span class="lf-review-card__stars" aria-label="5 out of 5 stars">★★★★★</span>
+          <span class="lf-review-card__label">Verified review area</span>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.text }}</p>
+          <footer class="lf-review-card__footer">
+            <span class="lf-review-card__source">Customer Review</span>
+            <span class="lf-review-card__verified">Verified buyer</span>
+          </footer>
+        </blockquote>
+      {%- endfor -%}
+    </div>
+    <div class="lf-reviews__proof">
+      <div><span>✓</span><div><strong>Verified Feedback</strong><small>Real reviews only</small></div></div>
+      <div><span>◇</span><div><strong>Secure Checkout</strong><small>Protected payment experience</small></div></div>
+      <div><span>✦</span><div><strong>Thoughtfully Selected</strong><small>Beauty tools &amp; devices</small></div></div>
+      <div><span>→</span><div><strong>Free US Shipping</strong><small>Clear delivery information</small></div></div>
+    </div>
+    <p class="lf-reviews__note">Reviews will be connected to your verified review platform before launch.</p>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Reviews",
+  "settings": [
+    {"type":"text","id":"kicker","label":"Kicker","default":"Customer experiences"},
+    {"type":"text","id":"heading","label":"Heading","default":"Loved by <span>Our Customers</span>"},
+    {"type":"textarea","id":"text","label":"Text","default":"Genuine feedback helps shoppers discover LumaForm with confidence. Verified customer reviews will appear here as they are collected."}
+  ],
+  "blocks": [
+    {"type":"review","name":"Review","settings":[
+      {"type":"text","id":"title","label":"Title","default":"Beauty Tools"},
+      {"type":"textarea","id":"text","label":"Text","default":"Real customer feedback about beauty tools and devices can be displayed here once verified reviews are available."}
+    ]}
+  ],
+  "max_blocks": 6,
+  "presets":[{"name":"Reviews","blocks":[
+    {"type":"review","settings":{"title":"Beauty Tools","text":"Real customer feedback about beauty tools and devices can be displayed here once verified reviews are available."}},
+    {"type":"review","settings":{"title":"Skincare Devices","text":"Use this card for genuine feedback on facial and skincare devices collected through your review system."}},
+    {"type":"review","settings":{"title":"Service & Delivery","text":"Verified comments about ordering, delivery and customer support can be featured here to strengthen shopper confidence."}}
+  ]}]
+}
+{% endschema %}

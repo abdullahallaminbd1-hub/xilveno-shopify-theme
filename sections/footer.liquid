@@ -1,1 +1,63 @@
-<footer class="site-footer"><div class="footer-top"><div><a class="wordmark wordmark--footer" href="{{ routes.root_url }}"><span>Luma</span><i>Form</i></a><p>{{ settings.brand_tagline }}</p><div class="socials"><a href="{{ settings.instagram_url | default: '#' }}">Instagram</a><a href="{{ settings.tiktok_url | default: '#' }}">TikTok</a></div></div><div><span class="footer-label">Shop</span><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="{{ routes.collections_url }}/beauty-essentials">Beauty Essentials</a><a href="{{ routes.collections_url }}/home-lifestyle">Home &amp; Lifestyle</a><a href="{{ routes.collections_url }}/smart-gadgets">Smart Gadgets</a><a href="{{ routes.collections_url }}/pet-essentials">Pet Essentials</a><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a><a href="{{ routes.collections_url }}/under-25">Under $25</a></div><div><span class="footer-label">Customer care</span><a href="/pages/about-us">About Us</a><a href="/pages/contact-us">Contact Us</a><a href="/pages/track-order">Track Your Order</a><a href="/policies/shipping-policy">Shipping Policy</a><a href="/policies/refund-policy">Returns &amp; Refunds</a><a href="/policies/privacy-policy">Privacy Policy</a><a href="/policies/terms-of-service">Terms of Service</a></div></div><div class="footer-bottom"><span>© {{ 'now' | date: '%Y' }} LumaForm</span><span>Beauty tools for modern rituals / United States</span><span>Visa · Mastercard · Amex · Shop Pay</span></div></footer>
+<footer class="lf-footer">
+  <div class="lf-footer__wave" aria-hidden="true"></div>
+  <div class="lf-footer__inner page-width">
+    <div class="lf-footer__grid">
+      <div class="lf-footer__brand">
+        <a class="lf-footer__logo-card" href="{{ routes.root_url }}">
+          <span class="lf-wordmark lf-wordmark--footer">Luma<i>Form</i></span>
+        </a>
+        <p>{{ settings.brand_tagline | default: 'Premium beauty tools and devices thoughtfully selected for modern routines.' }}</p>
+        <div class="lf-footer__social">
+          <a href="{{ settings.instagram_url | default: '#' }}" aria-label="Instagram">Ig</a>
+          <a href="{{ settings.tiktok_url | default: '#' }}" aria-label="TikTok">Tt</a>
+          <a href="{{ settings.facebook_url | default: '#' }}" aria-label="Facebook">Fb</a>
+        </div>
+      </div>
+
+      <div class="lf-footer__column">
+        <span class="lf-footer__label">Shop</span>
+        <a href="{{ routes.collections_url }}/beauty-tools">Beauty Tools</a>
+        <a href="{{ routes.collections_url }}/facial-tools">Facial Tools</a>
+        <a href="{{ routes.collections_url }}/skincare-tools">Skincare Tools</a>
+        <a href="{{ routes.collections_url }}/beauty-devices">Beauty Devices</a>
+        <a href="{{ routes.collections_url }}/hair-tools">Hair Tools</a>
+        <a href="{{ routes.collections_url }}/under-20">Under $20</a>
+      </div>
+
+      <div class="lf-footer__column">
+        <span class="lf-footer__label">Customer Care</span>
+        <a href="{{ routes.root_url }}pages/contact-us">Contact Us</a>
+        <a href="{{ routes.root_url }}pages/track-order">Track Your Order</a>
+        <a href="/policies/shipping-policy">Shipping Policy</a>
+        <a href="/policies/refund-policy">Returns &amp; Refunds</a>
+        <a href="/policies/privacy-policy">Privacy Policy</a>
+        <a href="/policies/terms-of-service">Terms of Service</a>
+      </div>
+
+      <div class="lf-footer__column lf-footer__column--contact">
+        <span class="lf-footer__label">Get In Touch</span>
+        <a href="mailto:{{ settings.contact_email | default: 'support@lumaform.com' }}">✉ {{ settings.contact_email | default: 'support@lumaform.com' }}</a>
+        <span>▣ Customer support available</span>
+        <div class="lf-footer__pay-box">
+          <strong>Secure payment options</strong>
+          <div class="lf-footer__pay-grid">
+            <span>VISA</span><span>MC</span><span>AMEX</span><span>Shop</span><span>G Pay</span><span>Pay</span>
+          </div>
+          <small>Additional supported payment methods may be available at checkout.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="lf-footer__trust">
+      <div><span>◇</span> Secure checkout</div>
+      <div><span>▣</span> Clear delivery information</div>
+      <div><span>↺</span> Returns policy available</div>
+    </div>
+
+    <div class="lf-footer__bottom">
+      <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</span>
+      <span class="lf-footer__bottom-links"><a href="/policies/privacy-policy">Privacy</a> • <a href="/policies/terms-of-service">Terms</a> • <a href="/policies/refund-policy">Returns</a></span>
+    </div>
+  </div>
+</footer>
+{% schema %}{"name":"Footer","settings":[],"presets":[{"name":"Footer"}]}{% endschema %}

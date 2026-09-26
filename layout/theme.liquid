@@ -5,13 +5,30 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="canonical" href="{{ canonical_url }}">
     <title>{{ page_title }}{% unless page_title contains shop.name %} — {{ shop.name }}{% endunless %}</title>
+    {{ 'poppins-400.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
+    {{ 'poppins-600.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
     {{ content_for_header }}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
     <style>
       :root{
-        --ink: {{ settings.color_ink | default: '#25211f' }};
-        --accent: {{ settings.color_accent | default: '#d9755f' }};
-        --sand: {{ settings.color_sand | default: '#f5f0e9' }};
+        --ink: {{ settings.color_ink | default: '#2C2929' }};
+        --accent: {{ settings.color_accent | default: '#7A4B50' }};
+        --sand: {{ settings.color_sand | default: '#FAF7F3' }};
+        --plum: #4A2B33;
+        --plum-deep: #2E1A20;
+        --rose: #C88F96;
+        --rose-soft: #E4B7BC;
+        --blush: #F6ECEC;
+        --blush-soft: #FBF5F4;
+        --ivory: #FBF8F5;
+        --gold: #C9A45C;
+        --charcoal: #2C2929;
+        --muted: #6F6567;
+        --line-rose: rgba(122, 75, 80, .14);
+        --shadow-soft: 0 18px 40px -28px rgba(74, 43, 51, .45);
+        --radius-card: 16px;
+        --font-body: 'Poppins', -apple-system, 'Segoe UI', Arial, sans-serif;
+        --font-accent: Georgia, 'Times New Roman', serif;
       }
     </style>
   </head>

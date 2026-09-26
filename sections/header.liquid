@@ -1,31 +1,100 @@
-<header class="site-header" data-header>
-  <div class="header-top">
-    <div class="header-top__side header-top__side--left">
-      <a class="icon-button" href="{{ routes.search_url }}" aria-label="Search">{% render 'icon', icon: 'search' %}</a>
-      <button class="mobile-menu icon-button" data-menu-open aria-label="Open menu">{% render 'icon', icon: 'menu' %}</button>
+<header class="lf-header" data-header>
+  <div class="lf-header__bar page-width">
+    <div class="lf-header__icons lf-header__icons--left">
+      <button class="lf-header__icon lf-header__icon--menu" data-menu-open aria-label="Menu" aria-expanded="false">
+        {% render 'icon', icon: 'menu' %}
+      </button>
+      <button class="lf-header__icon" data-search-open aria-label="Search">
+        {% render 'icon', icon: 'search' %}
+      </button>
     </div>
-    <a class="wordmark wordmark--center" href="{{ routes.root_url }}"><span>Luma</span><i>Form</i><small>beauty • lifestyle • essentials</small></a>
-    <div class="header-top__side header-top__side--right">
-      <a class="icon-button" href="{{ routes.account_login_url }}" aria-label="Account">{% render 'icon', icon: 'user' %}</a>
-      <button class="icon-button cart-trigger" data-cart-open aria-label="Open cart">{% render 'icon', icon: 'bag' %}<sup data-cart-count>{{ cart.item_count }}</sup></button>
+
+    <a class="lf-header__heading" href="{{ routes.root_url }}" role="heading" aria-level="2">
+      <span class="lf-wordmark">Luma<i>Form</i></span>
+      <span class="lf-wordmark-tag">beauty tools &amp; devices</span>
+    </a>
+
+    <div class="lf-header__icons lf-header__icons--right">
+      <a class="lf-header__icon lf-header__icon--account" href="{{ routes.account_login_url }}" aria-label="Log in">
+        {% render 'icon', icon: 'user' %}
+      </a>
+      <button class="lf-header__icon cart-trigger" data-cart-open aria-label="Open cart">
+        {% render 'icon', icon: 'bag' %}
+        <span class="lf-header__cart-count" data-cart-count>{{ cart.item_count }}</span>
+      </button>
     </div>
   </div>
-  <nav class="desktop-nav" aria-label="Main navigation">
-    <a href="{{ routes.collections_url }}/beauty-essentials">Beauty Essentials</a>
-    <a href="{{ routes.collections_url }}/home-lifestyle">Home &amp; Lifestyle</a>
-    <a href="{{ routes.collections_url }}/smart-gadgets">Smart Gadgets</a>
-    <a href="{{ routes.collections_url }}/pet-essentials">Pet Essentials</a>
-    <a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a>
-    <a href="/pages/about-us">About Us</a>
+
+  <nav class="lf-header__menu" aria-label="Main navigation">
+    <ul class="lf-header__menu-list" role="list">
+      {%- assign menu = linklists[section.settings.menu] -%}
+      {%- if menu.links.size > 0 -%}
+        {%- for link in menu.links -%}
+          <li><a href="{{ link.url }}" {% if link.active or link.child_active %}aria-current="page"{% endif %}>{{ link.title }}</a></li>
+        {%- endfor -%}
+      {%- else -%}
+        <li><a href="{{ routes.collections_url }}/beauty-tools">Beauty Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/facial-tools">Facial Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/skincare-tools">Skincare Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/beauty-devices">Beauty Devices</a></li>
+        <li><a href="{{ routes.collections_url }}/hair-tools">Hair Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/personal-grooming-tools">Personal Grooming Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a></li>
+        <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
+        <li><a href="{{ routes.root_url }}pages/about-us">About Us</a></li>
+      {%- endif -%}
+    </ul>
   </nav>
-  <div class="mobile-nav" data-mobile-nav>
-    <div class="mobile-nav__head"><span class="eyebrow">Explore LumaForm</span><button class="icon-button" data-menu-close aria-label="Close menu">{% render 'icon', icon: 'close' %}</button></div>
-    <a href="{{ routes.collections_url }}/beauty-essentials">Beauty Essentials</a>
-    <a href="{{ routes.collections_url }}/home-lifestyle">Home &amp; Lifestyle</a>
-    <a href="{{ routes.collections_url }}/smart-gadgets">Smart Gadgets</a>
-    <a href="{{ routes.collections_url }}/pet-essentials">Pet Essentials</a>
-    <a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a>
-    <a href="/pages/about-us">About Us</a>
-    <div class="mobile-nav__bottom"><a href="{{ routes.search_url }}">Search</a><a href="{{ routes.account_login_url }}">Account</a></div>
-  </div>
 </header>
+
+<div class="lf-menu-overlay" data-menu-close></div>
+<aside class="lf-menu-drawer" data-menu-drawer aria-hidden="true" aria-label="Menu">
+  <div class="lf-menu-drawer__head">
+    <h3>Menu</h3>
+    <button class="lf-header__icon" data-menu-close aria-label="Close menu">{% render 'icon', icon: 'close' %}</button>
+  </div>
+  <nav class="lf-menu-drawer__nav" aria-label="Mobile navigation">
+    <ul role="list">
+      {%- if menu.links.size > 0 -%}
+        {%- for link in menu.links -%}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {%- endfor -%}
+      {%- else -%}
+        <li><a href="{{ routes.collections_url }}/beauty-tools">Beauty Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/facial-tools">Facial Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/skincare-tools">Skincare Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/beauty-devices">Beauty Devices</a></li>
+        <li><a href="{{ routes.collections_url }}/hair-tools">Hair Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/personal-grooming-tools">Personal Grooming Tools</a></li>
+        <li><a href="{{ routes.collections_url }}/best-sellers">Best Sellers</a></li>
+        <li><a href="{{ routes.collections_url }}/new-arrivals">New Arrivals</a></li>
+        <li><a href="{{ routes.root_url }}pages/about-us">About Us</a></li>
+      {%- endif -%}
+    </ul>
+  </nav>
+  <div class="lf-menu-drawer__utility">
+    <a href="{{ routes.account_login_url }}">{% render 'icon', icon: 'user' %} Log in</a>
+    <a href="{{ routes.search_url }}">{% render 'icon', icon: 'search' %} Search</a>
+  </div>
+</aside>
+
+<div class="lf-search-overlay" data-search-overlay aria-hidden="true">
+  <div class="lf-search-overlay__inner page-width">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="lf-search-form">
+      <input type="search" name="q" placeholder="Search beauty tools &amp; devices" aria-label="Search" autocomplete="off">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="submit" class="button button--accent">Search</button>
+    </form>
+    <button class="lf-header__icon" data-search-close aria-label="Close search">{% render 'icon', icon: 'close' %}</button>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {"type":"link_list","id":"menu","label":"Menu","default":"main-menu"}
+  ],
+  "presets":[{"name":"Header"}]
+}
+{% endschema %}

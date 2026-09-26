@@ -1,13 +1,32 @@
-<article class="product-card">
-  <a class="product-card__media" href="{{ product.url }}">
-    {% if product.featured_image %}{{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '360,540,700', class: 'product-card__image' }}{% else %}<div class="placeholder-media">LF</div>{% endif %}
-    {% if product.compare_at_price > product.price %}<span class="badge">Save</span>{% endif %}
-    <span class="product-card__badge">{% if product.available %}In stock{% else %}Sold out{% endif %}</span>
-    <span class="quick-add" data-quick-add="{{ product.selected_or_first_available_variant.id }}">{% if product.available %}Add to cart{% else %}View options{% endif %} <span>+</span></span>
+<article class="lf-product-card">
+  <a class="lf-product-card__media" href="{{ product.url }}" aria-label="View {{ product.title | escape }}">
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '360,540,800', sizes: '(max-width: 750px) 50vw, 25vw', class: 'lf-product-card__image', alt: product.featured_image.alt | default: product.title }}
+    {%- else -%}
+      <div class="lf-product-card__placeholder">LF</div>
+    {%- endif -%}
+    {%- if badge != blank -%}<span class="lf-badge">{{ badge }}</span>
+    {%- elsif product.compare_at_price > product.price -%}<span class="lf-badge">Sale</span>
+    {%- endif -%}
+    {%- if product.available == false -%}<span class="lf-badge lf-badge--sold">Sold out</span>{%- endif -%}
+    {%- if arrow -%}<span class="lf-card-arrow" aria-hidden="true">↗</span>{%- endif -%}
   </a>
-  <div class="product-card__info">
-    <div class="eyebrow">{{ product.vendor | default: 'LumaForm' }}</div>
-    <h3><a href="{{ product.url }}">{{ product.title }}</a></h3>
-    <div class="product-card__meta"><div class="price">{{ product.price | money }}{% if product.compare_at_price > product.price %}<s>{{ product.compare_at_price | money }}</s>{% endif %}</div><span class="card-arrow">↗</span></div>
+  <div class="lf-product-card__info">
+    {%- if show_vendor -%}<span class="lf-product-card__vendor">{{ product.vendor | default: 'LumaForm' }}</span>{%- endif -%}
+    <h3 class="lf-product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    {%- if show_note -%}<span class="lf-product-card__note">Thoughtfully selected</span>{%- endif -%}
+    <div class="lf-product-card__price">
+      <span>{{ product.price | money }}</span>
+      {%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}
+    </div>
+    <div class="lf-product-card__actions">
+      {%- assign single_variant = product.variants.first -%}
+      {%- if product.available and product.variants.size == 1 and button_label == 'Add to cart' -%}
+        <button type="button" class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" data-quick-add="{{ single_variant.id }}">{{ button_label }}</button>
+      {%- else -%}
+        <a class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" href="{{ product.url }}">{{ button_label | default: 'Choose options' }}</a>
+      {%- endif -%}
+      <a class="lf-card-view" href="{{ product.url }}">View details <span aria-hidden="true">→</span></a>
+    </div>
   </div>
 </article>

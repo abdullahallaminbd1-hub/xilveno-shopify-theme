@@ -1,2 +1,53 @@
-<section class="value-edit"><div class="value-edit__heading"><span class="eyebrow">Affordable finds / curated by LumaForm</span><h2>Great finds<br><em>under $25.</em></h2><p>Discover thoughtfully selected beauty, lifestyle and everyday essentials — all priced under $25.</p><a class="button button--dark" href="{{ routes.all_products_collection_url }}">Shop all under $25 <span>→</span></a></div><div class="value-edit__items"><a class="value-item" href="{{ routes.all_products_collection_url }}"><span class="value-item__number">01</span><div class="mini-art mini-art--rose">✦</div><span class="eyebrow">Under $25 / LumaForm edit</span><strong>Precision facial roller</strong><small>$18.00 &nbsp; →</small></a><a class="value-item" href="{{ routes.all_products_collection_url }}"><span class="value-item__number">02</span><div class="mini-art mini-art--gold">◌</div><span class="eyebrow">Under $25 / LumaForm edit</span><strong>Travel-ready tool set</strong><small>$22.00 &nbsp; →</small></a></div></section>
-{% schema %}{"name":"Value edit","settings":[],"presets":[{"name":"Value edit"}]}{% endschema %}
+{%- assign value_collection = collections[section.settings.collection] -%}
+<section class="lf-value-edit" data-reveal-group>
+  <div class="page-width">
+    <div class="lf-section-head">
+      <span class="lf-eyebrow">{{ section.settings.kicker }}</span>
+      <h2 class="lf-section-title">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<p class="lf-section-subtitle">{{ section.settings.text }}</p>{%- endif -%}
+    </div>
+    <div class="lf-product-grid lf-product-grid--4">
+      {%- if value_collection.products.size > 0 -%}
+        {%- for product in value_collection.products limit: 4 -%}
+          {%- render 'product-card', product: product, badge: section.settings.badge_label, button_label: 'Shop this find', button_style: 'filled', show_vendor: true, show_note: false, arrow: true -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..4) -%}
+          <article class="lf-product-card">
+            <a class="lf-product-card__media" href="{{ routes.all_products_collection_url }}">
+              <div class="lf-product-card__placeholder">{{ i }}</div>
+              <span class="lf-badge">{{ section.settings.badge_label }}</span>
+              <span class="lf-card-arrow" aria-hidden="true">↗</span>
+            </a>
+            <div class="lf-product-card__info">
+              <span class="lf-product-card__vendor">{{ shop.name }} value edit</span>
+              <h3 class="lf-product-card__title"><a href="{{ routes.all_products_collection_url }}">{% case i %}{% when 1 %}Precision facial roller{% when 2 %}Cooling ice globes{% when 3 %}LED face mask brush{% else %}Gua sha sculpting stone{% endcase %}</a></h3>
+              <div class="lf-product-card__price">${{ i | plus: 9 }}.99</div>
+              <div class="lf-product-card__actions">
+                <a class="lf-card-btn lf-card-btn--filled" href="{{ routes.all_products_collection_url }}">Shop this find <span aria-hidden="true">→</span></a>
+              </div>
+            </div>
+          </article>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+    <div class="lf-products__footer">
+      <a class="lf-btn-outline" href="{{ section.settings.view_all_link | default: routes.all_products_collection_url }}">{{ section.settings.view_all_label }} <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Value edit",
+  "settings": [
+    {"type":"text","id":"kicker","label":"Kicker","default":"Affordable finds / curated by LumaForm"},
+    {"type":"text","id":"heading","label":"Heading","default":"Great Finds <span>Under $20</span>"},
+    {"type":"textarea","id":"text","label":"Text","default":"Discover thoughtfully selected beauty tools and everyday essentials — all priced under $20."},
+    {"type":"collection","id":"collection","label":"Collection"},
+    {"type":"text","id":"badge_label","label":"Badge label","default":"Under $20"},
+    {"type":"text","id":"view_all_label","label":"View all label","default":"Shop all under $20"},
+    {"type":"url","id":"view_all_link","label":"View all link"}
+  ],
+  "presets":[{"name":"Value edit"}]
+}
+{% endschema %}

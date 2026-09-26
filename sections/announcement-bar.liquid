@@ -1,1 +1,10 @@
-<div class="announcement" role="region" aria-label="Store announcements"><div class="announcement__track"><span>Welcome to LumaForm — Beauty & Lifestyle, Thoughtfully Curated</span><span>Free Shipping on Qualifying Orders</span><span>30-Day Returns • Secure Checkout • Dedicated Support</span><span>Welcome to LumaForm — Beauty & Lifestyle, Thoughtfully Curated</span><span>Free Shipping on Qualifying Orders</span><span>30-Day Returns • Secure Checkout • Dedicated Support</span></div></div>
+<div class="lf-announcement" role="region" aria-label="Store announcements">
+  <div class="lf-announcement__track">
+    {%- for i in (1..2) -%}
+      <span>Welcome to LumaForm — Beauty Tools &amp; Devices, Thoughtfully Curated</span>
+      <span>Free US Shipping on Qualifying Orders</span>
+      <span>30-Day Returns • Secure Checkout • Dedicated Support</span>
+    {%- endfor -%}
+  </div>
+</div>
+{% schema %}{"name":"Announcement bar","settings":[],"presets":[{"name":"Announcement bar"}]}{% endschema %}

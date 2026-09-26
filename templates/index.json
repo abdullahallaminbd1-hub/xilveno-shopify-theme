@@ -19,8 +19,7 @@
             "heading": "Elevate Your Everyday Beauty",
             "text": "Curated beauty tools and devices designed to bring confidence, simplicity and a refined touch to your everyday routine.",
             "button_label": "Shop beauty tools",
-            "link": "",
-            "image": "shopify://shop_images/dreamcatcher-pendant-necklace_925x_00da1970-b394-4990-9554-50cdb9d31cca.jpg"
+            "link": ""
           }
         },
         "slide-2": {
@@ -30,8 +29,7 @@
             "heading": "Radiance, Made Effortless",
             "text": "Discover thoughtfully selected facial tools and self-care devices for a beautifully simple daily ritual.",
             "button_label": "Explore facial tools",
-            "link": "",
-            "image": "shopify://shop_images/putting-on-your-shoes_925x_e5a1f560-9926-496b-aff3-aaa48b3e9cf3.jpg"
+            "link": ""
           }
         },
         "slide-3": {
@@ -129,7 +127,7 @@
       ],
       "settings": {
         "kicker": "Curated for everyday beauty",
-        "heading": "Explore the <span>LumaForm Collection</span>",
+        "heading": "Explore the LumaForm Collection",
         "text": "Discover beauty tools, facial rituals and everyday essentials thoughtfully selected for modern routines."
       }
     },

@@ -30,6 +30,10 @@
       },
       "footer": {
         "type": "footer",
+        "custom_css": [
+          ".lf-footer {padding-left: 40px;}",
+          ".lf-footer {padding-right: 40px;}"
+        ],
         "settings": {}
       }
     },

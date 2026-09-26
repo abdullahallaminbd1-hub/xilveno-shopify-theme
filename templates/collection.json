@@ -11,6 +11,9 @@
   "sections": {
     "main": {
       "type": "main-collection",
+      "custom_css": [
+        ".collection-page {padding-top: 0px;}"
+      ],
       "settings": {}
     }
   },

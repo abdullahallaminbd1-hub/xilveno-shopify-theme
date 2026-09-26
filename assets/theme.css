@@ -481,3 +481,32 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
   .lf-hero__slide{transition:none;}
   *{scroll-behavior:auto !important;}
 }
+
+/* ---------- homepage: wide, centred content box below the hero ----------
+   The hero stays full-bleed. Every section AFTER it places its headings,
+   text, products and cards inside one wide, centred box so the content
+   never runs edge-to-edge on large screens. Only horizontal rules are
+   used here, so no section height changes.
+   To make the box wider or narrower, change the two variables below. */
+:root{
+  --lf-home-box:1240px; /* outer width of the centred content box */
+  --lf-home-pad:20px;   /* space between the box edge and the content */
+}
+/* trust strip, categories, editorial, product grids, value edit, reviews, trust section */
+.template-index main .page-width{
+  width:100%;
+  max-width:var(--lf-home-box);
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:var(--lf-home-pad);
+  padding-right:var(--lf-home-pad);
+}
+/* any other post-hero homepage section that has no .page-width wrapper */
+.template-index main section:not(.lf-hero):not(:has(.page-width)){
+  max-width:var(--lf-home-box);
+  margin-left:auto;
+  margin-right:auto;
+}
+@media(max-width:749px){
+  :root{--lf-home-pad:16px;}
+}

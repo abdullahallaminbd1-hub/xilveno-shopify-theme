@@ -15,7 +15,7 @@
         "slide-1": {
           "type": "slide",
           "settings": {
-            "kicker": "The LumaForm Edit",
+            "kicker": "The Xilveno Edit",
             "heading": "Elevate Your Everyday Beauty",
             "text": "Curated beauty tools and devices designed to bring confidence, simplicity and a refined touch to your everyday routine.",
             "button_label": "Shop beauty tools",
@@ -129,7 +129,7 @@
       ],
       "settings": {
         "kicker": "Curated for everyday beauty",
-        "heading": "Explore the LumaForm Collection",
+        "heading": "Explore the Xilveno Collection",
         "text": "Discover beauty tools, facial rituals and everyday essentials thoughtfully selected for modern routines."
       }
     },
@@ -170,7 +170,7 @@
         "card-3"
       ],
       "settings": {
-        "kicker": "The LumaForm difference",
+        "kicker": "The Xilveno difference",
         "heading": "Thoughtfully Selected for <span>Modern Routines</span>",
         "text": "From everyday beauty rituals to professional-grade devices, discover considered essentials selected to complement the way you live."
       }
@@ -235,7 +235,7 @@
     "value-edit": {
       "type": "value-edit",
       "settings": {
-        "kicker": "Affordable finds / curated by LumaForm",
+        "kicker": "Affordable finds / curated by Xilveno",
         "heading": "Great Finds <span>Under $20</span>",
         "text": "Discover thoughtfully selected beauty tools and everyday essentials - all priced under $20.",
         "collection": "",
@@ -279,7 +279,7 @@
       "settings": {
         "kicker": "Customer experiences",
         "heading": "Loved by Our Customers",
-        "text": "Genuine feedback helps shoppers discover LumaForm with confidence. Verified customer reviews will appear here as they are collected."
+        "text": "Genuine feedback helps shoppers discover Xilveno with confidence. Verified customer reviews will appear here as they are collected."
       }
     },
     "trust-section": {
@@ -328,7 +328,7 @@
         "kicker": "A more confident way to shop",
         "heading": "Shop With <span>Confidence</span>",
         "text": "Thoughtfully selected products, clear delivery information and secure checkout support from browsing through to delivery.",
-        "newsletter_kicker": "Join the LumaForm Edit",
+        "newsletter_kicker": "Join the Xilveno Edit",
         "newsletter_heading": "Beauty tools and new finds, delivered to your inbox."
       }
     }

@@ -95,7 +95,7 @@
 @media(max-width:750px){.product-buy-row{grid-template-columns:1fr}.product-gallery{aspect-ratio:.88}.product-gallery__thumb{width:58px;height:66px}}
 
 /* ============================================================
-   LumaForm V2 layer - plum / rose / blush design system
+   Xilveno V2 layer - plum / rose / blush design system
    ============================================================ */
 :root{
   --plum:#4A2B33; --plum-deep:#2E1A20; --rose:#C88F96; --rose-soft:#E4B7BC;

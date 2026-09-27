@@ -1,4 +1,4 @@
-/* LumaForm product page behaviour: gallery, quantity stepper and offers,
+/* Xilveno product page behaviour: gallery, quantity stepper and offers,
    countdown, order progress, policy accordions and add to cart. */
 (function () {
   'use strict';

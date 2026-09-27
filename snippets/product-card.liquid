@@ -12,7 +12,7 @@
     {%- if arrow -%}<span class="lf-card-arrow" aria-hidden="true">↗</span>{%- endif -%}
   </a>
   <div class="lf-product-card__info">
-    {%- if show_vendor -%}<span class="lf-product-card__vendor">{{ product.vendor | default: 'LumaForm' }}</span>{%- endif -%}
+    {%- if show_vendor -%}<span class="lf-product-card__vendor">{{ product.vendor | default: 'Xilveno' }}</span>{%- endif -%}
     <h3 class="lf-product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {%- if show_note -%}<span class="lf-product-card__note">Thoughtfully selected</span>{%- endif -%}
     <div class="lf-product-card__price">

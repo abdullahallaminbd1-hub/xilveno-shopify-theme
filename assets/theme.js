@@ -1,4 +1,4 @@
-/* LumaForm theme behaviour - V2 */
+/* Xilveno theme behaviour - V2 */
 (function () {
   'use strict';
 

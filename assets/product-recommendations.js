@@ -1,4 +1,4 @@
-/* LumaForm product page: real Shopify product recommendations.
+/* Xilveno product page: real Shopify product recommendations.
 
    A section can only read the `recommendations` object when Shopify renders it
    through /recommendations/products, so the section ships a curated selection

@@ -77,21 +77,21 @@
           "type": "review",
           "settings": {
             "text": "Add verified customer feedback here once your review platform is connected.",
-            "author": "LumaForm customer"
+            "author": "Xilveno customer"
           }
         },
         "review-2": {
           "type": "review",
           "settings": {
             "text": "Add a second verified review block in the theme editor.",
-            "author": "LumaForm customer"
+            "author": "Xilveno customer"
           }
         },
         "review-3": {
           "type": "review",
           "settings": {
             "text": "Add a third verified review block in the theme editor.",
-            "author": "LumaForm customer"
+            "author": "Xilveno customer"
           }
         }
       },
@@ -108,7 +108,7 @@
         "review-3"
       ],
       "settings": {
-        "proof_eyebrow": "The LumaForm edit",
+        "proof_eyebrow": "The Xilveno edit",
         "proof_text": "Thoughtfully selected",
         "rating_value": 5,
         "rating_text": "Verified customer reviews",
@@ -120,7 +120,7 @@
         "show_offer": true,
         "offer_eyebrow": "Limited edit",
         "offer_title": "Exclusive limited-time offer",
-        "offer_text": "A hand-picked LumaForm offer, available for a limited period.",
+        "offer_text": "A hand-picked Xilveno offer, available for a limited period.",
         "timer_seconds": "8119",
         "show_progress": true,
         "shipping_title": "US & international delivery",

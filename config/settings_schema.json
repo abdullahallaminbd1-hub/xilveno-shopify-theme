@@ -1,11 +1,11 @@
 [
-  {"name":"theme_info","theme_name":"LumaForm","theme_version":"1.0.0","theme_author":"LumaForm","theme_documentation_url":"https://example.com","theme_support_url":"https://example.com"},
+  {"name":"theme_info","theme_name":"Xilveno","theme_version":"1.0.0","theme_author":"Xilveno","theme_documentation_url":"https://example.com","theme_support_url":"https://example.com"},
   {"name":"Brand","settings":[
     {"type":"text","id":"brand_tagline","label":"Brand tagline","default":"Premium beauty tools and devices, thoughtfully selected"},
     {"type":"color","id":"color_ink","label":"Ink","default":"#2C2929"},
     {"type":"color","id":"color_accent","label":"Accent","default":"#7A4B50"},
     {"type":"color","id":"color_sand","label":"Warm background","default":"#FAF7F3"},
-    {"type":"text","id":"contact_email","label":"Contact email","default":"support@lumaform.com"}
+    {"type":"text","id":"contact_email","label":"Contact email","default":"support@xilveno.com"}
   ]},
   {"name":"Hero","settings":[
     {"type":"header","content":"Homepage hero height"},

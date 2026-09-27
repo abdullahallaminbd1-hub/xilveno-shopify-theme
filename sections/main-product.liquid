@@ -159,7 +159,9 @@
               {%- assign tier_qty = block.settings.quantity | default: 1 -%}
               {%- assign tier_pct = block.settings.discount | default: 0 | divided_by: 100.0 -%}
               <div class="lf-offer{% if block.settings.featured %} is-featured{% endif %}{% if forloop.first %} is-selected{% endif %}"
-                   data-offer data-quantity="{{ tier_qty }}" data-discount="{{ tier_pct }}" {{ block.shopify_attributes }}>
+                   data-offer data-quantity="{{ tier_qty }}" data-discount="{{ tier_pct }}"
+                   data-discount-code="{% if tier_pct > 0 %}{{ section.settings.bundle_discount_code | escape }}{% endif %}"
+                   {{ block.shopify_attributes }}>
                 <input class="lf-offer__input" type="radio" name="lf-offer-{{ section.id }}" id="lf-offer-{{ section.id }}-{{ block.id }}" value="{{ forloop.index0 }}" data-offer-input{% if forloop.first %} checked{% endif %}>
                 <label class="lf-offer__label" for="lf-offer-{{ section.id }}-{{ block.id }}">
                   {%- if block.settings.badge != blank -%}<span class="lf-offer__badge">{{ block.settings.badge | escape }}</span>{%- endif -%}
@@ -415,6 +417,7 @@
     {"type": "text", "id": "sale_badge", "label": "Sale badge", "default": "Limited price"},
     {"type": "text", "id": "payment_note", "label": "Payment note", "default": "Pay in interest-free instalments at checkout with Shop Pay."},
     {"type": "text", "id": "offers_heading", "label": "Offers heading", "default": "Buy more, save more"},
+    {"type": "text", "id": "bundle_discount_code", "label": "Buy-more discount code", "info": "Create this discount in Shopify Admin (Discounts > Create) as 2% off, limited to the products in this offer, with a minimum quantity of 2. When a discounted offer is selected and added to the cart, the theme applies this code to the real cart so the saving is carried into checkout and the order. Leave blank to keep the offer display-only.", "default": ""},
     {"type": "checkbox", "id": "show_offer", "label": "Show limited-time offer", "default": true},
     {"type": "text", "id": "offer_eyebrow", "label": "Offer eyebrow", "default": "Limited edit"},
     {"type": "text", "id": "offer_title", "label": "Offer title", "default": "Exclusive limited-time offer"},

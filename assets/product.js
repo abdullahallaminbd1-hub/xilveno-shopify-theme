@@ -435,7 +435,58 @@
     });
   }
 
-  /* ---------------- add to cart ---------------- */
+  /* ---------------- add to cart ----------------
+     Shopify's Cart API has no price field: a line item always costs its
+     variant price. The only storefront-side way to make a Buy-more saving
+     real - so it survives into checkout and onto the order - is to apply a
+     genuine discount code to the cart. `codeForOffer` returns the code
+     configured for the selected offer (blank for a no-discount offer, which
+     also clears any code we previously applied). */
+  var codeForOffer = function (offer) {
+    if (!offer) { return ''; }
+    return (offer.getAttribute('data-discount-code') || '').trim();
+  };
+
+  /* the tier that matches the quantity currently in the box, else the
+     explicitly selected one, so the code always follows what is displayed */
+  var activeCode = function () {
+    var tier = tierForQty(readQty());
+    if (!tier) {
+      for (var i = 0; i < offers.length; i++) {
+        var input = qs('[data-offer-input]', offers[i]);
+        if (input && input.checked) { tier = offers[i]; break; }
+      }
+    }
+    return codeForOffer(tier);
+  };
+
+  var postCart = function (payload) {
+    return fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      if (!r.ok) { throw new Error('cart update failed'); }
+      return r.json();
+    });
+  };
+
+  /* Apply (or clear) the bundle code on the real cart. `previous` is the code
+     this page last applied so we only send an update when it actually
+     changes, which keeps a customer's own code untouched. */
+  var appliedCode = '';
+  var syncCartDiscount = function () {
+    var wanted = activeCode();
+    if (wanted === appliedCode) { return Promise.resolve(null); }
+    var next = wanted;
+    var previous = appliedCode;
+    appliedCode = wanted;
+    return postCart({ discount: next }).catch(function () {
+      appliedCode = previous;
+      throw new Error('discount could not be applied');
+    });
+  };
+
   var form = qs('.lf-atc', root);
   var message = qs('[data-atc-message]', root);
   if (form) {
@@ -460,9 +511,13 @@
 
       if (window.LumaCart && typeof window.LumaCart.add === 'function') {
         window.LumaCart.add([{ id: variantId, quantity: qty }])
+          .then(function () { return syncCartDiscount(); })
           .then(function () {
             settle(true, 'Added to your cart.');
             if (message) { window.setTimeout(function () { message.textContent = ''; }, 4000); }
+            /* the drawer totals come from the cart, so refresh it after the
+               discount lands so the customer sees the real saved total */
+            if (window.LumaCart.refresh) { return window.LumaCart.refresh(); }
           })
           .catch(function () { settle(false, 'We could not add that item. Please try again.'); });
         return;
@@ -475,8 +530,9 @@
       })
         .then(function (r) {
           if (!r.ok) { throw new Error('add failed'); }
-          return fetch('/cart.js').then(function (c3) { return c3.json(); });
+          return syncCartDiscount();
         })
+        .then(function () { return fetch('/cart.js').then(function (c3) { return c3.json(); }); })
         .then(function (cart) {
           var count = qs('[data-cart-count]');
           if (count) { count.textContent = String(cart.item_count); }

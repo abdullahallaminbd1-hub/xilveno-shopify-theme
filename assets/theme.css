@@ -132,21 +132,11 @@ body{background:#fff;}
 [data-reveal].is-revealed{opacity:1;transform:none;}
 
 /* ---------- header ----------
-   Smart, direction-based header. The whole main header - the bar with logo,
-   menu, search, account and cart, plus the desktop nav row underneath - is a
-   single sticky block that slides out of view while scrolling down and slides
-   back in on any upward scroll, at any depth on the page. It moves as one
-   unit, so the elements are never separated.
-
-   position:sticky keeps the header in the normal flow, so nothing reflows and
-   there is no layout shift; it is only translated. translate3d keeps the
-   motion on the compositor for a smooth, fast slide. .is-hidden is toggled by
-   theme.js from the scroll direction. The announcement bar above it is a
-   separate section and scrolls away normally. */
-.lf-header{position:sticky;top:0;z-index:60;background:#fff;
-  transition:box-shadow .3s ease,transform .28s cubic-bezier(.4,0,.2,1);
-  will-change:transform;}
-.lf-header.is-hidden{transform:translate3d(0,-100%,0);}
+   A normal, non-sticky header in ordinary document flow. It has no position,
+   no transform and no scroll-driven state, so it simply scrolls up and out of
+   the viewport with the rest of the page, exactly like a standard site header.
+   The announcement bar above it is a separate section and scrolls away with it. */
+.lf-header{background:#fff;}
 .lf-header__bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:var(--header-h);gap:12px;}
 .lf-header__icons{display:flex;align-items:center;gap:6px;}
 .lf-header__icons--right{justify-content:flex-end;}
@@ -650,7 +640,6 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
 @media (prefers-reduced-motion:reduce){
   .lf-announcement__track{animation:none;}
   .lf-footer__wave::before,.lf-footer__wave::after{animation:none;}
-  .lf-header{transition:none;}
   .lf-search-overlay,.lf-search-backdrop{transition:none;}
   [data-reveal]{opacity:1;transform:none;transition:none;}
   .lf-hero__slide{transition:none;}

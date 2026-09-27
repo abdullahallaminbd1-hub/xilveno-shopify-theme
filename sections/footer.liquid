@@ -16,22 +16,30 @@
 
       <div class="lf-footer__column">
         <span class="lf-footer__label">Shop</span>
-        <a href="{{ routes.collections_url }}/beauty-tools">Beauty Tools</a>
-        <a href="{{ routes.collections_url }}/facial-tools">Facial Tools</a>
-        <a href="{{ routes.collections_url }}/skincare-tools">Skincare Tools</a>
-        <a href="{{ routes.collections_url }}/beauty-devices">Beauty Devices</a>
-        <a href="{{ routes.collections_url }}/hair-tools">Hair Tools</a>
-        <a href="{{ routes.collections_url }}/under-20">Under $20</a>
+        {%- if section.settings.menu_shop != blank and section.settings.menu_shop.links.size > 0 -%}
+          {%- for link in section.settings.menu_shop.links -%}<a href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+        {%- else -%}
+          <a href="{{ routes.collections_url }}/beauty-tools">Beauty Tools</a>
+          <a href="{{ routes.collections_url }}/facial-tools">Facial Tools</a>
+          <a href="{{ routes.collections_url }}/skincare-tools">Skincare Tools</a>
+          <a href="{{ routes.collections_url }}/beauty-devices">Beauty Devices</a>
+          <a href="{{ routes.collections_url }}/hair-tools">Hair Tools</a>
+          <a href="{{ routes.collections_url }}/under-20">Under $20</a>
+        {%- endif -%}
       </div>
 
       <div class="lf-footer__column">
         <span class="lf-footer__label">Customer Care</span>
-        <a href="{{ routes.root_url }}pages/contact-us">Contact Us</a>
-        <a href="{{ routes.root_url }}pages/track-order">Track Your Order</a>
-        <a href="/policies/shipping-policy">Shipping Policy</a>
-        <a href="/policies/refund-policy">Returns &amp; Refunds</a>
-        <a href="/policies/privacy-policy">Privacy Policy</a>
-        <a href="/policies/terms-of-service">Terms of Service</a>
+        {%- if section.settings.menu_customer_care != blank and section.settings.menu_customer_care.links.size > 0 -%}
+          {%- for link in section.settings.menu_customer_care.links -%}<a href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+        {%- else -%}
+          <a href="{{ routes.root_url }}pages/contact-us">Contact Us</a>
+          <a href="{{ routes.root_url }}pages/track-order">Track Your Order</a>
+          <a href="/policies/shipping-policy">Shipping Policy</a>
+          <a href="/policies/refund-policy">Returns &amp; Refunds</a>
+          <a href="/policies/privacy-policy">Privacy Policy</a>
+          <a href="/policies/terms-of-service">Terms of Service</a>
+        {%- endif -%}
       </div>
 
       <div class="lf-footer__column lf-footer__column--contact">
@@ -58,4 +66,4 @@
     </div>
   </div>
 </footer>
-{% schema %}{"name":"Footer","settings":[],"presets":[{"name":"Footer"}]}{% endschema %}
+{% schema %}{"name":"Footer","settings":[{"type":"link_list","id":"menu_shop","label":"Shop menu","info":"Optional. Leave empty to use the default collection links."},{"type":"link_list","id":"menu_customer_care","label":"Customer Care menu","info":"Optional. Leave empty to use the default pages and policies."}],"presets":[{"name":"Footer"}]}{% endschema %}

@@ -37,12 +37,7 @@
           ".lf-footer__inner {padding-right: 10px;}",
           ".lf-footer__wave {height: 100px;}",
           ".lf-footer__wave {background: #fbf5f4;}",
-          ".lf-footer__inner {background: #802f47;}",
-          ".lf-footer__trust {background: #943f58;}",
-          ".lf-footer__trust {margin-left: 210px;}",
-          ".lf-footer__trust {margin-right: 210px;}",
-          ".lf-footer__trust {border-radius: 50px;}",
-          ".lf-footer__trust span{text-align: center;}"
+          ".lf-footer__inner {background: #802f47;}"
         ],
         "settings": {
           "menu_shop": "",

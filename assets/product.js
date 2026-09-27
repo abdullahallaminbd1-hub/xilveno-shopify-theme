@@ -397,7 +397,11 @@
     return { qty: qty, off: off, original: original, saving: saving, total: original - saving };
   };
 
-  var syncOffer = function (offer) {
+  /* Price one card from the variant its own select currently points at.
+     This only touches that card's own prices, so every card can be repriced
+     at once when the variant changes without disturbing which tier is
+     selected or what quantity is on show. */
+  var repaintOffer = function (offer) {
     var options = offerOptions(offer);
     var variant = options ? findVariant(options) : variants[0];
     var t = tierTotals(offer, variant);
@@ -409,11 +413,16 @@
       if (t.off > 0) { was.textContent = money(t.original); was.hidden = false; } else { was.textContent = ''; was.hidden = true; }
     }
     if (save) { save.textContent = money(t.saving); }
+    return { variant: variant, totals: t };
+  };
+
+  var syncOffer = function (offer) {
+    var result = repaintOffer(offer);
     if (offersWrap) {
       offers.forEach(function (other) { other.classList.toggle('is-selected', other === offer); });
     }
-    paintQty(t.qty);
-    return { variant: variant, totals: t };
+    paintQty(result.totals.qty);
+    return result;
   };
 
   /* pick a tier: price the card, force the quantity, then repaint the
@@ -432,13 +441,20 @@
       var select = qs('[data-offer-select]', offer);
       if (select) {
         select.addEventListener('change', function () {
+          var value = select.value;
           /* mirror the choice into the other tiers so every card shows one variant */
           offers.forEach(function (other) {
             if (other === offer) { return; }
             var mirror = qs('[data-offer-select]', other);
-            if (mirror) { applyChoice(mirror, select.value); }
+            if (mirror) { applyChoice(mirror, value); }
           });
           if (input) { input.checked = true; }
+          /* reprice the mirrored cards for the variant just chosen, so no price
+             is left showing the variant that was just replaced */
+          offers.forEach(function (other) {
+            if (other === offer) { return; }
+            repaintOffer(other);
+          });
           selectOffer(offer);
         });
       }

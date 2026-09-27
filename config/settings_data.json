@@ -34,7 +34,10 @@
         "type": "footer",
         "custom_css": [
           ".lf-footer__inner {padding-left: 10px;}",
-          ".lf-footer__inner {padding-right: 10px;}"
+          ".lf-footer__inner {padding-right: 10px;}",
+          ".lf-footer__wave {height: 100px;}",
+          ".lf-footer__wave {background: #fbf5f4;}",
+          ".lf-footer__inner {background: #802f47;}"
         ],
         "settings": {
           "menu_shop": "",

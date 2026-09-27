@@ -34,7 +34,10 @@
           ".lf-footer {padding-left: 10px;}",
           ".lf-footer {padding-right: 10px;}"
         ],
-        "settings": {}
+        "settings": {
+          "menu_shop": "",
+          "menu_customer_care": "footer"
+        }
       }
     },
     "content_for_index": [],

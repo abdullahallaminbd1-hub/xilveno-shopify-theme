@@ -33,8 +33,8 @@
       "footer": {
         "type": "footer",
         "custom_css": [
-          ".lf-footer {padding-left: 0px;}",
-          ".lf-footer {padding-right: 0px;}"
+          ".lf-footer__inner {padding-left: 10px;}",
+          ".lf-footer__inner {padding-right: 10px;}"
         ],
         "settings": {
           "menu_shop": "",

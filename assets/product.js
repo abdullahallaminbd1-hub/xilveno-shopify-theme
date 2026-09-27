@@ -132,29 +132,42 @@
   var atcStock = qs('[data-atc-stock]', root);
   var offPctBadge = qs('.lf-pbadge--off', root);
 
-  var paintPrice = function (variant) {
+  var paintPrice = function (variant, bundle) {
     if (!variant) { return; }
     if (variantField) { variantField.value = variant.id; }
-    if (priceCurrent) { priceCurrent.textContent = money(variant.price); }
     var compare = variant.compare_at_price || 0;
-    if (priceCompare) {
-      if (compare > variant.price) {
-        priceCompare.textContent = money(compare);
-        priceCompare.hidden = false;
-      } else {
-        priceCompare.hidden = true;
+    if (bundle) {
+      /* A bundle offer is selected, so the headline price becomes that
+         bundle's discounted total and the crossed price the 2-unit total. */
+      if (priceCurrent) { priceCurrent.textContent = money(bundle.total); }
+      if (priceCompare) { priceCompare.textContent = money(bundle.original); priceCompare.hidden = false; }
+      if (priceSaving) { priceSaving.textContent = 'You save ' + money(bundle.saving); priceSaving.hidden = false; }
+    } else {
+      if (priceCurrent) { priceCurrent.textContent = money(variant.price); }
+      if (priceCompare) {
+        if (compare > variant.price) {
+          priceCompare.textContent = money(compare);
+          priceCompare.hidden = false;
+        } else {
+          priceCompare.hidden = true;
+        }
+      }
+      if (priceSaving) {
+        if (compare > variant.price) {
+          priceSaving.textContent = 'You save ' + money(compare - variant.price);
+          priceSaving.hidden = false;
+        } else {
+          priceSaving.hidden = true;
+        }
       }
     }
-    if (priceSaving) {
-      if (compare > variant.price) {
-        priceSaving.textContent = 'You save ' + money(compare - variant.price);
-        priceSaving.hidden = false;
-      } else {
-        priceSaving.hidden = true;
+    if (offPctBadge) {
+      /* a bundle reports its own saving; otherwise fall back to the variant's */
+      var offFrom = bundle ? bundle.original : compare;
+      var offBy = bundle ? bundle.saving : (compare - variant.price);
+      if (offFrom > 0 && offBy > 0) {
+        offPctBadge.textContent = 'Up to ' + Math.round((offBy / offFrom) * 100) + '% off';
       }
-    }
-    if (offPctBadge && compare > variant.price) {
-      offPctBadge.textContent = 'Up to ' + Math.round(((compare - variant.price) / compare) * 100) + '% off';
     }
     if (atcSubmit) { atcSubmit.disabled = !variant.available; }
     if (atcLabel) { atcLabel.textContent = variant.available ? 'Add to cart' : 'Sold out'; }
@@ -248,8 +261,11 @@
     var tier = tierForQty(next);
     /* a bundle discount only applies while the quantity matches that offer exactly */
     highlightTiers(tier);
-    if (tier) { paintPrice(syncOffer(tier)); return; }
+    if (tier) { selectOffer(tier); return; }
+    /* no bundle at this quantity: repaint the plain single-unit price so a
+       stale bundle total is never left showing next to a different quantity */
     paintQty(next);
+    paintPrice(currentVariant());
   };
 
   if (qtyMinus) { qtyMinus.addEventListener('click', function () { bump(-1); }); }
@@ -297,33 +313,50 @@
     }
   };
 
-  var syncOffer = function (offer) {
-    var options = offerOptions(offer);
-    var variant = options ? findVariant(options) : variants[0];
+  /* the money for one tier: the discount is a percentage of the ORIGINAL
+     bundle total, and the saving is rounded so that
+     total + saving === original to the cent (no rounding drift). */
+  var tierTotals = function (offer, variant) {
     var qty = parseInt(offer.getAttribute('data-quantity'), 10) || 1;
     var off = parseFloat(offer.getAttribute('data-discount')) || 0;
     var unit = variant ? variant.price : 0;
-    var gross = unit * qty;
-    var net = Math.round(gross * (1 - off));
+    var original = unit * qty;
+    var saving = Math.round(original * off);
+    return { qty: qty, off: off, original: original, saving: saving, total: original - saving };
+  };
+
+  var syncOffer = function (offer) {
+    var options = offerOptions(offer);
+    var variant = options ? findVariant(options) : variants[0];
+    var t = tierTotals(offer, variant);
     var amount = qs('[data-offer-price]', offer);
     var was = qs('[data-offer-was]', offer);
     var save = qs('[data-offer-save]', offer);
-    if (amount) { amount.textContent = money(net); }
+    if (amount) { amount.textContent = money(t.total); }
     if (was) {
-      if (off > 0) { was.textContent = money(gross); was.hidden = false; } else { was.textContent = ''; was.hidden = true; }
+      if (t.off > 0) { was.textContent = money(t.original); was.hidden = false; } else { was.textContent = ''; was.hidden = true; }
     }
-    if (save) { save.textContent = money(gross - net); }
+    if (save) { save.textContent = money(t.saving); }
     if (offersWrap) {
       offers.forEach(function (other) { other.classList.toggle('is-selected', other === offer); });
     }
-    paintQty(qty);
-    return variant;
+    paintQty(t.qty);
+    return { variant: variant, totals: t };
+  };
+
+  /* pick a tier: price the card, force the quantity, then repaint the
+     headline price so a discounted bundle is reflected at the top too. */
+  var selectOffer = function (offer) {
+    var result = syncOffer(offer);
+    /* a tier with no discount is just the normal single-unit price */
+    paintPrice(result.variant, result.totals.off > 0 ? result.totals : null);
+    return result.variant;
   };
 
   if (offers.length) {
     offers.forEach(function (offer) {
       var input = qs('[data-offer-input]', offer);
-      if (input) { input.addEventListener('change', function () { paintPrice(syncOffer(offer)); }); }
+      if (input) { input.addEventListener('change', function () { selectOffer(offer); }); }
       var select = qs('[data-offer-select]', offer);
       if (select) {
         select.addEventListener('change', function () {
@@ -334,7 +367,7 @@
             if (mirror) { applyChoice(mirror, select.value); }
           });
           if (input) { input.checked = true; }
-          paintPrice(syncOffer(offer));
+          selectOffer(offer);
         });
       }
     });
@@ -347,8 +380,7 @@
     var active = selectedOffer();
     offers.forEach(function (offer) { syncOffer(offer); });
     offers.forEach(function (other) { other.classList.toggle('is-selected', other === active); });
-    if (active) { syncOffer(active); }
-    paintPrice(active ? syncOffer(active) : variants[0]);
+    if (active) { selectOffer(active); } else { paintPrice(variants[0]); }
     paintQty(readQty());
   } else if (variantField && variants.length) {
     paintPrice(variants[0]);

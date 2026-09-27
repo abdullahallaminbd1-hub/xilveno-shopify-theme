@@ -11,7 +11,7 @@
 {{ 'product.css' | asset_url | stylesheet_tag }}
 {%- assign rec_limit = section.settings.limit | default: 4 -%}
 {%- assign rec_scan = rec_limit | plus: 1 -%}
-<section class="lf-products lf-products--{{ section.settings.tone }}"
+<section class="lf-products lf-products--{{ section.settings.tone }} lf-products--boxed"
          data-recommendations
          data-recommendations-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ rec_limit }}&intent={{ section.settings.intent }}">
   <div class="page-width">

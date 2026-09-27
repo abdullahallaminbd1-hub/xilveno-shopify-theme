@@ -23,6 +23,21 @@
 .lf-product__media{width:55%;max-width:55%;min-width:0;}
 .lf-product__info{width:45%;max-width:45%;min-width:0;padding-left:50px;}
 
+/* ---------- sticky gallery (desktop only) ----------
+   The media column is a flex item, so it can only pin inside the row it
+   shares with the purchase panel. It therefore sticks from the moment the
+   product page reaches the top, travels down while the (much taller)
+   information column scrolls past, and stops on its own at the bottom of
+   that column - the end of the product content. Phones and tablets keep the
+   normal, non-sticky stacked flow. */
+@media (min-width:990px){
+  .lf-product__media{
+    position:sticky;
+    top:calc(var(--header-h, 78px) + 24px);
+    align-self:flex-start;
+  }
+}
+
 /* ---------- gallery ---------- */
 .lf-gallery{position:relative;}
 .lf-gallery__stage{
@@ -645,6 +660,28 @@
 /* ---------- recommendations ---------- */
 .lf-products [data-recommendations-grid]{transition:opacity .25s ease;}
 .lf-products.is-loading [data-recommendations-grid]{opacity:.55;}
+/* "You may also like" is boxed on desktop: only this section gets a centred,
+   capped column so the cards stop running to the screen edges. Phones and
+   tablets keep their existing responsive width, and the product cards
+   themselves are untouched. */
+@media (min-width:990px){
+  .lf-products--boxed{
+    width:100%;
+    max-width:var(--lf-home-box, 1240px);
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:var(--lf-home-pad, 20px);
+    padding-right:var(--lf-home-pad, 20px);
+  }
+  .lf-products--boxed .page-width{
+    width:100%;
+    max-width:none;
+    margin-left:0;
+    margin-right:0;
+    padding-left:0;
+    padding-right:0;
+  }
+}
 .lf-previews{padding-top:20px;padding-bottom:20px;text-align:center;}
 .lf-previews__eyebrow{display:block;font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--rose);}
 .lf-previews__title{margin:10px 0 0;font-size:clamp(26px,3vw,34px);font-weight:700;color:var(--ink);}

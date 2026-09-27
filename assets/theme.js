@@ -160,22 +160,14 @@
     }
   });
 
-  /* ---------- discount code ---------- */
-  document.addEventListener('submit', function (event) {
-    var form = event.target.closest('[data-discount-form]');
-    if (!form) { return; }
-    event.preventDefault();
-    var code = String(new FormData(form).get('discount') || '').trim();
-    var note = qs('[data-discount-note]', form.parentElement || document);
-    var write = function (message) { if (note) { note.textContent = message; note.classList.add('is-visible'); } };
-    if (!code) { write('Please enter a valid discount code.'); return; }
-    fetch('/cart/update.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ attributes: { 'Discount code': code } })
-    }).then(function () { write('Discount code ' + code + ' applied for review at checkout.'); })
-      .catch(function () { write('Discount code saved for checkout review.'); });
-  });
+  /* ---------- discount code ----------
+     The real handler lives in bindDrawerInternals() below, which applies the
+     code with Shopify's supported { discount: code } payload and checks the
+     response. An earlier delegated version of this handler only wrote the code
+     to the cart as an "attribute" (which never applies a discount) and
+     reported success without checking the response, so a rejected code was
+     still announced as applied. It was removed to avoid two handlers racing
+     to write the same message. */
 
   /* ---------- order tracking placeholder ---------- */
   document.addEventListener('submit', function (event) {
@@ -219,13 +211,16 @@
   /* the drawer markup is replaced after every cart update, so the listeners
      inside it are re-bound on the fresh nodes */
   var bindDrawerInternals = function () {
-    var form = qs('[data-discount-form]');
-    if (form && !form.hasAttribute('data-bound')) {
+    /* every discount form is bound, not just the first one, so the cart page
+       and the drawer each apply codes through the same supported flow */
+    qsa('[data-discount-form]').forEach(function (form) {
+      if (form.hasAttribute('data-bound')) { return; }
       form.setAttribute('data-bound', 'true');
       form.addEventListener('submit', function (event) {
         event.preventDefault();
+        var scope = form.parentElement || document;
         var input = qs('input[name="discount"]', form);
-        var note = qs('[data-discount-note]');
+        var note = qs('[data-discount-note]', scope) || qs('[data-discount-note]');
         var code = input ? input.value.trim() : '';
         if (!code) { if (note) { note.textContent = 'Enter a discount code first.'; } return; }
         postCart('/cart/update.js', { discount: code })
@@ -237,7 +232,7 @@
           })
           .catch(function () { if (note) { note.textContent = 'That code could not be applied. Please try again.'; } });
       });
-    }
+    });
     var giftBox = qs('[data-gift-choices]');
     if (giftBox && !giftBox.hasAttribute('data-bound')) {
       giftBox.setAttribute('data-bound', 'true');

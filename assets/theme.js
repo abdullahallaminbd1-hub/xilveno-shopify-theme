@@ -8,54 +8,15 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- header scroll state ----------
-     The header is a smart sticky header: it slides out of view while the
-     customer scrolls down and slides back in as soon as they scroll up.
-     A few guards keep it from flickering:
-       - a dead zone (HIDE_AFTER) so the header never hides right at the top;
-       - a movement threshold, so a couple of stray pixels cannot toggle it;
-       - it always returns when the page is scrolled back to the top;
-       - it stays put while the menu, cart or search overlay is open, because
-         hiding it then would hide the controls needed to close them.
-     Scroll work is throttled to one read per animation frame. */
+     The main header is a single sticky block: CSS keeps it pinned to the top of
+     the viewport on desktop and mobile, so it needs no scroll handling at all
+     and is never translated away. The only thing tracked here is the
+     .is-scrolled flag (once the page has moved past the top), kept exactly as
+     it was before and left for styling hooks. */
   var header = qs('[data-header]');
   if (header) {
-    var lastY = window.pageYOffset;
-    var ticking = false;
-    var HIDE_AFTER = 120;   /* px down before the header may hide */
-    var DELTA = 6;         /* px of travel needed to flip the state */
-
-    var overlayOpen = function () {
-      return body.classList.contains('drawer-open')
-        || body.classList.contains('mobile-nav-open')
-        || body.classList.contains('search-open');
-    };
-
-    var applyHeader = function () {
-      ticking = false;
-      var y = Math.max(0, window.pageYOffset);
-      var delta = y - lastY;
-      lastY = y;
-
-      header.classList.toggle('is-scrolled', y > 8);
-
-      if (y <= HIDE_AFTER || overlayOpen()) {
-        header.classList.remove('is-hidden');
-        return;
-      }
-      if (delta > DELTA) {
-        header.classList.add('is-hidden');
-      } else if (delta < -DELTA) {
-        header.classList.remove('is-hidden');
-      }
-    };
-
-    var onScroll = function () {
-      if (ticking) { return; }
-      ticking = true;
-      window.requestAnimationFrame(applyHeader);
-    };
-
-    applyHeader();
+    var onScroll = function () { header.classList.toggle('is-scrolled', window.pageYOffset > 8); };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 

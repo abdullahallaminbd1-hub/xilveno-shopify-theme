@@ -234,9 +234,10 @@
     },
     "value-edit": {
       "type": "value-edit",
+      "disabled": true,
       "settings": {
         "kicker": "Affordable finds / curated by Xilveno",
-        "heading": "Great Finds <span>Under $20</span>",
+        "heading": "Great Finds Under $20",
         "text": "Discover thoughtfully selected beauty tools and everyday essentials - all priced under $20.",
         "collection": "",
         "badge_label": "Under $20",

@@ -8,15 +8,69 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- header scroll state ----------
-     The main header is a single sticky block: CSS keeps it pinned to the top of
-     the viewport on desktop and mobile, so it needs no scroll handling at all
-     and is never translated away. The only thing tracked here is the
-     .is-scrolled flag (once the page has moved past the top), kept exactly as
-     it was before and left for styling hooks. */
+     Direction-based smart header: the whole main header slides out of view
+     while the customer scrolls down and slides back in as soon as they scroll
+     up, at any depth on the page.
+
+     Travel is accumulated rather than read per event, and that detail matters.
+     Browsers report scroll in small steps - a slow trackpad drag, or a test
+     wheel, can emit a long run of 1px events. Testing each event against a
+     threshold means a run of 1px steps never crosses it, so a "scroll up"
+     would be ignored and the header would stay hidden forever. Counting the
+     pixels in each direction instead makes the behaviour identical whether the
+     customer flicks a wheel or creeps.
+
+     The two directions use different totals on purpose:
+       - hiding needs HIDE_TRAVEL px of accumulated downward travel, so scroll
+         noise and jitter cannot make the header flicker;
+       - showing needs only SHOW_TRAVEL px of upward travel, so the header comes
+         straight back on the very first pixel of upward scrolling, at any depth.
+     The asymmetry is what stops rapid show/hide flapping.
+
+     It is never hidden while the page is at the very top. Overlays lock page
+     scrolling (body overflow:hidden), so it never needs to be held down for
+     them. Scroll work is throttled to one read per animation frame. */
   var header = qs('[data-header]');
   if (header) {
-    var onScroll = function () { header.classList.toggle('is-scrolled', window.pageYOffset > 8); };
-    onScroll();
+    var lastY = window.pageYOffset;
+    var ticking = false;
+    var downTravel = 0;   /* px scrolled down since the header was last shown */
+    var upTravel = 0;     /* px scrolled up since the header was last hidden  */
+    var HIDE_TRAVEL = 5;  /* downward px needed to hide  */
+    var SHOW_TRAVEL = 1;  /* upward px needed to show again */
+
+    var updateHeader = function () {
+      ticking = false;
+      var y = Math.max(0, window.pageYOffset);
+      var delta = y - lastY;
+      lastY = y;
+
+      header.classList.toggle('is-scrolled', y > 8);
+
+      if (delta > 0) { downTravel += delta; upTravel = 0; }
+      else if (delta < 0) { upTravel -= delta; downTravel = 0; }
+
+      if (y <= 0) {
+        downTravel = 0; upTravel = 0;
+        header.classList.remove('is-hidden');
+      } else if (header.classList.contains('is-hidden')) {
+        if (upTravel >= SHOW_TRAVEL) {
+          upTravel = 0;
+          header.classList.remove('is-hidden');
+        }
+      } else if (downTravel >= HIDE_TRAVEL) {
+        downTravel = 0;
+        header.classList.add('is-hidden');
+      }
+    };
+
+    var onScroll = function () {
+      if (ticking) { return; }
+      ticking = true;
+      window.requestAnimationFrame(updateHeader);
+    };
+
+    updateHeader();
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 

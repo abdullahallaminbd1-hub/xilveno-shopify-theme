@@ -136,12 +136,20 @@
     if (!variant) { return; }
     if (variantField) { variantField.value = variant.id; }
     var compare = variant.compare_at_price || 0;
+    /* what the product saves on its own, before any offer is layered on top */
+    var baseSaving = compare > variant.price ? compare - variant.price : 0;
     if (bundle) {
       /* A bundle offer is selected, so the headline price becomes that
          bundle's discounted total and the crossed price the 2-unit total. */
       if (priceCurrent) { priceCurrent.textContent = money(bundle.total); }
       if (priceCompare) { priceCompare.textContent = money(bundle.original); priceCompare.hidden = false; }
-      if (priceSaving) { priceSaving.textContent = 'You save ' + money(bundle.saving); priceSaving.hidden = false; }
+      if (priceSaving) {
+        /* The headline saving stacks the product's own discount with the
+           Buy 2 saving, so it always matches what the bundle really costs
+           less than the two prices combined. */
+        priceSaving.textContent = 'You save ' + money(baseSaving + bundle.saving);
+        priceSaving.hidden = false;
+      }
     } else {
       if (priceCurrent) { priceCurrent.textContent = money(variant.price); }
       if (priceCompare) {
@@ -153,8 +161,8 @@
         }
       }
       if (priceSaving) {
-        if (compare > variant.price) {
-          priceSaving.textContent = 'You save ' + money(compare - variant.price);
+        if (baseSaving > 0) {
+          priceSaving.textContent = 'You save ' + money(baseSaving);
           priceSaving.hidden = false;
         } else {
           priceSaving.hidden = true;
@@ -162,11 +170,13 @@
       }
     }
     if (offPctBadge) {
-      /* a bundle reports its own saving; otherwise fall back to the variant's */
-      var offFrom = bundle ? bundle.original : compare;
-      var offBy = bundle ? bundle.saving : (compare - variant.price);
-      if (offFrom > 0 && offBy > 0) {
-        offPctBadge.textContent = 'Up to ' + Math.round((offBy / offFrom) * 100) + '% off';
+      /* the badge stacks the product's own discount with the offer's, the
+         same way the saving above does */
+      var basePct = compare > 0 ? (baseSaving / compare) * 100 : 0;
+      var offerPct = bundle && bundle.original > 0 ? (bundle.saving / bundle.original) * 100 : 0;
+      var totalPct = basePct + offerPct;
+      if (totalPct > 0) {
+        offPctBadge.textContent = 'Up to ' + Math.round(totalPct) + '% off';
       }
     }
     if (atcSubmit) { atcSubmit.disabled = !variant.available; }

@@ -8,9 +8,9 @@
         </a>
         <p>{{ settings.brand_tagline | default: 'Premium beauty tools and devices thoughtfully selected for modern routines.' }}</p>
         <div class="lf-footer__social">
-          <a href="{{ settings.instagram_url | default: '#' }}" aria-label="Instagram">Ig</a>
-          <a href="{{ settings.tiktok_url | default: '#' }}" aria-label="TikTok">Tt</a>
-          <a href="{{ settings.facebook_url | default: '#' }}" aria-label="Facebook">Fb</a>
+          <a href="{{ settings.instagram_url | default: '#' }}" aria-label="Instagram">{% render 'icon', icon: 'instagram' %}</a>
+          <a href="{{ settings.tiktok_url | default: '#' }}" aria-label="TikTok">{% render 'icon', icon: 'tiktok' %}</a>
+          <a href="{{ settings.facebook_url | default: '#' }}" aria-label="Facebook">{% render 'icon', icon: 'facebook' %}</a>
         </div>
       </div>
 
@@ -40,9 +40,7 @@
         <span>▣ Customer support available</span>
         <div class="lf-footer__pay-box">
           <strong>Secure payment options</strong>
-          <div class="lf-footer__pay-grid">
-            <span>VISA</span><span>MC</span><span>AMEX</span><span>Shop</span><span>G Pay</span><span>Pay</span>
-          </div>
+          <div class="lf-footer__pay-grid">{%- for type in shop.enabled_payment_types -%}{{ type | payment_type_svg_tag }}{%- endfor -%}</div>
           <small>Additional supported payment methods may be available at checkout.</small>
         </div>
       </div>

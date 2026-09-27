@@ -423,7 +423,7 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
 
 /* checkout mirrors the reference: centred label with the live total */
 .drawer__checkout{justify-content:center;gap:.45rem;padding:1.05rem 1.25rem;}
-.drawer-savings{margin:-6px 0 12px;font-size:11.5px;color:var(--muted);text-align:center;}
+.drawer-savings{margin:0 0 12px;font-size:11.5px;color:var(--muted);text-align:center;}
 .cart-note--applied{background:var(--blush);color:var(--plum);}
 .gift-panel{display:flex;gap:14px;margin:18px 0;padding:18px;border:1px solid var(--line-rose);border-radius:14px;background:var(--blush-soft);}
 .gift-panel strong{font-size:13.5px;}
@@ -437,7 +437,7 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
 .shipping-progress > div{height:6px;margin:10px 0 8px;border-radius:999px;background:rgba(122,75,80,.16);overflow:hidden;}
 .shipping-progress i{display:block;height:100%;border-radius:999px;background:var(--plum);transition:width .4s ease;}
 .drawer__footer{padding:22px 26px 26px;border-top:1px solid var(--line-rose);background:#fff;}
-.discount-form{display:flex;align-items:stretch;gap:6px;margin:10px 0 4px;}
+.discount-form{display:flex;align-items:stretch;gap:6px;margin:14px 0 6px;border:0;}
 .discount-form input{flex:1;min-width:0;height:38px;padding:0 16px;border:1px solid var(--line-rose);border-radius:999px;background:var(--cream);font:inherit;font-size:12.5px;line-height:36px;color:var(--ink);outline:none;transition:border-color .2s ease,background .2s ease;}
 .discount-form input::placeholder{color:var(--muted);opacity:.75;}
 .discount-form input:focus{border-color:var(--plum);background:#fff;}

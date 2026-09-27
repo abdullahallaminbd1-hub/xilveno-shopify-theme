@@ -246,14 +246,49 @@
     }
   };
 
-  var refreshDrawer = function () {
+  var getScroller = function () {
+    return cartDrawer ? cartDrawer.querySelector('[data-cart-body]') : null;
+  };
+
+  var rowForLine = function (root, line) {
+    if (!root || !line) { return null; }
+    var trigger = root.querySelector('[data-line="' + line + '"]');
+    return trigger ? trigger.closest('.cart-item') : null;
+  };
+
+  /* loading feedback is applied to the single row the customer clicked */
+  var setRowBusy = function (line, busy) {
+    var row = rowForLine(cartDrawer, line);
+    if (row) { row.classList.toggle('is-updating', !!busy); }
+  };
+
+  /* anchorLine keeps the clicked row in place across the markup swap */
+  var refreshDrawer = function (anchorLine) {
     if (!cartDrawer) { return Promise.resolve(); }
+    var scroller = getScroller();
+    var anchor = rowForLine(cartDrawer, anchorLine);
+    var fallbackTop = scroller ? scroller.scrollTop : 0;
+    var anchorDelta = null;
+    if (anchor && scroller) {
+      anchorDelta = anchor.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+    }
     return fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       .then(function (r) { return r.text(); })
       .then(function (html) {
         var parsed = new DOMParser().parseFromString(html, 'text/html');
         var fresh = parsed.querySelector('[data-cart-drawer]');
         if (fresh) { cartDrawer.innerHTML = fresh.innerHTML; }
+        /* innerHTML rebuilds [data-cart-body], so re-query the live scroller */
+        var after = getScroller();
+        if (after) {
+          var next = rowForLine(cartDrawer, anchorLine);
+          if (next && anchorDelta !== null) {
+            var moved = next.getBoundingClientRect().top - after.getBoundingClientRect().top;
+            after.scrollTop += (moved - anchorDelta);
+          } else {
+            after.scrollTop = fallbackTop;
+          }
+        }
         bindDrawerInternals();
       })
       .catch(function () { /* keep the current drawer markup when the request fails */ });
@@ -290,10 +325,11 @@
       var quantity = Math.max(0, parseInt(change.getAttribute('data-quantity'), 10) || 0);
       if (!line) { return; }
       change.disabled = true;
+      setRowBusy(line, true);
       postCart('/cart/change.js', { line: line, quantity: quantity })
         .then(function (r) { if (!r.ok) { throw new Error('change failed'); } return getCart(); })
-        .then(function (cart) { paintCount(cart.item_count); return refreshDrawer(); })
-        .catch(function () { change.disabled = false; });
+        .then(function (cart) { paintCount(cart.item_count); return refreshDrawer(quantity > 0 ? line : null); })
+        .catch(function () { change.disabled = false; setRowBusy(line, false); });
       return;
     }
 
@@ -301,13 +337,14 @@
     if (remove) {
       event.preventDefault();
       var removeLine = remove.getAttribute('data-line');
+      setRowBusy(removeLine, true);
       var removeRequest = removeLine
         ? postCart('/cart/change.js', { line: removeLine, quantity: 0 })
         : fetch(remove.getAttribute('href'), { headers: { Accept: 'application/json' } });
       removeRequest
         .then(function () { return getCart(); })
         .then(function (cart) { paintCount(cart.item_count); return refreshDrawer(); })
-        .catch(function () { /* item stays in the drawer until the page reloads */ });
+        .catch(function () { setRowBusy(removeLine, false); /* item stays in the drawer until the page reloads */ });
     }
   });
 

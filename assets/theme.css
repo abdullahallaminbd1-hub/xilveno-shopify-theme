@@ -360,7 +360,54 @@ body{background:#fff;}
 
 /* ---------- footer ---------- */
 .lf-footer{position:relative;background:var(--plum-deep);color:rgba(255,255,255,.78);}
-.lf-footer__wave{height:78px;margin-bottom:-2px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 80' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='lfLine' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23B85C78' stop-opacity='0'/%3E%3Cstop offset='.2' stop-color='%23B85C78' stop-opacity='.5'/%3E%3Cstop offset='.6' stop-color='%238E3A63' stop-opacity='.72'/%3E%3Cstop offset='1' stop-color='%23B85C78' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='lfBlush' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23D9A3B4' stop-opacity='.28'/%3E%3Cstop offset='1' stop-color='%23D9A3B4' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,80 L0,52 C180,20 420,4 700,4 C980,4 1240,22 1440,52 L1440,80 Z' fill='%23ffffff'/%3E%3Cpath d='M0,52 C180,20 420,4 700,4 C980,4 1240,22 1440,52 L1440,80 L0,80 Z' fill='url(%23lfBlush)'/%3E%3Cpath d='M0,52 C180,20 420,4 700,4 C980,4 1240,22 1440,52' fill='none' stroke='url(%23lfLine)' stroke-width='2'/%3E%3C/svg%3E");background-position:center bottom;background-size:100% 100%;background-repeat:no-repeat;}
+/* ---------- footer top divider: Design #5, double wave layers ----------
+   Two complementary shades from the Xilveno palette (a light dusty rose
+   behind, --rose in front) are stacked as two full-bleed wave layers on
+   top of the deep plum footer. Each layer is one seamless tile sized to
+   50% of a 200%-wide pseudo element, so drifting it by -50% loops
+   forever with no visible seam and no white gap at either edge. The
+   divider's height, the footer content, layout, spacing, typography and
+   behaviour are all untouched. */
+.lf-footer__wave{
+  --lf-wave-back:#E5B7C6;  /* light dusty rose, a tint between --blush and --rose */
+  --lf-wave-front:#B85C78; /* the deeper front layer, = --rose */
+  position:relative;
+  overflow:hidden;          /* clips the 200%-wide layers, no page overflow */
+  height:78px;              /* unchanged: 44px on mobile via the rule below */
+  margin-bottom:-2px;
+  background:#fff;          /* matches the page above so the layers read as one shape */
+}
+.lf-footer__wave::before,
+.lf-footer__wave::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:200%;
+  height:100%;
+  background-repeat:repeat-x;
+  background-size:50% 100%;
+  pointer-events:none;
+  will-change:transform;
+}
+.lf-footer__wave::before{  /* back layer: the lighter, upper wave */
+  z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0,36 C230,36 350,12 650,12 C930,12 1020,36 1200,36 L1200,80 L0,80 Z' fill='%23E5B7C6'/%3E%3C/svg%3E");
+  animation:lf-wave-drift-back 24s linear infinite;
+}
+.lf-footer__wave::after{   /* front layer: the deeper wave that meets the plum */
+  z-index:2;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C190,60 320,26 630,26 C920,26 1040,60 1200,60 L1200,80 L0,80 Z' fill='%23B85C78'/%3E%3C/svg%3E");
+  animation:lf-wave-drift-front 15s linear infinite;
+}
+@keyframes lf-wave-drift-back{
+  from{transform:translate3d(0,0,0);}
+  to{transform:translate3d(-50%,0,0);}
+}
+@keyframes lf-wave-drift-front{
+  from{transform:translate3d(0,0,0);}
+  to{transform:translate3d(-50%,0,0);}
+}
 .lf-footer__inner{padding:52px 0 24px;}
 .lf-footer__grid{display:grid;grid-template-columns:1.35fr 1fr 1fr 1.15fr;gap:38px;}
 .lf-footer__logo-card{display:inline-flex;padding:12px 22px;border-radius:12px;background:#fff;}
@@ -557,6 +604,7 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
 }
 @media (prefers-reduced-motion:reduce){
   .lf-announcement__track{animation:none;}
+  .lf-footer__wave::before,.lf-footer__wave::after{animation:none;}
   [data-reveal]{opacity:1;transform:none;transition:none;}
   .lf-hero__slide{transition:none;}
   *{scroll-behavior:auto !important;}

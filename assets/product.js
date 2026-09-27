@@ -54,7 +54,7 @@
     });
   };
 
-  var show = function (index) {
+  var show = function (index, fromScroll) {
     if (!slides.length) { return; }
     current = (index + slides.length) % slides.length;
     slides.forEach(function (slide, i) {
@@ -74,6 +74,8 @@
     if (prevBtn) { prevBtn.disabled = current === 0; }
     if (nextBtn) { nextBtn.disabled = current === slides.length - 1; }
     revealThumb(current);
+    /* a swipe already moved the stage, so never scroll it back mid-gesture */
+    if (!fromScroll) { slideStageTo(current); }
   };
 
   /* thumbnail strip arrows */
@@ -99,8 +101,52 @@
     syncThumbArrows();
   };
 
+  /* ---------------- mobile swipe stage ----------------
+     Only on phones does the stage become a horizontal scroller that holds
+     every image. There, picking an image scrolls it into view, and scrolling
+     it by hand reports back which image is now showing. The desktop gallery
+     keeps its original crossfade and is left completely untouched. */
+  var stage = qs('[data-gallery-stage]', root);
+  var stageIsScroller = function () {
+    if (!stage) { return false; }
+    var cs = window.getComputedStyle(stage);
+    return cs.display === 'flex' && cs.overflowX !== 'visible';
+  };
+
+  var slideStageTo = function (index) {
+    var slide = slides[index];
+    if (!slide || !stage || !stageIsScroller()) { return; }
+    /* ignore the scroll events this movement causes, but keep the window
+       short so a customer who swipes straight after tapping a thumbnail is
+       never left looking at a stale indicator */
+    ignoreScrollUntil = Date.now() + 350;
+    if (typeof stage.scrollTo === 'function') {
+      stage.scrollTo({ left: slide.offsetLeft, behavior: 'smooth' });
+    } else {
+      stage.scrollLeft = slide.offsetLeft;
+    }
+  };
+
+  var ignoreScrollUntil = 0;
+  var nearestSlide = function () {
+    var mid = stage.scrollLeft + stage.clientWidth / 2;
+    var best = 0;
+    var bestGap = Infinity;
+    slides.forEach(function (slide, i) {
+      var centre = slide.offsetLeft + slide.offsetWidth / 2;
+      var gap = Math.abs(centre - mid);
+      if (gap < bestGap) { bestGap = gap; best = i; }
+    });
+    return best;
+  };
+
   if (slides.length) {
     buildDots();
+    /* one image needs no strip of thumbnails, so keep it off phones too */
+    if (slides.length < 2) {
+      var thumbsWrap = qs('[data-thumbs]', root);
+      if (thumbsWrap) { thumbsWrap.hidden = true; }
+    }
     show(0);
     thumbs.forEach(function (thumb, i) {
       thumb.addEventListener('click', function () { show(i); });
@@ -111,6 +157,22 @@
       if (e.key === 'ArrowLeft') { show(current - 1); }
       if (e.key === 'ArrowRight') { show(current + 1); }
     });
+    /* a swipe on the phone updates the thumbnail and dot indicator */
+    if (stage) {
+      var onScroll = function () {
+        if (!stageIsScroller() || Date.now() < ignoreScrollUntil) { return; }
+        var next = nearestSlide();
+        if (next !== current) { show(next, true); }
+      };
+      /* a short timer rather than requestAnimationFrame, which some browsers
+         do not run for a background or headless page */
+      var pending = false;
+      stage.addEventListener('scroll', function () {
+        if (pending) { return; }
+        pending = true;
+        window.setTimeout(function () { pending = false; onScroll(); }, 60);
+      }, { passive: true });
+    }
   }
   if (thumbsList) {
     var step = function () { return Math.max(120, thumbsList.clientWidth * 0.8); };

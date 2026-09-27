@@ -778,7 +778,10 @@
     position:relative;
     inset:auto;
     flex:0 0 100%;
-    display:none;
+    /* every image stays in the scroller so the stage can actually be swiped;
+       the active one is whichever slide is snapped into view */
+    display:grid;
+    place-items:center;
     scroll-snap-align:center;
     padding:0;
     opacity:1;
@@ -789,9 +792,21 @@
   .lf-gallery__slide.is-active{display:grid;place-items:center;padding:0;}
   .lf-gallery__media{width:100%;height:auto;max-height:none;aspect-ratio:1/1;object-fit:contain;}
   .lf-gallery__zoom,
-  .lf-gallery__arrow,
-  .lf-thumbs{display:none;}
-  .lf-gallery__dots{display:flex;}
+  .lf-gallery__arrow{display:none;}
+  /* the thumbnail strip is the primary way to change image on a phone;
+     swipe works too, and the dots stay as a position indicator only */
+  .lf-thumbs{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+    padding:0 15px;
+  }
+  .lf-thumbs[hidden]{display:none;}
+  .lf-thumbs__arrow{display:none;}
+  .lf-thumbs__list{gap:8px;}
+  .lf-thumbs__item{flex:0 0 auto;}
+  .lf-thumb{width:64px;}
+  .lf-gallery__dots{display:flex;margin-top:12px;}
 
   .lf-proof{gap:9px;padding:8px 12px 8px 9px;}
   .lf-proof__face{width:26px;height:26px;}

@@ -12,9 +12,14 @@
     {%- if arrow -%}<span class="lf-card-arrow" aria-hidden="true">↗</span>{%- endif -%}
   </a>
   <div class="lf-product-card__info">
-    {%- if show_vendor -%}<span class="lf-product-card__vendor">{{ product.vendor | default: 'Xilveno' }}</span>{%- endif -%}
+    {%- comment -%}
+      Card text is deliberately minimal: image, title, price (plus compare-at
+      price) and the VIEW PRODUCT button. The vendor label, the
+      "Thoughtfully selected" note and the "View details" link are not rendered
+      so no extra non-essential card text appears. Sale / Sold out badges in
+      the media block above are untouched.
+    {%- endcomment -%}
     <h3 class="lf-product-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
-    {%- if show_note -%}<span class="lf-product-card__note">Thoughtfully selected</span>{%- endif -%}
     <div class="lf-product-card__price">
       <span>{{ product.price | money }}</span>
       {%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}
@@ -28,7 +33,7 @@
         reads "VIEW PRODUCT").
       {%- endcomment -%}
       <a class="lf-card-btn lf-card-btn--{{ button_style | default: 'filled' }}" href="{{ product.url }}">View product</a>
-      {%- unless hide_view_details -%}<a class="lf-card-view" href="{{ product.url }}">View details <span aria-hidden="true">→</span></a>{%- endunless -%}
+      {%- if show_view_details -%}<a class="lf-card-view" href="{{ product.url }}">View details <span aria-hidden="true">→</span></a>{%- endif -%}
     </div>
   </div>
 </article>

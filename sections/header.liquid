@@ -78,6 +78,7 @@
   </div>
 </aside>
 
+<div class="lf-search-backdrop" data-search-close></div>
 <div class="lf-search-overlay" data-search-overlay aria-hidden="true">
   <div class="lf-search-overlay__inner page-width">
     <form action="{{ routes.search_url }}" method="get" role="search" class="lf-search-form">
@@ -85,7 +86,7 @@
       <input type="hidden" name="options[prefix]" value="last">
       <button type="submit" class="button button--accent">Search</button>
     </form>
-    <button class="lf-header__icon" data-search-close aria-label="Close search">{% render 'icon', icon: 'close' %}</button>
+    <button class="lf-header__icon" type="button" data-search-close aria-label="Close search">{% render 'icon', icon: 'close' %}</button>
   </div>
 </div>
 

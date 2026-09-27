@@ -7,11 +7,55 @@
   var qsa = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- header scroll state ---------- */
+  /* ---------- header scroll state ----------
+     The header is a smart sticky header: it slides out of view while the
+     customer scrolls down and slides back in as soon as they scroll up.
+     A few guards keep it from flickering:
+       - a dead zone (HIDE_AFTER) so the header never hides right at the top;
+       - a movement threshold, so a couple of stray pixels cannot toggle it;
+       - it always returns when the page is scrolled back to the top;
+       - it stays put while the menu, cart or search overlay is open, because
+         hiding it then would hide the controls needed to close them.
+     Scroll work is throttled to one read per animation frame. */
   var header = qs('[data-header]');
   if (header) {
-    var onScroll = function () { header.classList.toggle('is-scrolled', window.pageYOffset > 8); };
-    onScroll();
+    var lastY = window.pageYOffset;
+    var ticking = false;
+    var HIDE_AFTER = 120;   /* px down before the header may hide */
+    var DELTA = 6;         /* px of travel needed to flip the state */
+
+    var overlayOpen = function () {
+      return body.classList.contains('drawer-open')
+        || body.classList.contains('mobile-nav-open')
+        || body.classList.contains('search-open');
+    };
+
+    var applyHeader = function () {
+      ticking = false;
+      var y = Math.max(0, window.pageYOffset);
+      var delta = y - lastY;
+      lastY = y;
+
+      header.classList.toggle('is-scrolled', y > 8);
+
+      if (y <= HIDE_AFTER || overlayOpen()) {
+        header.classList.remove('is-hidden');
+        return;
+      }
+      if (delta > DELTA) {
+        header.classList.add('is-hidden');
+      } else if (delta < -DELTA) {
+        header.classList.remove('is-hidden');
+      }
+    };
+
+    var onScroll = function () {
+      if (ticking) { return; }
+      ticking = true;
+      window.requestAnimationFrame(applyHeader);
+    };
+
+    applyHeader();
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
@@ -38,11 +82,21 @@
     if (menuDrawer) { menuDrawer.setAttribute('aria-hidden', open ? 'false' : 'true'); }
     qsa('[data-menu-open]').forEach(function (t) { t.setAttribute('aria-expanded', open ? 'true' : 'false'); });
   };
+  /* The mobile search overlay closes from three places: the close control, the
+     backdrop behind it, and the Escape key handled below. Opening keeps the
+     existing behaviour (same form, same query, same results). Blurring the
+     field on close stops the on-screen keyboard from lingering. */
   var setSearch = function (open) {
     if (!setFlag('search-open', open)) { return; }
     if (searchOverlay) {
       searchOverlay.setAttribute('aria-hidden', open ? 'false' : 'true');
-      if (open) { var input = qs('input[type="search"]', searchOverlay); if (input) { window.setTimeout(function () { input.focus(); }, 240); } }
+      if (open) {
+        var input = qs('input[type="search"]', searchOverlay);
+        if (input) { window.setTimeout(function () { input.focus(); }, 240); }
+      } else {
+        var active = qs('input[type="search"]', searchOverlay);
+        if (active && active.blur) { active.blur(); }
+      }
     }
   };
   var setFilters = function (open) { body.classList.toggle('filter-panel-open', open); };

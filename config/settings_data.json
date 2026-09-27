@@ -47,7 +47,7 @@
           "show_featured_products": true,
           "featured_products": [],
           "background_color": "#FFFFFF",
-          "font_color": "#8E2C43",
+          "font_color": "#4F1B27",
           "agent_invert_activator_colors": true,
           "button_color": "#000000",
           "button_icon": "email",
@@ -57,7 +57,7 @@
           "agent_inherit_fonts": true,
           "agent_font": "system_ui_n4",
           "agent_font_size": 14,
-          "agent_activator_font_size": 18,
+          "agent_activator_font_size": 24,
           "agent_border_radius": 24
         }
       }

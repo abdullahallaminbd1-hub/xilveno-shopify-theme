@@ -61,7 +61,7 @@
           "type": "tier",
           "settings": {
             "quantity": 3,
-            "discount": 2,
+            "discount": 6,
             "badge": "Standard",
             "benefit": "Best value",
             "solid_benefit": true,

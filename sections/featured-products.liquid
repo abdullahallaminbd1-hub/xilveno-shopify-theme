@@ -1,5 +1,39 @@
 {%- assign grid_collection = collections[section.settings.collection] -%}
 <section class="lf-products lf-products--{{ section.settings.tone }}" data-reveal-group>
+  {%- comment -%}
+    Card width (Theme Editor > Product grid > Card Width Mode / Card Width px).
+    Desktop only (min-width:641px) so mobile stays exactly as before.
+    Box Width caps each card at the chosen pixel value, centred in its grid
+    column; Full Width leaves the card filling the column.
+    Scoped to this section instance so every Product grid section controls
+    its own cards, and this always wins over any global card-width setting.
+    Box Width is the default so homepage grids stay compact; Full Width
+    leaves the card filling the column.
+  {%- endcomment -%}
+  <style>
+    @media(min-width:641px){
+      /* Homepage Product Grid box: exactly 1400px, centred inside the 1600px
+         main content area, with tighter card spacing (row 20px / column 16px
+         instead of 30px / 24px). Desktop only; mobile/tablet unchanged. */
+      #shopify-section-{{ section.id }} .lf-product-grid{
+        width:100%;
+        max-width:1400px;
+        margin-left:auto;
+        margin-right:auto;
+        gap:20px 16px;
+      }
+      #shopify-section-{{ section.id }} .lf-product-card{
+        {%- if section.settings.product_card_width_mode == 'box' -%}
+        width:100%;
+        max-width:{{ section.settings.product_card_width | default: 340 }}px;
+        margin-left:auto;
+        margin-right:auto;
+        {%- else -%}
+        max-width:none;
+        {%- endif -%}
+      }
+    }
+  </style>
   <div class="page-width">
     <div class="lf-section-head">
       <span class="lf-eyebrow">{{ section.settings.kicker }}</span>
@@ -51,6 +85,9 @@
     {"type":"collection","id":"collection","label":"Collection"},
     {"type":"range","id":"columns","label":"Columns","min":2,"max":4,"step":1,"default":4},
     {"type":"range","id":"limit","label":"Products shown","min":4,"max":12,"step":4,"default":8},
+    {"type":"header","content":"Card width"},
+    {"type":"select","id":"product_card_width_mode","label":"Card Width Mode","info":"Full Width lets cards fill their grid column. Box Width caps desktop cards at the exact width set below, centred in the column.","options":[{"value":"box","label":"Box Width"},{"value":"full","label":"Full Width"}],"default":"box"},
+    {"type":"range","id":"product_card_width","label":"Card Width (px)","info":"Only applies when Card Width Mode is Box Width. Applies to desktop; mobile is unchanged.","min":200,"max":500,"step":10,"unit":"px","default":340},
     {"type":"text","id":"badge_label","label":"Badge label","default":"Best seller"},
     {"type":"checkbox","id":"show_vendor","label":"Show vendor label","default":false},
     {"type":"checkbox","id":"show_arrow","label":"Show corner arrow","default":false},

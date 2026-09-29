@@ -307,8 +307,8 @@ body{background:#fff;}
   .lf-product-card__image{object-fit:contain;max-width:100%;}
 }
 .lf-product-card__note{margin-top:4px;font-size:12px;color:var(--muted);}
-.lf-product-card__price{margin-top:10px;font-size:14.5px;font-weight:600;}
-.lf-product-card__price s{margin-left:8px;font-weight:400;color:var(--muted);}
+.lf-product-card__price{margin-top:10px;font-size:16px;font-weight:600;}
+.lf-product-card__price s{margin-left:8px;font-weight:400;color:var(--rose);}
 .lf-product-card__actions{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-top:14px;}
 /* VIEW PRODUCT spans the full width of the card content area.
    flex-basis 100% + wrap puts it on its own full-width line; shrink 0 plus

@@ -123,6 +123,9 @@
       "settings": {
         "proof_eyebrow": "The Xilveno edit",
         "proof_text": "Thoughtfully selected",
+        "proof_image_1": "shopify://shop_images/ChatGPT_Image_Sep_30_2026_12_34_35_AM.png",
+        "proof_image_2": "shopify://shop_images/ChatGPT_Image_Sep_30_2026_12_32_48_AM.png",
+        "proof_image_3": "shopify://shop_images/ChatGPT_Image_Sep_30_2026_12_30_43_AM.png",
         "rating_value": 5,
         "rating_text": "Verified customer reviews",
         "show_highlights": true,

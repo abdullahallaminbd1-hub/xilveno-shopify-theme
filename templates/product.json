@@ -57,6 +57,18 @@
             "caption": "Standard price"
           }
         },
+        "tier_WVeVNq": {
+          "type": "tier",
+          "settings": {
+            "quantity": 3,
+            "discount": 2,
+            "badge": "Most popular",
+            "benefit": "Best value",
+            "solid_benefit": true,
+            "featured": true,
+            "caption": "Standard price"
+          }
+        },
         "policy-shipping": {
           "type": "accordion",
           "settings": {
@@ -101,6 +113,7 @@
         "highlight-3",
         "offer-1",
         "offer-2",
+        "tier_WVeVNq",
         "policy-shipping",
         "policy-refund",
         "review-1",

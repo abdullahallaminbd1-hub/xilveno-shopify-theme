@@ -62,7 +62,7 @@
           "settings": {
             "quantity": 3,
             "discount": 2,
-            "badge": "Most popular",
+            "badge": "Standard",
             "benefit": "Best value",
             "solid_benefit": true,
             "featured": true,

@@ -448,7 +448,10 @@ body{background:#fff;}
 .lf-footer__pay-grid{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 10px;}
 .lf-footer__pay-grid svg{display:block;width:34px;height:22px;border-radius:3px;}
 .lf-footer__pay-box small{font-size:10.5px;line-height:1.5;color:rgba(255,255,255,.6);}
-.lf-footer__trust{display:flex;flex-wrap:wrap;gap:14px 34px;margin-top:40px;padding:24px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);}
+/* bottom trust/benefits row - the three items are centred as ONE group.
+   Only horizontal alignment is set here: size, colour, spacing, icons,
+   the top/bottom separators and the row height are all untouched. */
+.lf-footer__trust{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 34px;margin-top:40px;padding:24px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);}
 .lf-footer__trust > div{display:flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.72);}
 .lf-footer__trust span{color:var(--rose-soft);}
 .lf-footer__bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:22px;font-size:12px;color:rgba(255,255,255,.6);}
@@ -744,6 +747,9 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
   .lf-footer__bottom{
     overflow-wrap:anywhere;
   }
+  /* phones: the bottom trust items keep their original left-aligned flow
+     (desktop-only change - mobile behaviour is intentionally unchanged) */
+  .lf-footer__trust{justify-content:flex-start;}
   .lf-footer__trust>div{min-width:0;}
   .lf-footer__bottom{
     flex-direction:column;

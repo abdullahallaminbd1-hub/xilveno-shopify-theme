@@ -278,16 +278,16 @@ body{background:#fff;}
 .lf-product-card__title{margin:7px 0 0;font-size:15px;font-weight:600;line-height:1.4;}
 .lf-product-card__title a{color:inherit;text-decoration:none;}
 .lf-product-card__title a:hover{color:var(--plum);}
-/* desktop only: product titles wrap naturally across up to 5 lines.
-   Titles that fit within 5 lines show in full; only longer titles are
-   truncated after the 5th line. Font, size, weight, alignment, spacing
+/* desktop only: product titles wrap naturally across up to 3 lines.
+   Titles that fit within 3 lines show in full; only longer titles are
+   truncated after the 3rd line. Font, size, weight, alignment, spacing
    and the rest of the card are unchanged. */
 @media(min-width:641px){
   .lf-product-card__title a{
     display:-webkit-box;
     -webkit-box-orient:vertical;
-    -webkit-line-clamp:5;
-    line-clamp:5;
+    -webkit-line-clamp:3;
+    line-clamp:3;
     overflow:hidden;
     white-space:normal;
   }

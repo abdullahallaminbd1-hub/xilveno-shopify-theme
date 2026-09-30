@@ -894,7 +894,14 @@ a.cf__card-value:hover{color:var(--plum);}
 
 /* ---- wipe colour per family (resting surface -> colour that fills it) ---- */
 .lf-card-btn--outline,.lf-btn-outline,.gift-choices button{--lf-fill:var(--plum);}
-.lf-card-btn--filled,.button--accent,.button--dark,.discount-form button{--lf-fill:var(--plum-deep);}
+.button--accent,.button--dark,.discount-form button{--lf-fill:var(--plum-deep);}
+/* filled product-card buttons (VIEW PRODUCT / Choose options): their resting
+   surface is already the deep plum, so a darker shade is invisible - they wipe
+   to the lighter brand accent instead, giving the same obvious centre-out
+   sweep the outlined buttons have (white label + accent border at the end).
+   The doubled class keeps this above the shared :is() default above, which
+   also carries an element selector and would otherwise win the cascade. */
+.lf-card-btn.lf-card-btn--filled{--lf-fill:var(--accent);}
 .newsletter-form .button,.lf-newsletter-form .button{--lf-fill:var(--plum-deep);}
 .lf-atc__button{--lf-fill:var(--plum);}
 .lf-atc__payments .shopify-payment-button__button--unbranded{--lf-fill:var(--accent);}

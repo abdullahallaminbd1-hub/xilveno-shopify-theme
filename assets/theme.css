@@ -307,8 +307,12 @@ body{background:#fff;}
   .lf-product-card__image{object-fit:contain;max-width:100%;}
 }
 .lf-product-card__note{margin-top:4px;font-size:12px;color:var(--muted);}
-.lf-product-card__price{margin-top:10px;font-size:16px;font-weight:600;}
-.lf-product-card__price s{margin-left:8px;font-weight:400;color:var(--rose);}
+/* product card price: the selling price is the card's strongest number
+   (18px desktop, 17px on phones - see the <=640px block - and weight 700).
+   The compare-at price stays clearly secondary: lighter weight, rose tint
+   and a slightly smaller size, so it can never out-shout the selling price. */
+.lf-product-card__price{margin-top:10px;font-size:18px;font-weight:700;}
+.lf-product-card__price s{margin-left:8px;font-size:.85em;font-weight:400;color:var(--rose);}
 .lf-product-card__actions{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-top:14px;}
 /* VIEW PRODUCT spans the full width of the card content area.
    flex-basis 100% + wrap puts it on its own full-width line; shrink 0 plus
@@ -643,6 +647,7 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
   .lf-card-btn{padding:11px 16px;font-size:10.5px;letter-spacing:.08em;}
   .lf-card-view{font-size:11.5px;}
   .lf-product-card__title{font-size:14px;}
+  .lf-product-card__price{font-size:17px;}
   .lf-footer__grid{grid-template-columns:1fr;gap:24px;}
   .lf-footer__wave{height:44px;}
   .lf-confidence__returns{flex-direction:column;gap:12px;}
@@ -830,3 +835,114 @@ a.cf__card-value:hover{color:var(--plum);}
 .lf-badge--sold{background:var(--plum);color:#fff;}
 /* focus rings use the rose accent so they stay clearly visible */
 .lf-search-form input[type="search"]:focus{outline:2px solid var(--rose);outline-offset:1px;}
+
+/* ==========================================================================
+   PREMIUM BUTTON FILL - ONE shared centre-out hover animation for the CTAs
+   --------------------------------------------------------------------------
+   Reference: the product-card button. On hover the dark burgundy/plum grows
+   horizontally from the CENTRE of the button towards BOTH sides until the
+   whole surface is filled, the label turns white and the border blends into
+   the fill; leaving the button plays the same motion in reverse.
+
+   Why this is not a fade: every button gets a single ::before layer that is
+   scaled from scaleX(0) to scaleX(1) with transform-origin:center - a real
+   horizontal wipe. The layer is clipped by overflow:hidden (pill radii stay
+   perfect) and sits above the button's own background but behind the label
+   (z-index:-1 inside the button's own stacking context, created by
+   isolation:isolate), so the text never disappears under the fill.
+
+   Scope: every labelled CTA button site-wide - .button variants, product-card
+   buttons, the VIEW ALL pills, add-to-cart, the Shopify dynamic checkout
+   button, drawer/cart/form/account/collection buttons. Hero slide buttons are
+   deliberately excluded (reset at the end of this block) and icon-only
+   controls (header icons, close/remove, quantity steppers, gallery
+   arrows/thumbs/dots) are not filled: they are icon controls, not CTAs.
+
+   Timing: 520ms on a decelerating premium curve (requested range 450-650ms).
+   Touch: the wipe only exists where a real pointer can hover
+   (@media (hover:hover) and (pointer:fine)), so phones and tablets never keep
+   a fill stuck after a tap - they keep the untouched resting style.
+   ========================================================================== */
+
+/* ---- shared surface + fill layer ---- */
+:is(.button,.lf-card-btn,.lf-btn-outline,.lf-atc__button,
+    .shopify-payment-button__button--unbranded,
+    .discount-form button,.gift-choices button){
+  --lf-fill:var(--plum);           /* colour that wipes in */
+  --lf-fill-time:520ms;            /* 450-650ms */
+  --lf-fill-ease:cubic-bezier(.4,0,.16,1);
+  position:relative;
+  isolation:isolate;               /* keeps the wipe above our own background */
+  overflow:hidden;                 /* clips the wipe to the button shape */
+}
+:is(.button,.lf-card-btn,.lf-btn-outline,.lf-atc__button,
+    .shopify-payment-button__button--unbranded,
+    .discount-form button,.gift-choices button)::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:var(--lf-fill);
+  transform:scaleX(0);             /* collapsed in the middle = nothing drawn */
+  transform-origin:center center;
+  transition:transform var(--lf-fill-time) var(--lf-fill-ease);
+  pointer-events:none;
+}
+/* families that had no colour transition of their own get one, so their label
+   changes as smoothly as everywhere else */
+.discount-form button,.gift-choices button{transition:color .26s ease,border-color .26s ease;}
+
+/* ---- wipe colour per family (resting surface -> colour that fills it) ---- */
+.lf-card-btn--outline,.lf-btn-outline,.gift-choices button{--lf-fill:var(--plum);}
+.lf-card-btn--filled,.button--accent,.button--dark,.discount-form button{--lf-fill:var(--plum-deep);}
+.newsletter-form .button,.lf-newsletter-form .button{--lf-fill:var(--plum-deep);}
+.lf-atc__button{--lf-fill:var(--plum);}
+.lf-atc__payments .shopify-payment-button__button--unbranded{--lf-fill:var(--accent);}
+
+/* ---- the wipe replaces the old plain background fades: the resting surface
+        now holds its own colour and the ::before layer supplies the fill.
+        This also stops a tap on a touch device leaving a stuck hover fill. ---- */
+.button--accent:hover{background:var(--plum);}
+.button--dark:hover{background:var(--plum);}
+.lf-card-btn--filled:hover{background:var(--plum);}
+.lf-card-btn--outline:hover{background:transparent;color:var(--plum);}
+.lf-btn-outline:hover{background:transparent;color:var(--plum);}
+.newsletter-form .button:hover{background:#fff;color:var(--plum);}
+.lf-newsletter-form .button:hover{background:#fff;color:var(--plum);}
+.discount-form button:hover{opacity:1;}
+/* ---- the hover / keyboard-focus state (real pointers only) ---- */
+@media (hover:hover) and (pointer:fine){
+  /* the wipe itself: scaleX(0) -> scaleX(1) from the centre outwards */
+  :is(.button,.lf-card-btn,.lf-btn-outline,.lf-atc__button,
+      .shopify-payment-button__button--unbranded,
+      .discount-form button,.gift-choices button):not([disabled]):not([aria-disabled="true"]):is(:hover,:focus-visible)::before{
+    transform:scaleX(1);
+  }
+  /* label + border follow the fill */
+  :is(.button,.lf-card-btn,.lf-btn-outline,.lf-atc__button,
+      .shopify-payment-button__button--unbranded,
+      .discount-form button,.gift-choices button):not([disabled]):not([aria-disabled="true"]):is(:hover,:focus-visible){
+    color:#fff;
+    border-color:var(--lf-fill);
+  }
+}
+
+/* ---- hero slide buttons are excluded from all of the above: this reset hands
+        them back their original styling AND their original hover animation.
+        The selectors are deliberately more specific than the hover/focus rules
+        above so that nothing from the fill system can leak into the hero. ---- */
+.lf-hero .button{position:static;isolation:auto;overflow:visible;}
+.lf-hero .button::before{content:none;background:none;transform:none;transition:none;z-index:auto;}
+.lf-hero .lf-hero__content .button:hover:not([disabled]),
+.lf-hero .lf-hero__content .button:focus-visible:not([disabled]){background:var(--plum);color:#fff;border-color:transparent;}
+.lf-hero .lf-hero__content .button:hover:not([disabled])::before,
+.lf-hero .lf-hero__content .button:focus-visible:not([disabled])::before{transform:none;}
+
+/* ---- reduced motion: the fill still communicates the state, but instantly ---- */
+@media (prefers-reduced-motion:reduce){
+  :is(.button,.lf-card-btn,.lf-btn-outline,.lf-atc__button,
+      .shopify-payment-button__button--unbranded,
+      .discount-form button,.gift-choices button)::before{
+    transition-duration:.001s;
+  }
+}

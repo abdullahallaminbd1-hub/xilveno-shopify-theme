@@ -395,7 +395,10 @@
   cursor:pointer;
   transition:background .25s ease, transform .15s ease, box-shadow .25s ease;
 }
-.lf-atc__button:hover:not([disabled]){background:var(--plum);box-shadow:0 12px 24px -14px rgba(90,38,63,.8);}
+/* hover fill = the shared centre-out wipe (see theme.css). The surface keeps
+   its accent colour here and the plum layer wipes in over it, so the change
+   is a horizontal fill and never a plain background fade. */
+.lf-atc__button:hover:not([disabled]){background:var(--accent);box-shadow:0 12px 24px -14px rgba(90,38,63,.8);}
 .lf-atc__button:active:not([disabled]){transform:translateY(1px);}
 .lf-atc__button[disabled]{background:#E8D6DE;cursor:not-allowed;}
 .lf-atc__button.is-busy{pointer-events:none;}
@@ -456,12 +459,19 @@
   letter-spacing:.08em;
   text-transform:uppercase;
   cursor:pointer;
-  transition:background .25s ease, color .25s ease, box-shadow .25s ease;
+  /* label colour waits for the wipe: .38s is roughly when the retreating
+     centre-out layer has passed the centred label again on mouse-leave. */
+  transition:background .25s ease, color .2s ease .38s, box-shadow .25s ease;
 }
+/* shared centre-out wipe: the white surface stays put and the accent layer
+   wipes in from the centre. The label flips to white just after the wipe
+   reaches it (the delay here is the *entering* timing; mouse-leave uses the
+   delayed colour transition declared on the rule above). */
 .lf-atc__payments .shopify-payment-button__button--unbranded:hover:not([disabled]){
-  background:var(--accent);
+  background:#fff;
   color:#fff;
   box-shadow:0 12px 24px -14px rgba(90,38,63,.8);
+  transition:background .25s ease, color .2s ease .16s, box-shadow .25s ease;
 }
 .lf-atc__payments .shopify-payment-button__button[disabled]{opacity:.55;cursor:not-allowed;}
 .lf-atc__payments .shopify-payment-button__more-options{

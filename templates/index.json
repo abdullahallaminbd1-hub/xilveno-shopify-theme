@@ -183,7 +183,7 @@
         "text": "Discover popular picks from across our beauty tools and devices - thoughtfully selected for modern routines.",
         "collection": "frontpage",
         "columns": 4,
-        "limit": 8,
+        "limit": 4,
         "product_card_width_mode": "box",
         "product_card_width": 340,
         "badge_label": "Best seller",

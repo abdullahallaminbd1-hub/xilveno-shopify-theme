@@ -217,6 +217,51 @@
         "view_all_link": ""
       }
     },
+    "hero_w389fP": {
+      "type": "hero",
+      "blocks": {
+        "slide_qMmfpP": {
+          "type": "slide",
+          "settings": {
+            "kicker": "",
+            "heading": "",
+            "text": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_f4NeMY": {
+          "type": "slide",
+          "settings": {
+            "kicker": "",
+            "heading": "",
+            "text": "",
+            "button_label": "",
+            "link": ""
+          }
+        },
+        "slide_H6NJfd": {
+          "type": "slide",
+          "settings": {
+            "kicker": "",
+            "heading": "",
+            "text": "",
+            "button_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_qMmfpP",
+        "slide_f4NeMY",
+        "slide_H6NJfd"
+      ],
+      "settings": {
+        "autoplay": 6,
+        "height_desktop": 0,
+        "height_mobile": 0
+      }
+    },
     "devices": {
       "type": "featured-products",
       "settings": {
@@ -347,6 +392,7 @@
     "editorial",
     "bestsellers",
     "trending",
+    "hero_w389fP",
     "devices",
     "value-edit",
     "reviews",

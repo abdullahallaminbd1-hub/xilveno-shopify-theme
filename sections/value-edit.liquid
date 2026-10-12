@@ -21,10 +21,11 @@
             </a>
             <div class="lf-product-card__info">
               <span class="lf-product-card__vendor">{{ shop.name }} value edit</span>
-              <h3 class="lf-product-card__title"><a href="{{ routes.all_products_collection_url }}">{% case i %}{% when 1 %}Precision facial roller{% when 2 %}Cooling ice globes{% when 3 %}LED face mask brush{% else %}Gua sha sculpting stone{% endcase %}</a></h3>
-              <div class="lf-product-card__price">${{ i | plus: 9 }}.99</div>
+              <h3 class="lf-product-card__title"><a href="{{ routes.all_products_collection_url }}" title="Sample product title">{% case i %}{% when 1 %}Precision facial roller{% when 2 %}Cooling ice globes{% when 3 %}LED face mask brush{% else %}Gua sha sculpting stone{% endcase %}</a></h3>
+              <p class="lf-product-card__subtitle">Thoughtfully selected</p>
+              <div class="lf-product-card__price"><span class="lf-price">${{ i | plus: 9 }}.99</span></div>
               <div class="lf-product-card__actions">
-                <a class="lf-card-btn lf-card-btn--{{ section.settings.button_style | default: 'filled' }}" href="{{ routes.all_products_collection_url }}">View product</a>
+                <a class="lf-card-btn lf-card-btn--{{ section.settings.button_style | default: 'filled' }}" href="{{ routes.all_products_collection_url }}" aria-label="View sample product"><span class="lf-card-btn__label">View product</span><span class="lf-card-btn__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
               </div>
             </div>
           </article>

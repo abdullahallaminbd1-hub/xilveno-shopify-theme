@@ -9,6 +9,7 @@
     {{ 'poppins-600.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
     {{ content_for_header }}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'product-card.css' | asset_url | stylesheet_tag }}
     <style>
       :root{
         --ink: {{ settings.color_ink | default: '#2C2929' }};

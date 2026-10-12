@@ -282,25 +282,29 @@ body{background:#fff;}
    Titles that fit within 3 lines show in full; only longer titles are
    truncated after the 3rd line. Font, size, weight, alignment, spacing
    and the rest of the card are unchanged. */
+/* Legacy multi-line card-title rules (3 lines desktop / 2 lines mobile) are
+   superseded by product-card.css, which forces exactly one line everywhere. */
 @media(min-width:641px){
-  .lf-product-card__title a{
-    display:-webkit-box;
-    -webkit-box-orient:vertical;
-    -webkit-line-clamp:3;
-    line-clamp:3;
+  .lf-product-card .lf-product-card__title a{
+    display:block;
+    -webkit-box-orient:inline-axis;
+    -webkit-line-clamp:none;
+    line-clamp:none;
     overflow:hidden;
-    white-space:normal;
+    white-space:nowrap;
+    text-overflow:ellipsis;
   }
 }
-/* mobile: the title may use up to two lines, then ellipsis. Never a third line. */
+/* mobile: the title stays on one line with an ellipsis. */
 @media(max-width:640px){
-  .lf-product-card__title a{
-    display:-webkit-box;
-    -webkit-box-orient:vertical;
-    -webkit-line-clamp:2;
-    line-clamp:2;
+  .lf-product-card .lf-product-card__title a{
+    display:block;
+    -webkit-box-orient:inline-axis;
+    -webkit-line-clamp:none;
+    line-clamp:none;
     overflow:hidden;
-    white-space:normal;
+    white-space:nowrap;
+    text-overflow:ellipsis;
   }
   /* mobile image: fully contained inside the card, never cropped or stretched.
      aspect-ratio stays 1/1 so card size and appearance are unchanged. */

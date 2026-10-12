@@ -7,11 +7,11 @@
 .lf-product-card__info::before{content:"";display:block;width:24px;height:3px;border-radius:999px;background:#B85C78;margin:0 0 8px;}
 .lf-badge{background:#5A263F;color:#fff;font-size:10px;letter-spacing:.1em;padding:7px 13px;box-shadow:0 8px 18px -10px rgba(90,38,63,.7);}
 .lf-badge--sold{background:#2E1A20;color:#fff;}
-.lf-product-card .lf-product-card__title{margin:6px 0 0;font-size:16px;font-weight:600;line-height:1.35;min-width:0;}
+.lf-product-card .lf-product-card__title{margin:6px 0 0;font-size:17.5px;font-weight:700;line-height:1.35;min-width:0;}
 .lf-product-card .lf-product-card__title a{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 .lf-product-card__subtitle{margin:4px 0 0;min-height:20px;font-size:12.5px;line-height:20px;color:#8B536F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .lf-product-card__subtitle:empty::after{content:"\00a0";}
-.lf-product-card .lf-product-card__price{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:10px;font-size:18px;font-weight:700;}
+.lf-product-card .lf-product-card__price{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:10px;font-size:19.5px;font-weight:700;}
 .lf-product-card .lf-product-card__price .lf-price{color:#241820;}
 .lf-product-card .lf-product-card__price .lf-compare{font-size:14px;font-weight:400;color:#9a8f91;text-decoration:line-through;}
 .lf-product-card .lf-product-card__price .lf-save{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:#F9DEE3;color:#7A2E44;font-size:11.5px;font-weight:700;letter-spacing:.01em;white-space:nowrap;}
@@ -26,13 +26,31 @@
 .lf-card-btn__arrow{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#F3DCE5;color:#5A263F;}
 .lf-card-btn__arrow svg{width:16px;height:16px;}
 .lf-product-card .lf-card-btn:focus-visible,.lf-product-card a:focus-visible{outline:2px solid #B85C78;outline-offset:2px;}
+/* Secondary-image hover: cross-fade + restrained zoom on desktop pointers only.
+   Single-image cards keep the existing zoom. Honors reduced motion. */
+.lf-product-card__image--secondary{position:absolute;inset:0;opacity:0;}
+/* Fallback for browsers without :has(): hidden secondary never intercepts or shows. */
+.lf-product-card__media:not(:has(.lf-product-card__image--secondary)) .lf-product-card__image--secondary{display:none;}
+@supports not selector(:has(*)){
+  .lf-product-card__image--secondary{display:none;}
+}
+@media (hover:hover) and (pointer:fine){
+  .lf-product-card__media:has(.lf-product-card__image--secondary) .lf-product-card__image{transition:transform .6s ease,opacity .6s ease;}
+  .lf-product-card__media:has(.lf-product-card__image--secondary):hover .lf-product-card__image--primary{transform:scale(1.05);opacity:0;}
+  .lf-product-card__media:has(.lf-product-card__image--secondary):hover .lf-product-card__image--secondary{transform:scale(1.05);opacity:1;}
+}
+@media (prefers-reduced-motion:reduce){
+  .lf-product-card__media:has(.lf-product-card__image--secondary) .lf-product-card__image{transition:none;}
+  .lf-product-card__media:has(.lf-product-card__image--secondary):hover .lf-product-card__image--primary{transform:none;opacity:1;}
+  .lf-product-card__media:has(.lf-product-card__image--secondary):hover .lf-product-card__image--secondary{transform:none;opacity:0;}
+}
 @media (hover:hover) and (pointer:fine){.lf-card-btn:hover .lf-card-btn__arrow{transform:translateX(3px);} .lf-card-btn__arrow{transition:transform .25s ease;}}
 @media (max-width:640px){
   .lf-product-card{border-radius:20px;}
   .lf-product-card__media{border-radius:20px 20px 0 0;}
   .lf-product-card__info{margin-top:-22px;padding:20px 14px 16px;}
-  .lf-product-card .lf-product-card__title{font-size:14px;}
+  .lf-product-card .lf-product-card__title{font-size:15.5px;}
   .lf-product-card__subtitle{font-size:11.5px;}
-  .lf-product-card .lf-product-card__price{font-size:17px;}
+  .lf-product-card .lf-product-card__price{font-size:18.5px;}
   .lf-chip{font-size:10px;} .lf-chip svg{width:13px;height:13px;}
 }

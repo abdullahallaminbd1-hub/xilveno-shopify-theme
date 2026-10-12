@@ -1,7 +1,11 @@
 <article class="lf-product-card">
   <a class="lf-product-card__media" href="{{ product.url }}" aria-label="View {{ product.title | escape }}">
     {%- if product.featured_image -%}
-      {{ product.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '360,540,800', sizes: '(max-width: 750px) 50vw, 25vw', class: 'lf-product-card__image', alt: product.featured_image.alt | default: product.title }}
+      {{ product.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '360,540,800', sizes: '(max-width: 750px) 50vw, 25vw', class: 'lf-product-card__image lf-product-card__image--primary', alt: product.featured_image.alt | default: product.title }}
+      {%- assign card_second = product.images[1] -%}
+      {%- if card_second -%}
+        {{ card_second | image_url: width: 800 | image_tag: loading: 'lazy', widths: '360,540,800', sizes: '(max-width: 750px) 50vw, 25vw', class: 'lf-product-card__image lf-product-card__image--secondary', alt: card_second.alt | default: product.title }}
+      {%- endif -%}
     {%- else -%}
       <div class="lf-product-card__placeholder">LF</div>
     {%- endif -%}

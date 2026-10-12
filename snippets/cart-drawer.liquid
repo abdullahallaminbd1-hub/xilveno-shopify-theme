@@ -16,24 +16,25 @@
     {%- elsif bundle_done -%}{%- assign milestone_pct = 50 | plus: cart.total_price | times: 50.0 | divided_by: ship_threshold | round -%}{%- if milestone_pct > 99 -%}{%- assign milestone_pct = 99 -%}{%- endif -%}
     {%- elsif bundle_count > 0 -%}{%- assign milestone_pct = bundle_count | times: 50.0 | divided_by: bundle_need | round -%}
     {%- endif -%}
-    <div class="reward-strip" data-cart-milestones data-threshold="{{ ship_threshold }}" data-count="{{ bundle_count }}" data-subtotal="{{ cart.total_price }}">
+    <div class="reward-strip" data-cart-milestones data-threshold="{{ ship_threshold }}" data-count="{{ bundle_count }}" data-subtotal="{{ cart.total_price }}"{% if ship_done %} data-complete="true"{% endif %}>
       {%- if cart.item_count == 0 -%}
         <p class="reward-strip__lead" data-milestone-lead>Add 2 more items to unlock 2% off</p>
       {%- elsif bundle_done == false -%}
         <p class="reward-strip__lead" data-milestone-lead>Add {{ items_left }} more item{% if items_left != 1 %}s{% endif %} to unlock 2% off</p>
       {%- elsif ship_done == false -%}
-        <p class="reward-strip__lead" data-milestone-lead><strong>2% Bundle Savings Unlocked!</strong> <span>Spend {{ ship_left | money }} more to unlock free shipping</span></p>
+        <p class="reward-strip__lead" data-milestone-lead>Spend {{ ship_left | money }} more to unlock free shipping</p>
       {%- else -%}
-        <p class="reward-strip__lead" data-milestone-lead>You've unlocked free shipping!</p>
+        <p class="reward-strip__lead" data-milestone-lead>You've unlocked free shipping! Enjoy your savings.</p>
       {%- endif -%}
-      <div class="reward-strip__bar reward-strip__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ milestone_pct }}" aria-label="Savings progress">
+      <div class="reward-strip__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ milestone_pct }}" aria-label="Savings progress">
         <i class="reward-strip__fill" data-milestone-fill style="width:{{ milestone_pct }}%"></i>
-        <span class="reward-strip__marker reward-strip__marker--bundle{% if bundle_done %} is-done{% endif %}" aria-hidden="true">{% render 'icon', icon: 'bag' %}</span>
-        <span class="reward-strip__marker reward-strip__marker--ship{% if ship_done %} is-done{% endif %}" aria-hidden="true">{% render 'icon', icon: 'truck' %}</span>
+        <span class="reward-strip__pending" data-milestone-pending style="left:{{ milestone_pct }}%" aria-hidden="true"></span>
+        <span class="reward-strip__marker reward-strip__marker--bundle{% if bundle_done %} is-done{% endif %}" aria-hidden="true"><span class="reward-strip__marker-icon">{% render 'icon', icon: 'bag' %}</span><svg class="reward-strip__marker-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12.5 4 4 8-9"/></svg></span>
+        <span class="reward-strip__marker reward-strip__marker--ship{% if ship_done %} is-done{% endif %}" aria-hidden="true"><span class="reward-strip__marker-icon">{% render 'icon', icon: 'truck' %}</span><svg class="reward-strip__marker-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12.5 4 4 8-9"/></svg></span>
       </div>
       <ul class="reward-strip__steps">
-        <li class="reward-step{% if bundle_done %} is-done{% endif %}" data-step="bundle"><span class="reward-step__dot">{% render 'icon', icon: 'bag' %}</span><span>ADD 2, SAVE 2%</span><small>{% if bundle_done %}2% Bundle Savings Unlocked!{% else %}On your order{% endif %}</small></li>
-        <li class="reward-step{% if ship_done %} is-done{% endif %}" data-step="ship"><span class="reward-step__dot">{% render 'icon', icon: 'truck' %}</span><span>FREE SHIPPING</span><small>{% if ship_done %}You've unlocked free shipping!{% else %}On qualifying orders{% endif %}</small></li>
+        <li class="reward-step{% if bundle_done %} is-done{% endif %}" data-step="bundle"><span class="reward-step__label">Bundle Savings</span><small>Buy 2, save 2%</small></li>
+        <li class="reward-step{% if ship_done %} is-done{% endif %}" data-step="ship"><span class="reward-step__label">Free Shipping</span><small>On qualifying orders</small></li>
       </ul>
     </div>
     {% if cart.item_count == 0 %}<div class="empty-state"><div class="empty-state__mark">◇</div><h3>Your cart is empty</h3><p>Discover a small upgrade for your daily ritual.</p><a class="button button--dark" href="{{ routes.all_products_collection_url }}">Continue shopping</a></div>{% else %}<div class="cart-items">{% for item in cart.items %}<div class="cart-item"><div class="cart-item__image">{% if item.image %}{{ item.image | image_url: width: 180 | image_tag }}{% endif %}</div><div class="cart-item__main"><div class="cart-item__head"><h3 class="cart-item__title">{{ item.product.title }}</h3><button type="button" class="cart-item__remove" data-remove-item data-line="{{ forloop.index }}" aria-label="Remove {{ item.product.title | escape }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6.5 7l.9 11.1A2 2 0 0 0 9.4 20h5.2a2 2 0 0 0 2-1.9L17.5 7"/><path d="M9.5 7V5.2A1.2 1.2 0 0 1 10.7 4h2.6a1.2 1.2 0 0 1 1.2 1.2V7"/></svg></button></div>{% unless item.variant.title == 'Default Title' %}<p class="cart-item__variant">{{ item.variant.title }}</p>{% endunless %}<div class="cart-item__foot"><div class="quantity-control"><button type="button" data-cart-change data-line="{{ forloop.index }}" data-quantity="{{ item.quantity | minus: 1 }}" aria-label="Decrease quantity of {{ item.product.title | escape }}">−</button><span>{{ item.quantity }}</span><button type="button" data-cart-change data-line="{{ forloop.index }}" data-quantity="{{ item.quantity | plus: 1 }}" aria-label="Increase quantity of {{ item.product.title | escape }}">＋</button></div><span class="cart-item__price">{{ item.final_line_price | money }}</span></div></div></div>{% endfor %}</div>{% endif %}

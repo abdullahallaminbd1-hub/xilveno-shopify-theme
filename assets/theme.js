@@ -153,22 +153,31 @@
      never shows a stale milestone (server render already seeds correct values
      via refreshDrawer; this keeps any cached nodes in sync). Free gift stays
      removed: only Bundle (2 items) and Free shipping ($75) milestones exist. */
+  var money = function (cents) {
+    if (typeof Shopify !== 'undefined' && Shopify.formatMoney) { return Shopify.formatMoney(cents); }
+    return '$' + (cents / 100).toFixed(2);
+  };
   var paintMilestones = function (cart) {
     var root = qs('[data-cart-milestones]');
     if (!root || !cart) { return; }
     var threshold = parseInt(root.getAttribute('data-threshold'), 10) || 7500;
+    var need = 2;
     var count = cart.item_count || 0;
     var subtotal = cart.total_price || 0;
-    var bundleDone = count >= 2;
+    var bundleDone = count >= need;
     var shipDone = subtotal >= threshold;
     var pct = 0;
     if (shipDone) { pct = 100; }
     else if (bundleDone) { pct = Math.min(99, Math.round(50 + (subtotal * 50 / threshold))); }
-    else if (count > 0) { pct = Math.round(count * 50 / 2); }
+    else if (count > 0) { pct = Math.round(count * 50 / need); }
     var fill = qs('[data-milestone-fill]', root);
     if (fill) { fill.style.width = pct + '%'; }
+    var pending = qs('[data-milestone-pending]', root);
+    if (pending) { pending.style.left = pct + '%'; }
     var track = qs('.reward-strip__track', root);
     if (track) { track.setAttribute('aria-valuenow', String(pct)); }
+    if (shipDone) { root.setAttribute('data-complete', 'true'); }
+    else { root.removeAttribute('data-complete'); }
     var steps = qsa('.reward-step', root);
     steps.forEach(function (step) {
       var kind = step.getAttribute('data-step');
@@ -179,6 +188,14 @@
       var isBundle = marker.classList.contains('reward-strip__marker--bundle');
       marker.classList.toggle('is-done', isBundle ? bundleDone : shipDone);
     });
+    var lead = qs('[data-milestone-lead]', root);
+    if (lead) {
+      var left = need - count;
+      if (count <= 0) { lead.textContent = 'Add 2 more items to unlock 2% off'; }
+      else if (!bundleDone) { lead.textContent = 'Add ' + left + ' more item' + (left === 1 ? '' : 's') + ' to unlock 2% off'; }
+      else if (!shipDone) { lead.textContent = 'Spend ' + money(threshold - subtotal) + ' more to unlock free shipping'; }
+      else { lead.textContent = "You've unlocked free shipping! Enjoy your savings."; }
+    }
   };
 
   /* ---------- discount code ----------

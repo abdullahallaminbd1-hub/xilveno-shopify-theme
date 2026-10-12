@@ -148,24 +148,38 @@
     }
   });
 
-  /* ---------- complimentary gift ---------- */
-  document.addEventListener('click', function (event) {
-    var choice = event.target.closest('[data-gift-choice]');
-    if (!choice) { return; }
-    qsa('[data-gift-choice]').forEach(function (other) { other.classList.remove('is-selected'); });
-    choice.classList.add('is-selected');
-    var label = choice.getAttribute('data-gift-choice');
-    qsa('[data-gift-status]').forEach(function (status) { status.textContent = label + ' selected for checkout.'; });
-    try {
-      fetch('/cart/update.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ attributes: { 'Complimentary gift': label } })
-      });
-    } catch (error) {
-      /* Selection stays visible when the cart endpoint is unavailable. */
-    }
-  });
+  /* ---------- cart milestone updater ----------
+     Recomputes the two-milestone bar from live /cart.js state so the drawer
+     never shows a stale milestone (server render already seeds correct values
+     via refreshDrawer; this keeps any cached nodes in sync). Free gift stays
+     removed: only Bundle (2 items) and Free shipping ($75) milestones exist. */
+  var paintMilestones = function (cart) {
+    var root = qs('[data-cart-milestones]');
+    if (!root || !cart) { return; }
+    var threshold = parseInt(root.getAttribute('data-threshold'), 10) || 7500;
+    var count = cart.item_count || 0;
+    var subtotal = cart.total_price || 0;
+    var bundleDone = count >= 2;
+    var shipDone = subtotal >= threshold;
+    var pct = 0;
+    if (shipDone) { pct = 100; }
+    else if (bundleDone) { pct = Math.min(99, Math.round(50 + (subtotal * 50 / threshold))); }
+    else if (count > 0) { pct = Math.round(count * 50 / 2); }
+    var fill = qs('[data-milestone-fill]', root);
+    if (fill) { fill.style.width = pct + '%'; }
+    var track = qs('.reward-strip__track', root);
+    if (track) { track.setAttribute('aria-valuenow', String(pct)); }
+    var steps = qsa('.reward-step', root);
+    steps.forEach(function (step) {
+      var kind = step.getAttribute('data-step');
+      step.classList.toggle('is-done', kind === 'bundle' ? bundleDone : shipDone);
+    });
+    var markers = qsa('.reward-strip__marker', root);
+    markers.forEach(function (marker) {
+      var isBundle = marker.classList.contains('reward-strip__marker--bundle');
+      marker.classList.toggle('is-done', isBundle ? bundleDone : shipDone);
+    });
+  };
 
   /* ---------- discount code ----------
      The real handler lives in bindDrawerInternals() below, which applies the
@@ -240,17 +254,8 @@
           .catch(function () { if (note) { note.textContent = 'That code could not be applied. Please try again.'; } });
       });
     });
-    var giftBox = qs('[data-gift-choices]');
-    if (giftBox && !giftBox.hasAttribute('data-bound')) {
-      giftBox.setAttribute('data-bound', 'true');
-      giftBox.addEventListener('click', function (event) {
-        var choice = event.target.closest('[data-gift-choice]');
-        if (!choice) { return; }
-        var status = qs('[data-gift-status]');
-        if (status) { status.textContent = choice.getAttribute('data-gift-choice') + ' will be added as your complimentary gift.'; }
-        giftBox.setAttribute('data-gift-selected', choice.getAttribute('data-gift-choice'));
-      });
-    }
+    /* No free-gift binding here: the cart drawer ships without a gift milestone;
+       the cart page owns its own [data-gift-choices] block bound below. */
   };
 
   var getScroller = function () {
@@ -319,7 +324,7 @@
           /* open the side cart straight away, then refresh its contents - no navigation */
           setDrawer(true);
           restoreButton(quickAdd, originalHtml);
-          return refreshDrawer();
+          return refreshDrawer().then(function () { paintMilestones(cart); });
         })
         .catch(function () { flashButton(quickAdd, 'Unavailable', originalHtml); });
       return;
@@ -335,7 +340,7 @@
       setRowBusy(line, true);
       postCart('/cart/change.js', { line: line, quantity: quantity })
         .then(function (r) { if (!r.ok) { throw new Error('change failed'); } return getCart(); })
-        .then(function (cart) { paintCount(cart.item_count); return refreshDrawer(quantity > 0 ? line : null); })
+        .then(function (cart) { paintCount(cart.item_count); paintMilestones(cart); return refreshDrawer(quantity > 0 ? line : null); })
         .catch(function () { change.disabled = false; setRowBusy(line, false); });
       return;
     }
@@ -350,7 +355,7 @@
         : fetch(remove.getAttribute('href'), { headers: { Accept: 'application/json' } });
       removeRequest
         .then(function () { return getCart(); })
-        .then(function (cart) { paintCount(cart.item_count); return refreshDrawer(); })
+        .then(function (cart) { paintCount(cart.item_count); paintMilestones(cart); return refreshDrawer(); })
         .catch(function () { setRowBusy(removeLine, false); /* item stays in the drawer until the page reloads */ });
     }
   });

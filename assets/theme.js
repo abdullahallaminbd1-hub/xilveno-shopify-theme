@@ -172,8 +172,6 @@
     else if (count > 0) { pct = Math.round(count * 50 / need); }
     var fill = qs('[data-milestone-fill]', root);
     if (fill) { fill.style.width = pct + '%'; }
-    var pending = qs('[data-milestone-pending]', root);
-    if (pending) { pending.style.left = pct + '%'; }
     var track = qs('.reward-strip__track', root);
     if (track) { track.setAttribute('aria-valuenow', String(pct)); }
     if (shipDone) { root.setAttribute('data-complete', 'true'); }

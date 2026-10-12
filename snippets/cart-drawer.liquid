@@ -28,7 +28,6 @@
       {%- endif -%}
       <div class="reward-strip__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ milestone_pct }}" aria-label="Savings progress">
         <i class="reward-strip__fill" data-milestone-fill style="width:{{ milestone_pct }}%"></i>
-        <span class="reward-strip__pending" data-milestone-pending style="left:{{ milestone_pct }}%" aria-hidden="true"></span>
         <span class="reward-strip__marker reward-strip__marker--bundle{% if bundle_done %} is-done{% endif %}" aria-hidden="true"><span class="reward-strip__marker-icon">{% render 'icon', icon: 'bag' %}</span><svg class="reward-strip__marker-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12.5 4 4 8-9"/></svg></span>
         <span class="reward-strip__marker reward-strip__marker--ship{% if ship_done %} is-done{% endif %}" aria-hidden="true"><span class="reward-strip__marker-icon">{% render 'icon', icon: 'truck' %}</span><svg class="reward-strip__marker-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 12.5 4 4 8-9"/></svg></span>
       </div>

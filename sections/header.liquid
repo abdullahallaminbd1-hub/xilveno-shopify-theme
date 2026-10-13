@@ -18,12 +18,32 @@
       Same action, method and options[prefix] payload as the overlay search below, so
       submission behaviour is identical; on mobile this form stays display:none and the
       existing search overlay remains the only search UI. {%- endcomment -%}
-    <form class="lf-header__search" action="{{ routes.search_url }}" method="get" role="search">
+    <form class="lf-header__search" action="{{ routes.search_url }}" method="get" role="search" data-search-suggest-form>
       <span class="lf-header__search-icon" aria-hidden="true">{% render 'icon', icon: 'search' %}</span>
-      <input type="search" name="q" placeholder="Search for beauty tools, devices and more..." aria-label="Search" autocomplete="off">
+      <input type="search" name="q" placeholder="Search for beauty tools, devices and more..." aria-label="Search" autocomplete="off" data-search-suggest-input role="combobox" aria-expanded="false" aria-controls="XilvenoSearchSuggest" aria-autocomplete="list" aria-haspopup="listbox">
       <input type="hidden" name="options[prefix]" value="last">
       <button type="submit" aria-label="Search">{% render 'icon', icon: 'arrow' %}</button>
+      <div class="lf-search-suggest" id="XilvenoSearchSuggest" data-search-suggest-panel hidden></div>
     </form>
+
+    {%- comment -%}
+      A small set of real popular products, rendered server-side straight from the
+      live catalog, used only for the focused-but-empty suggestion state. Nothing
+      here is hardcoded and no data is faked. Hidden from layout (script island);
+      ignored entirely on mobile where the desktop field is display:none.
+    {%- endcomment -%}
+    <script type="application/json" data-xilveno-popular>[
+      {%- for pop in collections.all.products limit: 6 -%}
+      {
+        "title": {{ pop.title | json }},
+        "url": {{ pop.url | json }},
+        "image": {% if pop.featured_image %}{{ pop.featured_image | image_url: width: 120 | json }}{% else %}""{% endif %},
+        "price": {{ pop.price | default: 0 | json }},
+        "compare_at_price": {{ pop.compare_at_price | json }},
+        "available": {{ pop.available | json }}
+      }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]</script>
 
     <div class="lf-header__icons lf-header__icons--right">
       <a class="lf-header__icon lf-header__icon--account" href="{{ routes.account_login_url }}" aria-label="Log in">

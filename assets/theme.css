@@ -984,3 +984,93 @@ a.cf__card-value:hover{color:var(--plum);}
     transition-duration:.001s;
   }
 }
+
+/* ---------- desktop-only two-row header ----------
+   Reproduces the reference desktop header: Row 1 = logo left, wide pill search
+   bar centred, Account + Cart (with labels) right; Row 2 = main menu aligned
+   left with the active item in a blush pill, and a Special Offers pill on the
+   right, with a subtle divider under each row.
+   ALL of it is scoped to min-width:990px - the exact breakpoint the theme
+   already uses for its mobile header - so the mobile header, menu drawer and
+   search overlay markup and rendering are completely unchanged. The announcement
+   bar (a separate section above) is untouched. No JavaScript, destinations,
+   search submission or cart behaviour change. */
+/* pieces below exist in the markup for the desktop layout only; they are hidden
+   everywhere else so small screens render exactly as they did before */
+.lf-header__search{display:none;}
+.lf-header__icon-label{display:none;}
+.lf-header__icon-wrap{display:contents;}
+.lf-header__offers{display:none;}
+@media (min-width:990px){
+  :root{--header-h:116px;}
+  /* the centred header box now sits on a full-bleed cream band like the reference */
+  #shopify-section-header{background:var(--cream);}
+  .lf-header{background:var(--cream);}
+
+  /* ---- row 1: brand | search | account + cart ---- */
+  .lf-header__bar{
+    grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-areas:"brand search tools";
+    gap:34px;
+    min-height:116px;
+    padding-top:24px;
+    padding-bottom:24px;
+    border-bottom:1px solid rgba(232,214,222,.6);
+  }
+  .lf-header__heading{grid-area:brand;align-items:flex-start;gap:7px;}
+  .lf-wordmark{font-size:40px;}
+  .lf-wordmark-tag{font-size:11px;letter-spacing:.22em;}
+  .lf-header__icons--left{display:none;}
+  .lf-header__icons--right{grid-area:tools;gap:24px;}
+
+  /* pill search field: cream border, white background, icon left, burgundy
+     rounded arrow button flush to the right end (same GET payload as the
+     existing overlay search form) */
+  .lf-header__search{
+    grid-area:search;
+    display:flex;align-items:center;gap:14px;
+    height:56px;min-width:0;
+    padding:0 0 0 22px;
+    background:#fff;
+    border:1px solid var(--line-rose);
+    border-radius:999px;
+  }
+  .lf-header__search-icon{display:grid;place-items:center;flex:0 0 auto;color:var(--ink);}
+  .lf-header__search-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+  .lf-header__search input[type="search"]{flex:1 1 auto;min-width:0;padding:0;border:0;background:transparent;outline:0;font:inherit;font-size:15px;color:var(--ink);appearance:none;-webkit-appearance:none;}
+  .lf-header__search input[type="search"]::-webkit-search-cancel-button{appearance:none;-webkit-appearance:none;}
+  .lf-header__search:focus-within{border-color:var(--rose);box-shadow:0 0 0 3px rgba(184,92,120,.14);}
+  .lf-header__search button{flex:0 0 auto;align-self:stretch;margin:-1px -1px -1px 0;padding:0 20px;border:0;border-radius:15px 28px 28px 15px;background:var(--plum);color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .2s ease;}
+  .lf-header__search button:hover{background:var(--plum-deep);}
+  .lf-header__search button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .lf-header__search button:focus-visible{outline:2px solid var(--plum);outline-offset:2px;}
+
+  /* account + cart: icon above its label, aligned with logo and search */
+  .lf-header__icon{display:flex;flex-direction:column;align-items:center;gap:6px;width:auto;min-width:48px;height:auto;padding:2px 6px;border-radius:12px;}
+  .lf-header__icon svg{width:25px;height:25px;}
+  .lf-header__icon-wrap{display:block;position:relative;line-height:0;}
+  .lf-header__icon-label{display:block;font-size:11.5px;line-height:1;color:var(--ink);}
+  .lf-header__cart-count{top:-7px;right:-8px;min-width:17px;height:17px;line-height:17px;font-size:10px;}
+
+  /* ---- row 2: navigation left, Special Offers pill right ---- */
+  .lf-header__menu{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:16px 24px;
+    padding:16px var(--lf-header-pad) 20px;
+    border-bottom:1px solid rgba(232,214,222,.85);
+  }
+  .lf-header__menu-list{flex-wrap:wrap;justify-content:flex-start;gap:4px 6px;padding:0;}
+  .lf-header__menu-list li{display:flex;}
+  .lf-header__menu-list a{display:inline-block;padding:13px 20px;border-radius:999px;font-size:13px;letter-spacing:.09em;}
+  .lf-header__menu-list a[aria-current="page"]{background:var(--blush);color:var(--plum);}
+  /* the active item keeps its burgundy underline, as a short bar below the pill */
+  .lf-header__menu-list a[aria-current="page"]::after{left:50%;right:auto;width:16px;height:3px;bottom:-8px;border-radius:999px;transform:translateX(-50%);transition:none;}
+  .lf-header__offers{
+    display:inline-flex;align-items:center;gap:11px;
+    padding:14px 24px;border-radius:999px;
+    background:var(--blush);color:var(--plum);
+    font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .lf-header__offers svg{flex:0 0 auto;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+}

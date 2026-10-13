@@ -14,13 +14,25 @@
       <span class="lf-wordmark-tag">beauty tools &amp; devices</span>
     </a>
 
+    {%- comment -%} Desktop-only inline search bar (visible from the 990px breakpoint via CSS).
+      Same action, method and options[prefix] payload as the overlay search below, so
+      submission behaviour is identical; on mobile this form stays display:none and the
+      existing search overlay remains the only search UI. {%- endcomment -%}
+    <form class="lf-header__search" action="{{ routes.search_url }}" method="get" role="search">
+      <span class="lf-header__search-icon" aria-hidden="true">{% render 'icon', icon: 'search' %}</span>
+      <input type="search" name="q" placeholder="Search for beauty tools, devices and more..." aria-label="Search" autocomplete="off">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="submit" aria-label="Search">{% render 'icon', icon: 'arrow' %}</button>
+    </form>
+
     <div class="lf-header__icons lf-header__icons--right">
       <a class="lf-header__icon lf-header__icon--account" href="{{ routes.account_login_url }}" aria-label="Log in">
-        {% render 'icon', icon: 'user' %}
+        <span class="lf-header__icon-wrap">{% render 'icon', icon: 'user' %}</span>
+        <span class="lf-header__icon-label">Account</span>
       </a>
       <button class="lf-header__icon cart-trigger" data-cart-open aria-label="Open cart">
-        {% render 'icon', icon: 'bag' %}
-        <span class="lf-header__cart-count" data-cart-count>{{ cart.item_count }}</span>
+        <span class="lf-header__icon-wrap">{% render 'icon', icon: 'bag' %}<span class="lf-header__cart-count" data-cart-count>{{ cart.item_count }}</span></span>
+        <span class="lf-header__icon-label">Cart</span>
       </button>
     </div>
   </div>
@@ -44,6 +56,15 @@
         <li><a href="{{ routes.root_url }}pages/about-us">About Us</a></li>
       {%- endif -%}
     </ul>
+    {%- comment -%} Desktop-only Special Offers pill. The theme contains no existing
+      Special Offers page, collection or link to reuse, so this pill is intentionally
+      a non-interactive element (no invented URL). Drop a real destination in here
+      once one exists. {%- endcomment -%}
+    <span class="lf-header__offers">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c.8 5.2 3.8 8.2 9 9-5.2.8-8.2 3.8-9 9-.8-5.2-3.8-8.2-9-9 5.2-.8 8.2-3.8 9-9Z"/></svg>
+      Special offers
+      {% render 'icon', icon: 'arrow' %}
+    </span>
   </nav>
 </header>
 

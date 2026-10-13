@@ -14,7 +14,7 @@
     "color_accent": "#7A4B50",
     "color_sand": "#FAF7F3",
     "contact_email": "support@xilveno.com",
-    "hero_height_desktop": 620,
+    "hero_height_desktop": 660,
     "hero_height_mobile": 590,
     "instagram_url": "https://facebook.com",
     "tiktok_url": "",
@@ -27,6 +27,7 @@
       "header": {
         "type": "header",
         "settings": {
+          "logo_width": 180,
           "menu": "main-menu"
         }
       },
@@ -40,6 +41,7 @@
           ".lf-footer__inner {background: #802f47;}"
         ],
         "settings": {
+          "logo_width": 140,
           "menu_shop": "",
           "menu_customer_care": "footer"
         }

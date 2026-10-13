@@ -10,8 +10,21 @@
     </div>
 
     <a class="lf-header__heading" href="{{ routes.root_url }}" role="heading" aria-level="2">
-      <span class="lf-wordmark">Xil<i>veno</i></span>
-      <span class="lf-wordmark-tag">beauty tools &amp; devices</span>
+      {%- if section.settings.logo != blank -%}
+        <img
+          class="lf-header__logo-img"
+          src="{{ section.settings.logo | image_url: width: 600 }}"
+          srcset="{{ section.settings.logo | image_url: width: 150 }} 150w, {{ section.settings.logo | image_url: width: 300 }} 300w, {{ section.settings.logo | image_url: width: 450 }} 450w, {{ section.settings.logo | image_url: width: 600 }} 600w"
+          sizes="(max-width: 989px) 150px, {{ section.settings.logo_width | default: 180 }}px"
+          alt="{{ section.settings.logo.alt | default: shop.name | escape }}"
+          width="{{ section.settings.logo.width }}"
+          height="{{ section.settings.logo.height }}"
+          loading="eager"
+          style="width:{{ section.settings.logo_width | default: 180 }}px">
+      {%- else -%}
+        <span class="lf-wordmark">Xil<i>veno</i></span>
+        <span class="lf-wordmark-tag">beauty tools &amp; devices</span>
+      {%- endif -%}
     </a>
 
     {%- comment -%} Desktop-only inline search bar (visible from the 990px breakpoint via CSS).
@@ -135,6 +148,23 @@
 {
   "name": "Header",
   "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Header logo image",
+      "info": "Optional. Upload a PNG, JPEG or GIF logo. Leave empty to keep the default Xilveno wordmark."
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Header logo width",
+      "min": 60,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 180,
+      "info": "Applied only when a header logo image is selected."
+    },
     {"type":"link_list","id":"menu","label":"Menu","default":"main-menu"}
   ],
   "presets":[{"name":"Header"}]

@@ -4,7 +4,20 @@
     <div class="lf-footer__grid">
       <div class="lf-footer__brand">
         <a class="lf-footer__logo-card" href="{{ routes.root_url }}">
-          <span class="lf-wordmark lf-wordmark--footer">Xil<i>veno</i></span>
+          {%- if section.settings.logo != blank -%}
+            <img
+              class="lf-footer__logo-img"
+              src="{{ section.settings.logo | image_url: width: 400 }}"
+              srcset="{{ section.settings.logo | image_url: width: 100 }} 100w, {{ section.settings.logo | image_url: width: 200 }} 200w, {{ section.settings.logo | image_url: width: 300 }} 300w, {{ section.settings.logo | image_url: width: 400 }} 400w"
+              sizes="{{ section.settings.logo_width | default: 140 }}px"
+              alt="{{ section.settings.logo.alt | default: shop.name | escape }}"
+              width="{{ section.settings.logo.width }}"
+              height="{{ section.settings.logo.height }}"
+              loading="lazy"
+              style="width:{{ section.settings.logo_width | default: 140 }}px">
+          {%- else -%}
+            <span class="lf-wordmark lf-wordmark--footer">Xil<i>veno</i></span>
+          {%- endif -%}
         </a>
         <p>{{ settings.brand_tagline | default: 'Premium beauty tools and devices thoughtfully selected for modern routines.' }}</p>
         <div class="lf-footer__social">
@@ -66,4 +79,4 @@
     </div>
   </div>
 </footer>
-{% schema %}{"name":"Footer","settings":[{"type":"link_list","id":"menu_shop","label":"Shop menu","info":"Optional. Leave empty to use the default collection links."},{"type":"link_list","id":"menu_customer_care","label":"Customer Care menu","info":"Optional. Leave empty to use the default pages and policies."}],"presets":[{"name":"Footer"}]}{% endschema %}
+{% schema %}{"name":"Footer","settings":[{"type":"image_picker","id":"logo","label":"Footer logo image","info":"Optional. Upload a PNG, JPEG or GIF logo. Leave empty to keep the default Xilveno wordmark."},{"type":"range","id":"logo_width","label":"Footer logo width","min":60,"max":300,"step":10,"unit":"px","default":140,"info":"Applied only when a footer logo image is selected."},{"type":"link_list","id":"menu_shop","label":"Shop menu","info":"Optional. Leave empty to use the default collection links."},{"type":"link_list","id":"menu_customer_care","label":"Customer Care menu","info":"Optional. Leave empty to use the default pages and policies."}],"presets":[{"name":"Footer"}]}{% endschema %}

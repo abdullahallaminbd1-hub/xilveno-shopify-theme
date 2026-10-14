@@ -725,6 +725,15 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
   .lf-hero__slide{transition:none;}
   *{scroll-behavior:auto !important;}
 }
+@media (min-width: 990px){
+  .lf-hero__content{
+    text-align:left;
+  }
+  .lf-hero__content > *{
+    margin-left:0;
+    margin-right:0;
+  }
+}
 
 /* ---------- homepage: wide, centred content box below the hero ----------
    The hero stays full-bleed. Every section AFTER it places its headings,

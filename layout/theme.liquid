@@ -48,4 +48,13 @@
     {% render 'cart-drawer' %}
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
   </body>
+    <script>
+      (function () {
+        var html = document.documentElement;
+        var isChromeDesktopSiteOnPhone = !(/Mobi/.test(navigator.userAgent)) && navigator.maxTouchPoints > 0 && window.innerWidth <= 989;
+        if (isChromeDesktopSiteOnPhone) {
+          html.classList.add('lf-chrome-desktop-site');
+        }
+      })();
+    </script>
 </html>

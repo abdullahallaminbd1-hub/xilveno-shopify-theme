@@ -127,9 +127,18 @@
     </ul>
   </nav>
   <div class="lf-menu-drawer__utility">
-    <a href="{{ routes.account_login_url }}">{% render 'icon', icon: 'user' %} Log in</a>
-    <a href="{{ routes.search_url }}">{% render 'icon', icon: 'search' %} Search</a>
+  <div class="lf-menu-drawer__account">
+    {% if shop.customer_accounts_enabled %}
+      {% if customer %}
+        <a href="{{ routes.account_url }}">Account</a>
+      {% else %}
+        <a href="{{ routes.account_login_url }}">{% render 'icon', icon: 'user' %} Log in</a>
+        <a href="{{ routes.account_register_url }}">{% render 'icon', icon: 'user' %} Create an account</a>
+      {% endif %}
+    {% endif %}
   </div>
+  <a href="{{ routes.search_url }}">{% render 'icon', icon: 'search' %} Search</a>
+</div>
 </aside>
 
 <div class="lf-search-backdrop" data-search-close></div>

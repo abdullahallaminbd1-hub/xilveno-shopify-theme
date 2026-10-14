@@ -130,10 +130,9 @@
   <div class="lf-menu-drawer__account">
     {% if shop.customer_accounts_enabled %}
       {% if customer %}
-        <a href="{{ routes.account_url }}">Account</a>
+        <a href="{{ routes.account_logout_url }}">Sign out</a>
       {% else %}
-        <a href="{{ routes.account_login_url }}">{% render 'icon', icon: 'user' %} Log in</a>
-        <a href="{{ routes.account_register_url }}">{% render 'icon', icon: 'user' %} Create an account</a>
+        <a href="{{ routes.account_login_url }}">{% render 'icon', icon: 'user' %} Sign in</a>
       {% endif %}
     {% endif %}
   </div>

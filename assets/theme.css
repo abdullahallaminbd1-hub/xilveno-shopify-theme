@@ -175,7 +175,7 @@ body{background:#fff;}
 .lf-menu-drawer__nav a::after{content:"";flex:1 1 auto;height:1px;background:var(--line-rose);margin-top:8px;}
 .lf-menu-drawer__nav li:last-child a{border-bottom:none;}
 .lf-menu-drawer__utility{padding:18px 26px 22px;border-top:1px solid var(--line-rose);display:flex;flex-direction:column;gap:10px;}
-.lf-menu-drawer__utility a{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--ink);text-decoration:none;padding:10px 14px;border-radius:10px;background:var(--cream);transition:background .25s ease,color .25s ease;}
+.lf-menu-drawer__utility a{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;color:var(--ink);text-decoration:none;padding:10px 14px;border-radius:10px;background:var(--cream);transition:background .25s ease,color .25s ease;}
 .lf-menu-drawer__utility a:hover{background:var(--plum);color:#fff;}
 .lf-menu-drawer__utility svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.4;}
 /* Search overlay. The bar is a flex row: the form takes the free space and the
@@ -677,28 +677,28 @@ body.drawer-open .cart-drawer{transform:translateX(0);visibility:visible;}
   .filter-panel-open .filter-panel{display:block;}
   .product-page{grid-template-columns:1fr !important;}
 }
-/* Chrome Desktop Site on narrow touch viewports (desktop UA + narrow viewport + touch device).
-   Scoped to avoid altering normal mobile or full desktop layouts. */
-.lf-chrome-desktop-site .lf-hero__content{
-  padding:96px 22px 84px;
-  text-align:center;
-  color:#fff;
-}
-.lf-chrome-desktop-site .lf-hero__content > *{
-  max-width:620px;
-  margin-left:auto;
-  margin-right:auto;
-}
-.lf-chrome-desktop-site .lf-hero__content .button{
-  display:block;
-  max-width:620px;
-  margin:32px auto 0;
-  background:#fff;
-  color:var(--plum);
-}
-.lf-chrome-desktop-site .lf-product-grid--4{
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:20px 16px;
+@media (max-width:989px){
+  .lf-chrome-desktop-site .lf-hero__content{
+    padding:96px 22px 84px;
+    text-align:center;
+    color:#fff;
+  }
+  .lf-chrome-desktop-site .lf-hero__content > *{
+    max-width:620px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .lf-chrome-desktop-site .lf-hero__content .button{
+    display:block;
+    max-width:620px;
+    margin:32px auto 0;
+    background:#fff;
+    color:var(--plum);
+  }
+  .lf-chrome-desktop-site .lf-product-grid--4{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:20px 16px;
+  }
 }
 @media (max-width:640px){
   .lf-announcement__track{font-size:10px;gap:30px;}

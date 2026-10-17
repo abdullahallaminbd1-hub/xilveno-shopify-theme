@@ -386,8 +386,9 @@
         "item-4"
       ],
       "settings": {
+        "image": "shopify://shop_images/Cozy_Travel_Beauty_Unboxing.png",
         "kicker": "A more confident way to shop",
-        "heading": "Shop With <span>Confidence</span>",
+        "heading": "Shop With Confidence",
         "text": "Thoughtfully selected products, clear delivery information and secure checkout support from browsing through to delivery.",
         "newsletter_kicker": "Join the Xilveno Edit",
         "newsletter_heading": "Beauty tools and new finds, delivered to your inbox."

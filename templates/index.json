@@ -83,15 +83,15 @@
           "type": "tile",
           "settings": {
             "title": "Grooming Tools",
-            "link_label": "Explore facial tools",
+            "link_label": "Explore  Grooming Tools",
             "link": ""
           }
         },
         "cat-3": {
           "type": "tile",
           "settings": {
-            "title": "Skincare Tools",
-            "link_label": "Discover skincare",
+            "title": "Pet Care",
+            "link_label": "Discover  Pet Care",
             "link": ""
           }
         },

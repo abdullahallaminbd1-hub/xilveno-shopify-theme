@@ -76,7 +76,8 @@
           "settings": {
             "title": "Beauty Tools",
             "link_label": "Shop collection",
-            "link": ""
+            "link": "",
+            "image": "shopify://shop_images/Rose_Quartz_Beauty_Ritual-1.png"
           }
         },
         "cat-2": {

@@ -98,8 +98,8 @@
         "cat-4": {
           "type": "tile",
           "settings": {
-            "title": "Beauty Devices",
-            "link_label": "Explore devices",
+            "title": "Smart Gadgets",
+            "link_label": "Explore  Gadgets",
             "link": ""
           }
         },

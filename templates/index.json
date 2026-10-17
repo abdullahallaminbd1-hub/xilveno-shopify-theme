@@ -94,7 +94,8 @@
           "settings": {
             "title": "Pet Care",
             "link_label": "Discover  Pet Care",
-            "link": ""
+            "link": "",
+            "image": "shopify://shop_images/Fluffy_Friends_and_Grooming_Brush-3.png"
           }
         },
         "cat-4": {
@@ -102,7 +103,8 @@
           "settings": {
             "title": "Smart Gadgets",
             "link_label": "Explore  Gadgets",
-            "link": ""
+            "link": "",
+            "image": "shopify://shop_images/Modern_Blue-Gray_Tech_Still_Life-4.png"
           }
         },
         "cat-5": {
@@ -110,7 +112,8 @@
           "settings": {
             "title": "Travel Essentials",
             "link_label": "Shop  Travel Essentials",
-            "link": ""
+            "link": "",
+            "image": "shopify://shop_images/Warm_Minimalist_Travel_Essentials-5.png"
           }
         },
         "cat-6": {
@@ -118,7 +121,8 @@
           "settings": {
             "title": "New Arrivals",
             "link_label": "Shop new arrivals",
-            "link": ""
+            "link": "",
+            "image": "shopify://shop_images/Magical_Lavender_Gift_Box-6.png"
           }
         }
       },

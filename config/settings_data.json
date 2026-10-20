@@ -73,7 +73,7 @@
       },
       "13015552501482376882": {
         "type": "shopify://apps/neo-cod-form-upsell/blocks/app-block/6d1c1f47-a7b1-4fee-af01-4ada7fb162d2",
-        "disabled": false,
+        "disabled": true,
         "settings": {}
       }
     }
